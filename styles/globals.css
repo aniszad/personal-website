@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/*
+ * Every visual token lives here. Changing the palette or the type stack is a
+ * single file edit; nothing downstream hardcodes a hex value.
+ */
+@theme {
+  /* Surfaces, darkest to lightest */
+  --color-surface: #0a192f;
+  --color-surface-raised: #112240;
+  --color-line: #233554;
+
+  /* Text, muted to strongest. All clear 7:1 against the surface. */
+  --color-muted: #8892b0;
+  --color-body: #ccd6f6;
+  --color-heading: #e6f1ff;
+
+  /* The single accent. Links, rules under active items, timeline fill. */
+  --color-accent: #64ffda;
+
+  /*
+   * Paper. Backs artwork that was drawn on white, so the illustration reads as
+   * a printed plate laid on the page rather than a bright hole cut into it.
+   */
+  --color-paper: #f7f4ee;
+
+  /*
+   * Two families doing two jobs. Space Grotesk carries the headings, where its
+   * geometric forms and cut terminals give the page personality. Inter carries
+   * body copy, where it is simply the most readable option at small sizes.
+   *
+   * The contrast between them is the point. One family doing both jobs is what
+   * makes a page look defaulted.
+   */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /*
+     * Each route swaps --color-surface, and a custom property change
+     * recomputes background-color like any other declaration, so this single
+     * transition is what turns a section change into a crossfade. The ambient
+     * wash and the theme colour meta run on the same 700ms.
+     */
+    transition: background-color 700ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-heading);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* Focus must stay visible for keyboard users, so never remove the ring. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    color: var(--color-heading);
+  }
+}
+
+/*
+ * Honors the OS level motion preference. Framer Motion components also check
+ * useReducedMotion, but this catches CSS transitions and smooth scrolling too.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
