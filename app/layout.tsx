@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { HOME_THEME, SITE } from "@/lib/constants";
 import { Ambient } from "@/components/layout/Ambient";
 import "@/styles/globals.css";
@@ -87,6 +88,15 @@ export default function RootLayout({
         <Ambient />
 
         {children}
+
+        {/*
+          Vercel's own page view beacon: cookieless and collects no personal
+          data, which is what lets an EU facing site skip a consent banner.
+          It only reports anything once Web Analytics is switched on for this
+          project in the Vercel dashboard; until then the script loads and
+          silently does nothing.
+        */}
+        <Analytics />
       </body>
     </html>
   );
