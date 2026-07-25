@@ -1,14 +1,9 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SITE } from "@/lib/constants";
 import { CloseIcon } from "@/components/ui/Icons";
-import {
-  buildRuleBasedFallbackAnswer,
-  loadKnowledgeBase,
-  type KnowledgeBase,
-} from "@/lib/chatbot";
 
 type ChatMessage = {
   id: string;
@@ -30,7 +25,6 @@ const INITIAL_MESSAGE: ChatMessage = {
 
 export function ChatWidget() {
   const reduced = useReducedMotion() ?? false;
-  const knowledgeRef = useRef<KnowledgeBase | null>(null);
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -52,15 +46,6 @@ export function ChatWidget() {
     ]);
   }
 
-  async function ensureKnowledgeBase(): Promise<KnowledgeBase> {
-    if (knowledgeRef.current) {
-      return knowledgeRef.current;
-    }
-    const knowledge = await loadKnowledgeBase();
-    knowledgeRef.current = knowledge;
-    return knowledge;
-  }
-
   async function sendMessage(text: string) {
     const message = text.trim();
     if (!message || isTyping) {
@@ -73,8 +58,17 @@ export function ChatWidget() {
     setStatus("Thinking...");
 
     try {
-      const knowledge = await ensureKnowledgeBase();
-      pushAssistantMessage(buildRuleBasedFallbackAnswer(knowledge, message));
+      const history = messages.slice(-6).map(({ role, text }) => ({ role, text }));
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, history }),
+      });
+      const payload = (await response.json()) as { answer?: string; error?: string };
+      if (!response.ok || !payload.answer) {
+        throw new Error(payload.error ?? "The assistant could not generate a reply.");
+      }
+      pushAssistantMessage(payload.answer);
     } catch (error) {
       const textValue = error instanceof Error ? error.message : String(error);
       pushAssistantMessage(`Unable to answer right now: ${textValue}`);

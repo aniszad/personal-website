@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Fully static site. Every route is prerendered at build time and served as
-  // plain HTML, so there is no server runtime to pay for on Vercel.
-  output: "export",
+  // Pages remain statically rendered where possible, while /api/chat is
+  // deployed by Vercel as a serverless function for the portfolio assistant.
   images: {
     // The export target has no image optimization server, so images ship as
     // authored. Keep source assets appropriately sized.
