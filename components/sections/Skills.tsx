@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { SKILL_GROUPS } from "@/lib/data";
+import { localizeSkillCategory } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,12 +23,14 @@ import { cn } from "@/lib/utils";
  */
 export function Skills() {
   const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
   const [focused, setFocused] = useState<string | null>(null);
 
   return (
     <div className="border-b border-line">
       {SKILL_GROUPS.map((group, position) => {
         const isDimmed = focused !== null && focused !== group.category;
+        const category = localizeSkillCategory(language, group.category);
 
         return (
           <motion.section
@@ -53,7 +57,7 @@ export function Skills() {
                   focused === group.category ? "text-accent" : "text-heading",
                 )}
               >
-                {group.category}
+                {category}
               </h2>
 
               <ul className="flex flex-1 flex-wrap items-baseline gap-x-4 gap-y-2">

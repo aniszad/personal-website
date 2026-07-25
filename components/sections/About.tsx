@@ -1,4 +1,7 @@
-import { ABOUT_PARAGRAPHS } from "@/lib/data";
+"use client";
+
+import { t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 import { RevealText } from "@/components/animations/RevealText";
 import { FadeInOnScroll } from "@/components/animations/FadeInOnScroll";
 
@@ -10,7 +13,9 @@ import { FadeInOnScroll } from "@/components/animations/FadeInOnScroll";
  * treatment here, so nothing else on the page competes with it.
  */
 export function About() {
-  const [lead, ...rest] = ABOUT_PARAGRAPHS;
+  const { language } = useLanguage();
+  const aboutParagraphs = t(language).generic.aboutParagraphs;
+  const [lead, ...rest] = aboutParagraphs;
 
   return (
     <div className="relative">

@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { getNeighbours, type PageMeta } from "@/lib/constants";
+import { getPageCopy, t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { SiteNav } from "@/components/layout/SiteNav";
 import { ThemeStyle } from "@/components/layout/ThemeStyle";
@@ -20,6 +24,9 @@ export function PageShell({
   page: PageMeta;
   children: ReactNode;
 }) {
+  const { language } = useLanguage();
+  const copy = t(language);
+  const localizedPage = getPageCopy(language, page.href);
   const { previous, next } = getNeighbours(page.href);
 
   return (
@@ -34,19 +41,19 @@ export function PageShell({
       <div className="mx-auto max-w-5xl px-6 pb-24 md:px-10">
         <SiteNav />
 
-        <PageHeading title={page.title} blurb={page.blurb} />
+        <PageHeading title={localizedPage.title} blurb={localizedPage.blurb} />
 
         <main id="content">{children}</main>
 
         <nav
-          aria-label="Page sequence"
+          aria-label={copy.generic.pageSequence}
           className="mt-32 grid gap-px border-t border-line sm:grid-cols-2"
         >
           {previous ? (
             <SequenceLink
               href={previous.href}
-              caption="Previous"
-              label={previous.label}
+              caption={copy.generic.previous}
+              label={getPageCopy(language, previous.href).label}
             />
           ) : (
             <span className="hidden sm:block" />
@@ -55,12 +62,17 @@ export function PageShell({
           {next ? (
             <SequenceLink
               href={next.href}
-              caption="Next"
-              label={next.label}
+              caption={copy.generic.next}
+              label={getPageCopy(language, next.href).label}
               alignEnd
             />
           ) : (
-            <SequenceLink href="/" caption="Back to" label="Index" alignEnd />
+            <SequenceLink
+              href="/"
+              caption={copy.generic.backTo}
+              label={copy.generic.index}
+              alignEnd
+            />
           )}
         </nav>
       </div>

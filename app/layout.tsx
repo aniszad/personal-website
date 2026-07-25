@@ -3,6 +3,8 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { HOME_THEME, SITE } from "@/lib/constants";
 import { Ambient } from "@/components/layout/Ambient";
+import { LanguageProvider } from "@/components/layout/LanguageProvider";
+import { ChatWidget } from "@/components/ui/ChatWidget";
 import "@/styles/globals.css";
 
 /** Body and interface text. Variable weight, so no weight list is needed. */
@@ -85,9 +87,12 @@ export default function RootLayout({
           colour becoming another. It also means the slow drift survives a
           navigation rather than restarting from the top each time.
         */}
-        <Ambient />
+        <LanguageProvider>
+          <Ambient />
 
-        {children}
+          {children}
+          <ChatWidget />
+        </LanguageProvider>
 
         {/*
           Vercel's own page view beacon: cookieless and collects no personal

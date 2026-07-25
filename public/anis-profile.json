@@ -1,0 +1,395 @@
+{
+  "profile": {
+    "name": "Anis Zadri",
+    "role": "AI & Software Engineering Student",
+    "location": "Lille, France",
+    "summary": "I'm a software engineer and AI student based in Lille, currently finishing my M1 in Artificial Intelligence at Université de Lille. I come from a strong engineering background at ESTIN (Béjaïa, Algeria), where I spent four years studying computer science and AI. Right now I'm wrapping up a production internship at Limpidius where I built a barcode scanning library that processes thousands of scans daily in retail. I'm looking for a 24-month alternance starting September 2026 in Data Science, AI, or software engineering.",
+    "availability": "Actively seeking a 24-month alternance (apprenticeship contract) starting September 2026, based in the Lille metropolitan area.",
+    "languages": {
+      "french": "C2 (fluent, professional working language)",
+      "english": "C2 (fluent)",
+      "arabic": "Native",
+      "kabyle": "Native"
+    },
+    "contact": {
+      "email": "anis.zadri8@gmail.com",
+      "linkedin": "https://www.linkedin.com/in/anis-zadri-735905267",
+      "github": "https://github.com/aniszad",
+      "portfolio": "https://aniszadri.dev"
+    }
+  },
+  "education": [
+    {
+      "id": "edu-m1-ia",
+      "degree": "Master 1 Intelligence Artificielle",
+      "institution": "Université de Lille",
+      "location": "Lille, France",
+      "period": "2025-2026",
+      "status": "In progress",
+      "notes": "Top-target program, admitted via MonMaster."
+    },
+    {
+      "id": "edu-l3-info",
+      "degree": "Licence 3 Informatique",
+      "institution": "Université de Lille",
+      "location": "Lille, France",
+      "period": "2024-2025",
+      "status": "Completed",
+      "notes": "Transition year after arriving in France."
+    },
+    {
+      "id": "edu-estin",
+      "degree": "Engineering Cycle (Cycle Préparatoire + 2nd Cycle AI & Data Science)",
+      "institution": "ESTIN - École Supérieure en Sciences et Technologies de l'Informatique et du Numérique",
+      "location": "Béjaïa, Algeria",
+      "period": "2020-2024",
+      "status": "Completed (4 years)",
+      "notes": "Two-year preparatory cycle followed by specialization in Artificial Intelligence and Data Science. Strong theoretical and applied ML foundation."
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-limpidius",
+      "title": "Production Internship - Fullstack & Data Engineering",
+      "company": "Limpidius",
+      "location": "EuraTechnologies, Lille",
+      "period": "2025-2026",
+      "category": "experience",
+      "content": "Built limpscanner, a production barcode scanning library deployed at Castorama, processing approximately 3,000 scans per day. Designed and implemented the full observability stack: a NestJS microservice ingesting scan telemetry into BigQuery, with Grafana dashboards providing multi-tenant time series, stacked bar charts, and diagnostic tables. Resolved complex cross-platform issues including an iOS Safari coordinate space mismatch where the browser reports raw landscape sensor dimensions regardless of device orientation. Built a device model mapping pipeline using Google Play's supported_devices.csv (~27,000 rows), stored as a Kubernetes ConfigMap. Handled infrastructure challenges including Kubernetes/Istio AuthorizationPolicy debugging and IP-based rate limiting with a custom @RealIp() NestJS decorator. Conducted a formal cost analysis comparing Prometheus (Google Managed Prometheus, ~$68-88/month at 7 tenants) against BigQuery's session-volume pricing, ultimately recommending BigQuery for production.",
+      "stack": [
+        "TypeScript",
+        "NestJS",
+        "Angular",
+        "BigQuery",
+        "Grafana",
+        "Kubernetes",
+        "Istio",
+        "WASM",
+        "Docker"
+      ],
+      "tags": [
+        "production",
+        "observability",
+        "data-engineering",
+        "barcode-scanning",
+        "retail-tech",
+        "cross-platform"
+      ],
+      "metrics": [
+        "~3,000 scans/day in production at Castorama",
+        "Multi-tenant analytics dashboard serving multiple retail clients",
+        "~27,000-row device mapping pipeline",
+        "Formal cost analysis leading to infrastructure decision"
+      ]
+    },
+    {
+      "id": "exp-freelance",
+      "title": "Freelance Web & Mobile Developer",
+      "company": "Independent",
+      "location": "Remote",
+      "period": "Prior experience",
+      "category": "experience",
+      "content": "Freelance web and mobile development work, building client projects across web and Android platforms.",
+      "stack": [
+        "Android",
+        "Kotlin",
+        "Web"
+      ],
+      "tags": [
+        "freelance",
+        "mobile",
+        "web"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-limpscanner",
+      "name": "limpscanner",
+      "problem": "Retail environments need fast, reliable barcode scanning directly in the browser without native app installs, but cross-platform camera APIs behave inconsistently (especially on iOS Safari).",
+      "solution": "Built a production-grade browser-based barcode scanning library using WASM with full asset inlining (base64-encoded WASM + worker) for zero-config npm installation. Solved iOS Safari's coordinate space mismatch by implementing coordinate remapping between display space and raw camera frame space. Added device model detection via geometry bucketing for iOS where direct model identification isn't possible.",
+      "stack": [
+        "TypeScript",
+        "WASM",
+        "Angular",
+        "Web APIs"
+      ],
+      "results": "Deployed at Castorama with ~3,000 scans/day. Packaged as an npm library (limpscanner) integrated into multiple Angular applications.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-limpscanner-stats",
+      "name": "limpscanner Analytics Platform",
+      "problem": "No visibility into how the barcode scanner performs across tenants, devices, and browsers in production. Need to track scan success rates, error distributions, and device-level diagnostics.",
+      "solution": "Designed a BigQuery schema and built a NestJS ingestion endpoint (/tenant-stats/limpscanner-stats) with IP-based rate limiting. Created multi-tenant Grafana dashboards with time series, stacked bar charts, and diagnostic tables. Implemented noise filtering (page_abandoned events) and domain decision refinements (removed camera_denied/unavailable categories).",
+      "stack": [
+        "NestJS",
+        "BigQuery",
+        "Grafana",
+        "Kubernetes",
+        "TypeScript"
+      ],
+      "results": "Full observability over scanner behavior across all tenants. Dashboards used by the team to monitor production health and debug device-specific issues.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-portfolio",
+      "name": "aniszadri.dev - Portfolio Website",
+      "problem": "Need a personal portfolio to showcase projects and attract recruiters, with a modern developer-oriented aesthetic.",
+      "solution": "Designed and built a portfolio site inspired by Brittany Chiang's design philosophy: dark theme, scroll-driven animations, clean typography. Full architecture spec produced before development.",
+      "stack": [
+        "Next.js 16",
+        "Tailwind CSS v4",
+        "Framer Motion",
+        "shadcn/ui",
+        "Vercel"
+      ],
+      "results": "In development. Will serve as the primary online presence for alternance applications.",
+      "links": {
+        "demo": "https://aniszadri.dev",
+        "repo": "https://github.com/aniszat"
+      }
+    },
+    {
+      "id": "project-crous-bot",
+      "name": "CROUS Housing Notification Bot",
+      "problem": "Student housing listings on CROUS appear and disappear quickly. Students miss openings because they can't monitor the platform 24/7.",
+      "solution": "Built a Discord bot that scrapes CROUS housing listings and sends real-time notifications to a Discord channel when new listings appear. Automated with GitHub Actions for scheduled runs.",
+      "stack": [
+        "Python",
+        "Discord API",
+        "GitHub Actions"
+      ],
+      "results": "Automated housing monitoring, helping students catch listings as soon as they appear.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-medical-prediction",
+      "name": "Medical Prediction System",
+      "problem": "Applied machine learning to medical data for predictive diagnostics.",
+      "solution": "Built a prediction system using PyTorch and scikit-learn for medical data classification and outcome prediction.",
+      "stack": [
+        "Python",
+        "PyTorch",
+        "scikit-learn"
+      ],
+      "results": "Academic project demonstrating applied ML in healthcare.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-scheduling-planner",
+      "name": "CSP + Reinforcement Learning Scheduling Planner",
+      "problem": "Complex scheduling problems require balancing hard constraints with optimization objectives.",
+      "solution": "Combined Constraint Satisfaction Problem (CSP) techniques with reinforcement learning to build an intelligent scheduling planner.",
+      "stack": [
+        "Python",
+        "Reinforcement Learning",
+        "CSP"
+      ],
+      "results": "Academic project demonstrating hybrid AI approaches to combinatorial optimization.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-nlp-disambiguation",
+      "name": "NLP Lexical Disambiguation Algorithm",
+      "problem": "Words with multiple meanings need context-aware disambiguation for accurate text understanding.",
+      "solution": "Designed and implemented a lexical disambiguation algorithm using NLP techniques.",
+      "stack": [
+        "Python",
+        "NLP"
+      ],
+      "results": "Academic project in computational linguistics.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-estin-connect",
+      "name": "Estin Connect",
+      "problem": "Students at ESTIN needed a platform to connect and share resources.",
+      "solution": "Built a social/community application using Firebase as the backend.",
+      "stack": [
+        "Firebase",
+        "Android",
+        "Kotlin"
+      ],
+      "results": "Student community platform.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-bacprep",
+      "name": "BacPrep",
+      "problem": "Students preparing for the Baccalauréat exam need structured study resources and practice tools.",
+      "solution": "Built an exam preparation application to help students study and practice.",
+      "stack": [
+        "Android",
+        "Kotlin"
+      ],
+      "results": "Exam prep tool for Baccalauréat candidates.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-bus-fleet",
+      "name": "Bus Fleet Management System",
+      "problem": "Managing bus fleet operations (routes, schedules, vehicles) requires centralized tracking and coordination.",
+      "solution": "Built a fleet management system for tracking and coordinating bus operations.",
+      "stack": [
+        "Spring Boot"
+      ],
+      "results": "Operational management tool for bus fleet coordination.",
+      "links": {
+        "demo": "",
+        "repo": ""
+      }
+    },
+    {
+      "id": "project-kotlin-library",
+      "name": "Open-Source Android/Kotlin Library",
+      "problem": "Common Android development patterns needed a reusable, well-packaged solution.",
+      "solution": "Developed and published an open-source Android library in Kotlin, distributed via JitPack.",
+      "stack": [
+        "Kotlin",
+        "Android",
+        "JitPack"
+      ],
+      "results": "Published on JitPack, available for public use.",
+      "links": {
+        "demo": "",
+        "repo": "https://github.com/aniszat"
+      }
+    }
+  ],
+  "skills": {
+    "languages": [
+      "TypeScript",
+      "Python",
+      "Kotlin",
+      "Java",
+      "JavaScript",
+      "SQL"
+    ],
+    "frontend": [
+      "Angular",
+      "Next.js",
+      "React",
+      "Tailwind CSS",
+      "Framer Motion",
+      "shadcn/ui"
+    ],
+    "backend": [
+      "NestJS",
+      "Spring Boot",
+      "Node.js"
+    ],
+    "ai_ml": [
+      "PyTorch",
+      "scikit-learn",
+      "Reinforcement Learning",
+      "NLP",
+      "Constraint Satisfaction Problems"
+    ],
+    "data": [
+      "BigQuery",
+      "Grafana",
+      "Prometheus",
+      "SQL",
+      "Data Pipelines"
+    ],
+    "infrastructure": [
+      "Kubernetes",
+      "Docker",
+      "Istio",
+      "GitHub Actions",
+      "Vercel"
+    ],
+    "mobile": [
+      "Android (Kotlin)",
+      "Firebase"
+    ],
+    "other": [
+      "WASM",
+      "LaTeX",
+      "Git"
+    ]
+  },
+  "faq": [
+    {
+      "q": "What roles are you looking for?",
+      "a": "I'm looking for a 24-month alternance (apprenticeship contract) starting September 2026 in Data Science, AI, or software engineering. I'm open to roles that involve machine learning, data engineering, fullstack development, or applied AI. I'm based in Lille and prefer positions in the Lille metropolitan area."
+    },
+    {
+      "q": "What is an alternance?",
+      "a": "An alternance is a French apprenticeship contract where I split my time between university (Master's in AI at Université de Lille) and working at a company. It lasts 24 months and I'd be available for the company roughly 3-4 days per week depending on the university schedule."
+    },
+    {
+      "q": "What's your strongest technical area?",
+      "a": "I'm strongest at the intersection of software engineering and data/AI. At Limpidius I shipped a production scanning library, built the full observability pipeline (NestJS to BigQuery to Grafana), and solved hard cross-platform problems. On the AI side, I have hands-on experience with PyTorch, scikit-learn, reinforcement learning, and NLP from my engineering studies at ESTIN."
+    },
+    {
+      "q": "What did you build at Limpidius?",
+      "a": "I built limpscanner, a browser-based barcode scanning library deployed at Castorama processing about 3,000 scans per day. I also built the entire analytics stack: a NestJS microservice that ingests scan telemetry into BigQuery, with Grafana dashboards for multi-tenant monitoring. I dealt with real production challenges like iOS Safari coordinate space bugs, Kubernetes/Istio networking issues, and infrastructure cost optimization."
+    },
+    {
+      "q": "Do you speak French?",
+      "a": "Yes, fluently. I have C2-level French and use it as my professional working language. I also speak English at C2 level, plus native Arabic and Kabyle."
+    },
+    {
+      "q": "Where did you study?",
+      "a": "I spent four years at ESTIN in Béjaïa, Algeria, which is a competitive engineering school. I did a two-year preparatory cycle then specialized in AI and Data Science. I then moved to France for my L3 in Computer Science at Université de Lille, and I'm now in the M1 Artificial Intelligence program there."
+    },
+    {
+      "q": "Can you work in France?",
+      "a": "Yes. I'm enrolled at Université de Lille and eligible for an alternance (apprenticeship) contract, which is a standard French work-study arrangement."
+    },
+    {
+      "q": "What's your experience with production systems?",
+      "a": "At Limpidius my code runs in production at Castorama every day. I've dealt with real-world concerns: rate limiting, Kubernetes deployments, Istio service mesh policies, cost analysis for infrastructure decisions, device compatibility at scale (27,000+ device models), and cross-platform browser bugs. It's not just academic work."
+    },
+    {
+      "q": "Do you have mobile development experience?",
+      "a": "Yes. I have a multi-year background in Android/Kotlin development. I've published an open-source library on JitPack, built apps like Estin Connect (Firebase-backed) and BacPrep, and I understand mobile development patterns deeply."
+    },
+    {
+      "q": "What are your interests outside of tech?",
+      "a": "I have a strong interest in Amazigh (Berber) history, heritage, and literature. I value historically verified sources and authentic cultural narratives."
+    },
+    {
+      "q": "Are you available for a call or interview?",
+      "a": "Yes, feel free to reach out via email or LinkedIn and I'll get back to you to schedule a time."
+    },
+    {
+      "q": "What makes you different from other candidates?",
+      "a": "I've shipped production code that thousands of people use daily, not just class projects. I bridge AI/ML knowledge with solid software engineering practice: I can train a model and also build the pipeline that serves it, monitor it, and debug it when something breaks in Kubernetes. I also bring a multicultural perspective, with four languages and experience across two countries and education systems."
+    }
+  ],
+  "guardrails": {
+    "identity": "You are an AI assistant on Anis Zadri's portfolio website. You answer questions about Anis's background, skills, projects, and availability based on his published information. You are friendly, concise, and professional.",
+    "scope": "Only answer questions related to Anis's professional profile, education, projects, skills, and availability. Do not answer general knowledge questions, give opinions on unrelated topics, or pretend to be Anis himself.",
+    "unknown_answer": "I don't have that specific information in Anis's profile. You can reach him directly at anis.zadri8@gmail.com or on LinkedIn: https://www.linkedin.com/in/anis-zadri-735905267.",
+    "tone": "Be direct and informative. Avoid corporate fluff, buzzwords, or overly salesy language. Anis values authenticity, so keep it real.",
+    "privacy": "Do not share personal details beyond what's in this knowledge base. Do not speculate about salary expectations, personal life, or opinions Anis hasn't explicitly stated.",
+    "redirect_to_contact": "If someone expresses interest in hiring or interviewing Anis, encourage them to reach out via email or LinkedIn."
+  }
+}

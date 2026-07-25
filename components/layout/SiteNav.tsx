@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PAGES, SITE } from "@/lib/constants";
+import { t, getLocalizedPages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/layout/LanguageProvider";
+import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 
 /**
  * Slim bar carried by every page except the index.
@@ -17,22 +20,28 @@ import { cn } from "@/lib/utils";
  */
 export function SiteNav() {
   const pathname = usePathname();
+  const { language } = useLanguage();
+  const copy = t(language);
+  const pages = getLocalizedPages(language, PAGES);
 
   return (
     <nav
-      aria-label="Site sections"
+      aria-label={copy.generic.siteSections}
       className="sticky top-0 z-30 -mx-6 mb-20 border-b border-line bg-surface/90 px-6 backdrop-blur-sm md:-mx-10 md:px-10"
     >
       <div className="flex h-16 items-center justify-between gap-8">
-        <Link
-          href="/"
-          className="shrink-0 font-display text-lg font-semibold text-heading transition-colors duration-200 hover:text-accent"
-        >
-          {SITE.name}
-        </Link>
+        <div className="flex shrink-0 items-center gap-3">
+          <Link
+            href="/"
+            className="font-display text-lg font-semibold text-heading transition-colors duration-200 hover:text-accent"
+          >
+            {SITE.name}
+          </Link>
+          <LanguageSwitch compact />
+        </div>
 
         <ul className="flex min-w-0 items-center gap-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {PAGES.map((page) => {
+          {pages.map((page) => {
             // Routes are exported with trailing slashes, so compare on the
             // prefix rather than requiring an exact string match.
             const isCurrent =

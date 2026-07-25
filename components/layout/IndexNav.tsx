@@ -4,6 +4,8 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { PAGES } from "@/lib/constants";
+import { getLocalizedPages, t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 import { ArrowUpRightIcon } from "@/components/ui/Icons";
 
 /**
@@ -26,15 +28,18 @@ import { ArrowUpRightIcon } from "@/components/ui/Icons";
  */
 export function IndexNav() {
   const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
+  const copy = t(language);
+  const pages = getLocalizedPages(language, PAGES);
 
   return (
-    <nav aria-label="Sections">
+    <nav aria-label={copy.generic.siteSections}>
       <p className="mb-8 text-xs lowercase tracking-[0.25em] text-muted">
-        Sections
+        {copy.home.indexLabel}
       </p>
 
       <ul>
-        {PAGES.map((page, position) => (
+        {pages.map((page, position) => (
           <motion.li
             key={page.href}
             // Read by the hover utilities below, which is what lets a single

@@ -1,9 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { motion, useReducedMotion, type Variants } from "motion/react";
+import {
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type Variants,
+} from "motion/react";
 import { SITE } from "@/lib/constants";
+import { t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
+import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { ArrowUpRightIcon } from "@/components/ui/Icons";
 import { ScrollCue } from "@/components/ui/ScrollCue";
 
@@ -29,10 +41,12 @@ import { ScrollCue } from "@/components/ui/ScrollCue";
  * large enough to carry the screen inside a narrow column, and the ragged right
  * edge is the point.
  */
-const TITLE_LINES = ["Master's", "student in", "Lille"] as const;
-
 export function Hero({ portrait }: { portrait?: ReactNode }) {
   const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
+  const copy = t(language);
+  const titleCopy = copy.home.rotatingTitle;
+  const [titleIndex, setTitleIndex] = useState(0);
 
   const container: Variants = {
     hidden: {},
@@ -69,6 +83,19 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
     },
   };
 
+  useEffect(() => {
+    if (reduced) {
+      setTitleIndex(0);
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setTitleIndex((current) => (current + 1) % titleCopy.middle.length);
+    }, 2300);
+
+    return () => window.clearInterval(intervalId);
+  }, [reduced, titleCopy.middle.length]);
+
   return (
     <motion.section
       initial="hidden"
@@ -83,55 +110,67 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
         <span className="font-display text-lg font-semibold text-heading">
           {SITE.name}
         </span>
-        <span className="text-sm text-muted">{SITE.location}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted">{copy.home.location}</span>
+          <LanguageSwitch />
+        </div>
       </motion.div>
 
       <div className="flex flex-1 items-center py-14 md:py-16">
         <div
           className={
             portrait
-              ? "grid w-full items-center gap-12 md:grid-cols-[1.15fr_1fr] md:gap-14"
+              ? "grid w-full items-center gap-12 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:gap-14"
               : "w-full"
           }
         >
-          <div>
+          <div className="min-w-0">
             <h1
-              aria-label={TITLE_LINES.join(" ")}
+              aria-label={`${titleCopy.start} ${titleCopy.middle[titleIndex]} ${titleCopy.end}`}
               className="text-[clamp(3rem,8vw,5.5rem)] leading-[0.92] text-heading"
             >
-              {TITLE_LINES.map((text, position) => (
-                <span
-                  key={text}
-                  aria-hidden="true"
-                  className="block overflow-hidden pb-[0.08em]"
-                >
+              <span aria-hidden="true" className="block overflow-hidden pb-[0.08em]">
+                <motion.span variants={line} className="block">
+                  {titleCopy.start}
+                </motion.span>
+              </span>
+
+              <span
+                aria-hidden="true"
+                className="relative block h-[1.25em] w-full overflow-hidden text-[clamp(1.5rem,3vw,2.5rem)] leading-[1.1]"
+              >
+                <AnimatePresence initial={false} mode="wait">
                   <motion.span
-                    variants={line}
-                    className={
-                      // The accent city is the one flourish on the screen.
-                      position === TITLE_LINES.length - 1
-                        ? "block text-accent transition-colors duration-700"
-                        : "block"
-                    }
+                    key={titleCopy.middle[titleIndex]}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                      duration: reduced ? 0.2 : 0.35,
+                      ease: "easeOut",
+                    }}
+                    className="absolute left-0 top-0 block whitespace-nowrap"
                   >
-                    {text}
+                    {titleCopy.middle[titleIndex]}
                   </motion.span>
-                </span>
-              ))}
+                </AnimatePresence>
+              </span>
+
+              <span aria-hidden="true" className="block overflow-hidden pb-[0.08em]">
+                <motion.span
+                  variants={line}
+                  className="block text-accent transition-colors duration-700"
+                >
+                  {titleCopy.end}
+                </motion.span>
+              </span>
             </h1>
 
             <motion.p
               variants={item}
-              className="mt-8 max-w-sm font-display text-xl font-semibold leading-snug text-heading"
+              className="mt-8 max-w-md leading-relaxed text-body"
             >
-              {SITE.discipline}
-            </motion.p>
-
-            <motion.p
-              variants={item}
-              className="mt-6 max-w-md leading-relaxed text-body"
-            >
-              {SITE.tagline}
+              {copy.home.tagline}
             </motion.p>
 
             <motion.p
@@ -153,15 +192,15 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
                   ease: "easeInOut",
                 }}
               />
-              {SITE.availability}
+              {copy.home.availability}
             </motion.p>
 
             <motion.div
               variants={item}
               className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
             >
-              <HeroLink href="/projects" label="Start with the work" primary />
-              <HeroLink href="/contact" label="Get in touch" />
+              <HeroLink href="/projects" label={copy.home.startWithWork} primary />
+              <HeroLink href="/contact" label={copy.home.getInTouch} />
             </motion.div>
           </div>
 

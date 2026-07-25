@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import { motion, useMotionTemplate, useMotionValue } from "motion/react";
 import { CV_PATH, SOCIALS } from "@/lib/constants";
+import { t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { ArrowUpRightIcon } from "@/components/ui/Icons";
 
@@ -19,6 +21,8 @@ import { ArrowUpRightIcon } from "@/components/ui/Icons";
  */
 export function Contact() {
   const panelRef = useRef<HTMLDivElement>(null);
+  const { language } = useLanguage();
+  const copy = t(language).generic;
 
   const glowX = useMotionValue(50);
   const glowY = useMotionValue(50);
@@ -48,13 +52,11 @@ export function Contact() {
 
       <div className="relative max-w-3xl">
         <p className="font-display text-2xl font-semibold leading-snug tracking-tight text-heading md:text-4xl">
-          I am looking for an alternance starting September 2026 in AI, Data
-          Science, or Software Engineering, in and around Lille.
+          {copy.contactLead}
         </p>
 
         <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
-          If you would like to work together, or you just want to ask about
-          something I built, write to me.
+          {copy.contactBody}
         </p>
 
         <a
@@ -91,7 +93,7 @@ export function Contact() {
             rel="noreferrer noopener"
             className="group inline-flex items-center gap-2 text-sm font-semibold text-body transition-colors duration-200 hover:text-accent"
           >
-            Download CV
+            {copy.downloadCv}
             <ArrowUpRightIcon
               width={15}
               height={15}

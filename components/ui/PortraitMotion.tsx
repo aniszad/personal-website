@@ -1,34 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  AnimatePresence,
   motion,
   useMotionValue,
   useReducedMotion,
   useSpring,
   useTransform,
 } from "motion/react";
-import { PlayIcon } from "@/components/ui/Icons";
+
+const PORTRAIT_PLAYED_KEY = "anis-portrait-animation-played-v2";
 
 /**
  * The portrait plate.
  *
- * At rest it shows the drawn portrait. The animated version is held back until
- * the reader asks for it: clicking the plate plays the loop through once and it
- * returns to the still on its own, so the movement is a reward for curiosity
- * rather than something running unbidden in the corner of the eye. Clicking
- * again while it plays stops it early.
+ * The animated version plays once on a visitor's first landing-page view, then
+ * returns to the still. A session flag prevents it playing again when the
+ * visitor navigates home or refreshes during that same visit.
  *
  * The artwork is drawn on white, so the plate is paper coloured and takes no
  * wash or gradient over the top, the same constraint the timeline logos follow.
  *
- * The video is muted: it is an animation of a drawing, there is nothing to
- * hear, and muted playback is what lets the click start it without the browser
- * refusing. Under reduced motion the drift and the entrance wipe are dropped,
- * but the click to play is kept, since a reader choosing to start it is a
- * deliberate act rather than motion imposed on them.
+ * The video is muted and inline, which allows autoplay. Visitors who prefer
+ * reduced motion see the still portrait instead.
  */
 export function PortraitMotion({
   video,
@@ -39,10 +34,11 @@ export function PortraitMotion({
   poster: string | null;
   alt: string;
 }) {
-  const frameRef = useRef<HTMLButtonElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion() ?? false;
   const [playing, setPlaying] = useState(false);
+  const [shouldAutoplay, setShouldAutoplay] = useState(false);
 
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -59,7 +55,32 @@ export function PortraitMotion({
     springConfig,
   );
 
-  function handlePointerMove(event: React.PointerEvent<HTMLButtonElement>) {
+  useEffect(() => {
+    if (reduced || sessionStorage.getItem(PORTRAIT_PLAYED_KEY)) {
+      return;
+    }
+
+    setShouldAutoplay(true);
+  }, [reduced]);
+
+  useEffect(() => {
+    if (!shouldAutoplay) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    // The autoplay attribute starts the clip as soon as it is ready. Calling
+    // play as well covers browsers that wait for enough data before starting.
+    setPlaying(true);
+    void video
+      .play()
+      .then(() => sessionStorage.setItem(PORTRAIT_PLAYED_KEY, "true"))
+      .catch(() => {
+        setPlaying(false);
+        setShouldAutoplay(false);
+      });
+  }, [shouldAutoplay]);
+
+  function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
     if (reduced) return;
     const frame = frameRef.current;
     if (!frame) return;
@@ -74,39 +95,14 @@ export function PortraitMotion({
     pointerY.set(0);
   }
 
-  function toggle() {
-    if (playing) {
-      // Stopping early. Reset to the first frame so the next play starts clean.
-      const element = videoRef.current;
-      if (element) {
-        element.pause();
-        element.currentTime = 0;
-      }
-      setPlaying(false);
-      return;
-    }
-    setPlaying(true);
-    // The element mounts this render, so start it on the next frame once the
-    // ref is attached. A rejected promise here is a blocked autoplay, which the
-    // controls-free plate cannot recover from, so it falls back to the still.
-    requestAnimationFrame(() => {
-      videoRef.current?.play().catch(() => setPlaying(false));
-    });
-  }
-
   return (
-    <motion.button
+    <motion.div
       ref={frameRef}
-      type="button"
-      onClick={toggle}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      aria-label={
-        playing ? "Stop the animated portrait" : "Play the animated portrait"
-      }
       // Matches the source loop at 1096 by 720, so nothing of the drawing is
       // cropped away to fit a shape it was not made in.
-      className="group relative block aspect-[137/90] w-full cursor-pointer overflow-hidden border border-line bg-paper transition-colors duration-500 hover:border-accent/60"
+      className="relative block aspect-[137/90] w-full overflow-hidden border border-line bg-paper"
       initial={
         reduced ? { opacity: 0 } : { opacity: 0, clipPath: "inset(100% 0 0 0)" }
       }
@@ -138,9 +134,10 @@ export function PortraitMotion({
 
         <video
           ref={videoRef}
+          autoPlay={shouldAutoplay}
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           poster={poster ?? undefined}
           aria-hidden="true"
           onEnded={() => setPlaying(false)}
@@ -151,31 +148,6 @@ export function PortraitMotion({
           <source src={video} type="video/mp4" />
         </video>
       </motion.div>
-
-      {/*
-        The play affordance sits in the corner rather than over the centre, so
-        it never covers the face, and it is what the reader reaches for on
-        hover. Gone while the clip runs.
-      */}
-      <AnimatePresence>
-        {playing ? null : (
-          <motion.span
-            aria-hidden="true"
-            className="absolute bottom-3 left-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-          >
-            <span className="flex items-center gap-2 rounded-full bg-surface/75 py-1.5 pl-1.5 pr-3 text-xs font-semibold text-heading backdrop-blur-sm transition-colors duration-300 group-hover:bg-accent group-hover:text-surface">
-              <span className="grid size-7 place-items-center rounded-full bg-accent text-surface transition-colors duration-300 group-hover:bg-surface group-hover:text-accent">
-                <PlayIcon width={13} height={13} />
-              </span>
-              Play
-            </span>
-          </motion.span>
-        )}
-      </AnimatePresence>
 
       {/*
         A single sweep of light crossing the plate once on arrival, then never
@@ -190,6 +162,6 @@ export function PortraitMotion({
           transition={{ duration: 1.1, ease: "easeInOut", delay: 1.05 }}
         />
       )}
-    </motion.button>
+    </motion.div>
   );
 }

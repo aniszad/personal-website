@@ -4,6 +4,7 @@ import { HOME_THEME, SITE } from "@/lib/constants";
 import { ThemeStyle } from "@/components/layout/ThemeStyle";
 import { Hero } from "@/components/sections/Hero";
 import { IndexNav } from "@/components/layout/IndexNav";
+import { HomeFooterNote } from "@/components/layout/HomeFooterNote";
 import { Portrait } from "@/components/ui/Portrait";
 import { PortraitMotion } from "@/components/ui/PortraitMotion";
 import { SocialLinks } from "@/components/ui/SocialLinks";
@@ -53,9 +54,7 @@ export default function HomePage() {
 
         <footer className="mt-16 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <SocialLinks />
-          <p className="text-sm text-muted">
-            Built with Next.js and Tailwind CSS.
-          </p>
+          <HomeFooterNote />
         </footer>
       </div>
     </>
