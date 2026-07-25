@@ -47,6 +47,24 @@ function extractAnswer(payload: unknown): string | null {
   return typeof content === "string" && content.trim() ? content.trim() : null;
 }
 
+function extractProviderError(payload: unknown): string | undefined {
+  if (typeof payload !== "object" || payload === null || !("error" in payload)) {
+    return undefined;
+  }
+
+  const error = payload.error;
+  if (typeof error === "string") return error;
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
+  }
+  return undefined;
+}
+
 export async function POST(request: Request) {
   if (!process.env.HF_TOKEN) {
     return NextResponse.json(
@@ -108,6 +126,13 @@ export async function POST(request: Request) {
 
     const payload: unknown = await modelResponse.json();
     if (!modelResponse.ok) {
+      // This is visible only in Vercel's function logs. Do not send provider
+      // details to visitors, but preserve them for configuration debugging.
+      console.error("Hugging Face chat request failed", {
+        model: MODEL,
+        status: modelResponse.status,
+        detail: extractProviderError(payload),
+      });
       return NextResponse.json(
         { error: "The AI model is temporarily unavailable. Please try again shortly." },
         { status: 502 },
@@ -123,7 +148,11 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ answer });
-  } catch {
+  } catch (error) {
+    console.error("Hugging Face chat request could not be completed", {
+      model: MODEL,
+      detail: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "The AI model could not be reached. Please try again shortly." },
       { status: 502 },
