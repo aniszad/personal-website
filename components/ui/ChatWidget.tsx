@@ -4,7 +4,8 @@ import { FormEvent, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SITE } from "@/lib/constants";
 import { CloseIcon } from "@/components/ui/Icons";
-
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 type ChatMessage = {
   id: string;
   role: "user" | "assistant";
@@ -115,16 +116,24 @@ export function ChatWidget() {
 
             <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
               {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
-                    message.role === "assistant"
-                      ? "bg-surface text-body ring-1 ring-line"
-                      : "ml-auto bg-accent text-surface"
-                  }`}
-                >
-                  {message.text}
-                </div>
+                  <div
+                      key={message.id}
+                      className={`max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
+                          message.role === "assistant"
+                              ? "bg-surface text-body ring-1 ring-line"
+                              : "ml-auto bg-accent text-surface"
+                      }`}
+                  >
+                    {message.role === "assistant" ? (
+                        <div className="prose prose-sm max-w-none prose-p:my-2 prose-ul:my-2 prose-ul:pl-5 prose-li:my-1 prose-strong:text-heading dark:prose-invert">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {message.text}
+                          </ReactMarkdown>
+                        </div>
+                    ) : (
+                        <p>{message.text}</p>
+                    )}
+                  </div>
               ))}
 
               {isTyping ? (
