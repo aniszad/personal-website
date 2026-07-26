@@ -156,30 +156,7 @@ function buildChunks(kb: KnowledgeBase): Chunk[] {
   return chunks;
 }
 
-export function retrieveContext(kb: KnowledgeBase, question: string, limit = 5): string {
-  const terms = tokenize(question);
-  if (terms.length === 0) {
-    return "";
-  }
 
-  const ranked = buildChunks(kb)
-    .map((chunk) => {
-      const haystack = chunk.text.toLowerCase();
-      let score = 0;
-      for (const term of terms) {
-        if (haystack.includes(term)) {
-          score += 1;
-        }
-      }
-      return { chunk, score };
-    })
-    .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map((item) => item.chunk.text);
-
-  return ranked.join("\n\n---\n\n");
-}
 
 export function findBestFaqAnswer(
   kb: KnowledgeBase,
@@ -278,21 +255,183 @@ export function buildRuleBasedFallbackAnswer(
 }
 
 export function buildSystemPrompt(kb: KnowledgeBase): string {
+  const unknown =
+      kb.guardrails?.unknown_answer ??
+      "I don't have that specific information in Anis's profile.";
+
   return [
-    kb.guardrails?.identity ??
-      `You are an AI assistant on ${kb.profile.name}'s portfolio website.`,
-    kb.guardrails?.scope ??
-      "Only answer questions about the candidate's profile, education, experience, projects, skills, and availability.",
-    kb.guardrails?.tone ??
-      "Be concise, specific, and professional. Avoid hype and fluff.",
-    kb.guardrails?.privacy ??
-      "Only use information explicitly present in the provided context.",
-    "If asked about your identity or implementation, clearly say you are powered by an open-source packaged model and not built from scratch.",
-    `If a question cannot be answered from context, reply exactly with: "${kb.guardrails?.unknown_answer ?? "I don't have that information in this profile."}"`,
-    kb.guardrails?.redirect_to_contact ?? "",
+    `You are the portfolio assistant for ${kb.profile.name}.`,
+    `You answer questions only about ${kb.profile.name}'s background, education, experience, projects, skills, languages, and availability.`,
+    "Never invent, infer, exaggerate, or use outside knowledge.",
+    `Never speak as if you are ${kb.profile.name}. Refer to him as "Anis" or "he".`,
+    "Answer the visitor's exact question, not a generic biography.",
+    "Prefer short direct answers: usually one short paragraph or 3 bullet points.",
+    "If the user asks about projects, mention only the most relevant projects.",
+    "If the user asks about roles or availability, answer only with target role, contract, timing, and location preference when present.",
+    "Use simple Markdown.",
+    `If the answer is not supported by the provided context, reply exactly with: "${unknown}"`,
+    kb.guardrails?.tone ?? "Be concise, direct, and professional.",
+    kb.guardrails?.privacy ?? "Only use information explicitly present in the provided context.",
   ]
-    .filter(Boolean)
-    .join("\n");
+      .filter(Boolean)
+      .join("\n");
+}
+
+function formatEducation(kb: KnowledgeBase): string {
+  return (kb.education ?? [])
+      .map(
+          (item) =>
+              `- ${item.degree} — ${item.institution}, ${item.location} (${item.period}, ${item.status})${item.notes ? `. ${item.notes}` : ""}`,
+      )
+      .join("\n");
+}
+
+function formatExperience(kb: KnowledgeBase): string {
+  return (kb.experience ?? [])
+      .map(
+          (item) =>
+              `- ${item.title} at ${item.company} (${item.period}, ${item.location})\n  ${item.content}${
+                  item.metrics?.length ? `\n  Metrics: ${item.metrics.join(" | ")}` : ""
+              }${item.stack?.length ? `\n  Stack: ${item.stack.join(", ")}` : ""}`,
+      )
+      .join("\n");
+}
+
+function formatProjects(kb: KnowledgeBase, limit = 4): string {
+  return (kb.projects ?? [])
+      .slice(0, limit)
+      .map(
+          (item) =>
+              `- ${item.name}\n  Problem: ${item.problem}\n  Solution: ${item.solution}${
+                  item.results ? `\n  Results: ${item.results}` : ""
+              }${item.stack?.length ? `\n  Stack: ${item.stack.join(", ")}` : ""}`,
+      )
+      .join("\n");
+}
+
+function formatSkills(kb: KnowledgeBase): string {
+  return Object.entries(kb.skills ?? {})
+      .map(([group, values]) => `- ${group}: ${values.join(", ")}`)
+      .join("\n");
+}
+
+function findFaq(kb: KnowledgeBase, matcher: (q: string) => boolean): string | null {
+  const item = (kb.faq ?? []).find((entry) => matcher(entry.q.toLowerCase()));
+  return item?.a ?? null;
+}
+
+export function retrieveContext(kb: KnowledgeBase, question: string, limit = 5): string {
+  const q = question.toLowerCase();
+  const blocks: string[] = [];
+
+  const wantsBackground =
+      q.includes("background") ||
+      q.includes("about") ||
+      q.includes("who is") ||
+      q.includes("who are") ||
+      q.includes("introduce") ||
+      q.includes("journey");
+
+  const wantsProjects =
+      q.includes("project") ||
+      q.includes("proud") ||
+      q.includes("built") ||
+      q.includes("worked on") ||
+      q.includes("portfolio");
+
+  const wantsRole =
+      q.includes("role") ||
+      q.includes("looking for") ||
+      q.includes("alternance") ||
+      q.includes("available") ||
+      q.includes("availability") ||
+      q.includes("job");
+
+  const wantsSkills =
+      q.includes("skill") ||
+      q.includes("stack") ||
+      q.includes("technology") ||
+      q.includes("tools") ||
+      q.includes("technical");
+
+  const wantsExperience =
+      q.includes("experience") ||
+      q.includes("work") ||
+      q.includes("internship") ||
+      q.includes("limpidius");
+
+  const wantsEducation =
+      q.includes("study") ||
+      q.includes("education") ||
+      q.includes("university") ||
+      q.includes("master") ||
+      q.includes("estin");
+
+  const wantsContact =
+      q.includes("contact") ||
+      q.includes("email") ||
+      q.includes("linkedin") ||
+      q.includes("github");
+
+  if (wantsBackground) {
+    blocks.push(
+        `PROFILE\n${kb.profile.summary}`,
+        formatEducation(kb) ? `EDUCATION\n${formatEducation(kb)}` : "",
+        formatExperience(kb) ? `EXPERIENCE\n${formatExperience(kb)}` : "",
+    );
+  }
+
+  if (wantsProjects) {
+    blocks.push(`PROJECTS\n${formatProjects(kb, limit)}`);
+  }
+
+  if (wantsRole) {
+    const roleFaq = findFaq(kb, (text) => text.includes("roles are you looking for"));
+    blocks.push(
+        `AVAILABILITY\n${kb.profile.availability}`,
+        roleFaq ? `ROLE DETAILS\n${roleFaq}` : "",
+    );
+  }
+
+  if (wantsSkills) {
+    const strongestFaq = findFaq(kb, (text) => text.includes("strongest technical area"));
+    blocks.push(
+        formatSkills(kb) ? `SKILLS\n${formatSkills(kb)}` : "",
+        strongestFaq ? `TECHNICAL STRENGTH\n${strongestFaq}` : "",
+    );
+  }
+
+  if (wantsExperience) {
+    const expFaq = findFaq(kb, (text) => text.includes("what did you build at limpidius"));
+    blocks.push(
+        formatExperience(kb) ? `EXPERIENCE\n${formatExperience(kb)}` : "",
+        expFaq ? `LIMPIDIUS DETAILS\n${expFaq}` : "",
+    );
+  }
+
+  if (wantsEducation) {
+    const eduFaq = findFaq(kb, (text) => text.includes("where did you study"));
+    blocks.push(
+        formatEducation(kb) ? `EDUCATION\n${formatEducation(kb)}` : "",
+        eduFaq ? `STUDY BACKGROUND\n${eduFaq}` : "",
+    );
+  }
+
+  if (wantsContact && kb.profile.contact) {
+    blocks.push(
+        `CONTACT\nEmail: ${kb.profile.contact.email ?? "n/a"}\nLinkedIn: ${kb.profile.contact.linkedin ?? "n/a"}\nGitHub: ${kb.profile.contact.github ?? "n/a"}\nPortfolio: ${kb.profile.contact.portfolio ?? "n/a"}`,
+    );
+  }
+
+  if (blocks.length === 0) {
+    blocks.push(
+        `PROFILE\n${kb.profile.summary}`,
+        `AVAILABILITY\n${kb.profile.availability}`,
+        formatProjects(kb, 3) ? `SELECTED PROJECTS\n${formatProjects(kb, 3)}` : "",
+    );
+  }
+
+  return blocks.filter(Boolean).join("\n\n---\n\n");
 }
 
 export async function loadKnowledgeBase(): Promise<KnowledgeBase> {
