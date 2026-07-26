@@ -9,7 +9,7 @@ import {
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const MODEL = process.env.GROQ_MODEL ?? "qwen/qwen3-32b";
+const MODEL = process.env.GROQ_MODEL ?? "qwen/qwen3.6-27b";
 const MAX_MESSAGE_LENGTH = 700;
 const MAX_HISTORY_MESSAGES = 6;
 
