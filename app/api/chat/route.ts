@@ -9,7 +9,7 @@ import {
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const MODEL = process.env.HF_MODEL ?? "Qwen/Qwen2.5-7B-Instruct-1M:fastest";
+const MODEL = process.env.GROQ_MODEL ?? "qwen/qwen3-32b";
 const MAX_MESSAGE_LENGTH = 700;
 const MAX_HISTORY_MESSAGES = 6;
 
@@ -66,9 +66,9 @@ function extractProviderError(payload: unknown): string | undefined {
 }
 
 export async function POST(request: Request) {
-  if (!process.env.HF_TOKEN) {
+  if (!process.env.GROQ_API_KEY) {
     return NextResponse.json(
-      { error: "The AI assistant is not configured yet." },
+      { error: "The AI assistant is not configured yet. Add GROQ_API_KEY in Vercel." },
       { status: 503 },
     );
   }
@@ -101,17 +101,18 @@ export async function POST(request: Request) {
 
   try {
     const modelResponse = await fetch(
-      "https://router.huggingface.co/v1/chat/completions",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.HF_TOKEN}`,
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           model: MODEL,
           temperature: 0.25,
           max_tokens: 280,
+          reasoning_effort: "none",
           messages: [
             { role: "system", content: systemPrompt },
             ...history.map((item) => ({ role: item.role, content: item.text })),
@@ -128,15 +129,22 @@ export async function POST(request: Request) {
     if (!modelResponse.ok) {
       // This is visible only in Vercel's function logs. Do not send provider
       // details to visitors, but preserve them for configuration debugging.
-      console.error("Hugging Face chat request failed", {
+      console.error("Groq chat request failed", {
         model: MODEL,
         status: modelResponse.status,
         detail: extractProviderError(payload),
       });
-      return NextResponse.json(
-        { error: "The AI model is temporarily unavailable. Please try again shortly." },
-        { status: 502 },
-      );
+      const providerError =
+        modelResponse.status === 401
+          ? "Groq rejected the API key. Check that GROQ_API_KEY is correct."
+          : modelResponse.status === 402
+            ? "The Groq account requires billing for this request."
+            : modelResponse.status === 404
+              ? "The selected Qwen model is not available on Groq right now."
+              : modelResponse.status === 429
+                ? "Hugging Face rate-limited this request. Please try again shortly."
+                : "The Groq model provider is temporarily unavailable.";
+      return NextResponse.json({ error: providerError }, { status: 502 });
     }
 
     const answer = extractAnswer(payload);
@@ -149,7 +157,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ answer });
   } catch (error) {
-    console.error("Hugging Face chat request could not be completed", {
+    console.error("Groq chat request could not be completed", {
       model: MODEL,
       detail: error instanceof Error ? error.message : String(error),
     });
