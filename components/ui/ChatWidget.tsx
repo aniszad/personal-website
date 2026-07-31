@@ -156,7 +156,11 @@ export function ChatWidget() {
                 </header>
 
                 {/* Custom scrollbar styling for a cleaner look */}
-                <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-line/80">
+                <div
+                  aria-live="polite"
+                  aria-label="Chat messages"
+                  className="flex-1 space-y-4 overflow-y-auto px-4 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-line/80"
+                >
                   <AnimatePresence mode="popLayout">
                     {messages.map((message) => (
                         <motion.div

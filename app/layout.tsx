@@ -1,11 +1,26 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import { HOME_THEME, SITE } from "@/lib/constants";
+import { HOME_THEME, SITE, SOCIALS } from "@/lib/constants";
 import { Ambient } from "@/components/layout/Ambient";
 import { LanguageProvider } from "@/components/layout/LanguageProvider";
 import { ChatWidget } from "@/components/ui/ChatWidget";
 import "@/styles/globals.css";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: SITE.name,
+  url: SITE.url,
+  jobTitle: SITE.title,
+  description: SITE.description,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Lille",
+    addressCountry: "FR",
+  },
+  sameAs: [SOCIALS.github, SOCIALS.linkedin],
+};
 
 /** Body and interface text. Variable weight, so no weight list is needed. */
 const inter = Inter({
@@ -40,11 +55,20 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     title: `${SITE.name}, ${SITE.title}`,
     description: SITE.description,
+    images: [
+      {
+        url: `${SITE.url}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: `${SITE.name} — ${SITE.title}`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE.name}, ${SITE.title}`,
     description: SITE.description,
+    images: [`${SITE.url}/opengraph-image`],
   },
   robots: {
     index: true,
@@ -68,6 +92,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-surface text-body antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {/*
           First tab stop on the page. Visually hidden until focused, at which
           point it becomes a normal button so keyboard users can jump past the

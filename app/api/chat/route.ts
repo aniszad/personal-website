@@ -52,9 +52,11 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { message?: unknown };
+  type HistoryEntry = { role: "user" | "assistant"; text: string };
+
+  let body: { message?: unknown; history?: unknown };
   try {
-    body = (await request.json()) as { message?: unknown };
+    body = (await request.json()) as { message?: unknown; history?: unknown };
   } catch {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
@@ -67,6 +69,17 @@ export async function POST(request: Request) {
     );
   }
 
+  const rawHistory = Array.isArray(body.history) ? body.history : [];
+  const history: HistoryEntry[] = rawHistory
+    .filter(
+      (e): e is HistoryEntry =>
+        typeof e === "object" &&
+        e !== null &&
+        ((e as HistoryEntry).role === "user" || (e as HistoryEntry).role === "assistant") &&
+        typeof (e as HistoryEntry).text === "string",
+    )
+    .slice(-6);
+
   const knowledge = knowledgeBase as KnowledgeBase;
   const context = retrieveContext(knowledge, message, 5);
   const systemPrompt = [
@@ -76,6 +89,11 @@ export async function POST(request: Request) {
     "If the context is insufficient, say so plainly.",
     "Keep answers concise: one short paragraph or at most 3 bullets.",
   ].join("\n");
+
+  const historyMessages = history.map((entry) => ({
+    role: entry.role,
+    content: entry.text,
+  }));
 
   try {
     const modelResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -91,6 +109,7 @@ export async function POST(request: Request) {
         reasoning_effort: "none",
         messages: [
           { role: "system", content: systemPrompt },
+          ...historyMessages,
           {
             role: "user",
             content: [
