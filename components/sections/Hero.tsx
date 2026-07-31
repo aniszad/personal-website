@@ -215,12 +215,9 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
             </div>
 
             {portrait ? (
-                <motion.div
-                    className="md:pl-2"
-                    style={reduced ? {} : { x: portraitX, y: portraitY }}
-                >
+                <div className="md:pl-2">
                   {portrait}
-                </motion.div>
+                </div>
             ) : null}
           </div>
         </div>
