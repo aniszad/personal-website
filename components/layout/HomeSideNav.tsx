@@ -9,6 +9,7 @@ import { useLanguage } from "@/components/layout/LanguageProvider";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { CloseIcon, MenuIcon } from "@/components/ui/Icons";
+import { PaletteTrigger, PaletteTriggerIcon } from "@/components/ui/PaletteTrigger";
 
 /**
  * The homepage's only navigation: a fixed rail on the left from md upward,
@@ -41,14 +42,17 @@ export function HomeSideNav() {
         >
           {SITE.name}
         </Link>
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label={copy.generic.openMenu}
-          className="text-muted transition-colors duration-200 hover:text-heading"
-        >
-          <MenuIcon width={22} height={22} />
-        </button>
+        <div className="flex items-center gap-4">
+          <PaletteTriggerIcon />
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label={copy.generic.openMenu}
+            className="text-muted transition-colors duration-200 hover:text-heading"
+          >
+            <MenuIcon width={22} height={22} />
+          </button>
+        </div>
       </div>
 
       <MobileDrawer
@@ -68,6 +72,8 @@ export function HomeSideNav() {
             {SITE.name}
           </Link>
           <p className="mt-1 text-sm text-muted">{copy.home.location}</p>
+
+          <PaletteTrigger className="mt-8 w-full" />
 
           <NavList pages={pages} label={copy.home.indexLabel} />
         </div>
@@ -134,6 +140,8 @@ function MobileDrawer({
                 </button>
               </div>
               <p className="mt-1 text-sm text-muted">{location}</p>
+
+              <PaletteTrigger className="mt-6 w-full" onClick={onClose} />
 
               <NavList pages={pages} label={label} onNavigate={onClose} />
             </div>

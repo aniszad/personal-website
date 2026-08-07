@@ -5,6 +5,7 @@ import { HOME_THEME, SITE, SOCIALS } from "@/lib/constants";
 import { Ambient } from "@/components/layout/Ambient";
 import { LanguageProvider } from "@/components/layout/LanguageProvider";
 import { ChatWidget } from "@/components/ui/ChatWidget";
+import { CommandPalette } from "@/components/ui/CommandPalette";
 import "@/styles/globals.css";
 
 const jsonLd = {
@@ -123,6 +124,7 @@ export default function RootLayout({
 
           {children}
           <ChatWidget />
+          <CommandPalette />
         </LanguageProvider>
 
         {/*

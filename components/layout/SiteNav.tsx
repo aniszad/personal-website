@@ -7,6 +7,7 @@ import { t, getLocalizedPages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
+import { PaletteTriggerIcon } from "@/components/ui/PaletteTrigger";
 
 /**
  * Slim bar carried by every page except the index.
@@ -69,6 +70,8 @@ export function SiteNav() {
             );
           })}
         </ul>
+
+        <PaletteTriggerIcon className="shrink-0" />
       </div>
     </nav>
   );

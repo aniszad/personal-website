@@ -170,3 +170,20 @@ export function MenuIcon({ width = 20, height = 20, ...props }: IconProps) {
   );
 }
 
+/** Opens the command palette. */
+export function SearchIcon({ width = 20, height = 20, ...props }: IconProps) {
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      {...strokeDefaults}
+      {...props}
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
+

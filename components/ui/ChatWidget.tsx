@@ -55,6 +55,14 @@ export function ChatWidget() {
     }
   }, [open, reduced]);
 
+  // Lets other parts of the page (the command palette) open the widget
+  // without lifting its state up into the layout.
+  useEffect(() => {
+    const openChat = () => setOpen(true);
+    window.addEventListener("portfolio:open-chat", openChat);
+    return () => window.removeEventListener("portfolio:open-chat", openChat);
+  }, []);
+
   // 2. Auto-resize textarea handler
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDraft(e.target.value);
