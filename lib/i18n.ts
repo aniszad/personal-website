@@ -121,6 +121,7 @@ const GENERIC_COPY = {
     backTo: "Back to",
     index: "Index",
     siteSections: "Site sections",
+    openMenu: "Open menu",
     pageSequence: "Page sequence",
     downloadCv: "Download CV",
     contactLead:
@@ -158,6 +159,7 @@ const GENERIC_COPY = {
     backTo: "Retour",
     index: "Accueil",
     siteSections: "Sections du site",
+    openMenu: "Ouvrir le menu",
     pageSequence: "Séquence des pages",
     downloadCv: "Télécharger le CV",
     contactLead:

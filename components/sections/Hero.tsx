@@ -16,12 +16,9 @@ import {
   useTransform,
   type Variants,
 } from "motion/react";
-import { SITE } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
-import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { ArrowUpRightIcon } from "@/components/ui/Icons";
-import { ScrollCue } from "@/components/ui/ScrollCue";
 
 export function Hero({ portrait }: { portrait?: ReactNode }) {
   const reduced = useReducedMotion() ?? false;
@@ -118,19 +115,6 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
             />
         )}
 
-        <motion.div
-            variants={item}
-            className="relative z-10 flex items-baseline justify-between gap-6 border-b border-line pb-5"
-        >
-        <span className="font-display text-lg font-semibold text-heading">
-          {SITE.name}
-        </span>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted">{copy.home.location}</span>
-            <LanguageSwitch />
-          </div>
-        </motion.div>
-
         <div className="relative z-10 flex flex-1 items-center py-14 md:py-16">
           <div
               className={
@@ -220,10 +204,6 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
                 </div>
             ) : null}
           </div>
-        </div>
-
-        <div className="relative z-10">
-          <ScrollCue label="More below" />
         </div>
       </motion.section>
   );
