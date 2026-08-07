@@ -45,6 +45,9 @@ export const metadata: Metadata = {
   description: SITE.description,
   authors: [{ name: SITE.name, url: SITE.url }],
   creator: SITE.name,
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+  },
   alternates: {
     canonical: "/",
   },
