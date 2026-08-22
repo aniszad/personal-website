@@ -152,3 +152,38 @@ export function CloseIcon({ width = 20, height = 20, ...props }: IconProps) {
   );
 }
 
+/** Opens the section drawer on small screens. */
+export function MenuIcon({ width = 20, height = 20, ...props }: IconProps) {
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      {...strokeDefaults}
+      {...props}
+    >
+      <path d="M4 7h16" />
+      <path d="M4 12h16" />
+      <path d="M4 17h16" />
+    </svg>
+  );
+}
+
+/** Opens the command palette. */
+export function SearchIcon({ width = 20, height = 20, ...props }: IconProps) {
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      {...strokeDefaults}
+      {...props}
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
+

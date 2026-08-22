@@ -1,0 +1,2363 @@
+From ecf01a5a4a25473eb8b944dfc51c12d9672ef01e Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 31 Jul 2026 14:59:13 +0000
+Subject: [PATCH 1/2] Apply portfolio enhancements across SEO, accessibility,
+ and UX
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Add opengraph-image.tsx: generates a 1200x630 OG card so LinkedIn/Twitter previews show a real image instead of blank
+- Add sitemap.ts and robots.ts: exposes /sitemap.xml and /robots.txt for search engine discovery of all 7 routes
+- Add JSON-LD Person schema to layout: name, jobTitle, sameAs (GitHub + LinkedIn) for Google rich results
+- Fix chat history: API route now reads and injects the last 6 turns into the Groq messages array so follow-up questions are coherent
+- Add contact form: name/email/message fields posting to new /api/contact route (Resend); success and error states handled
+- Fix French i18n: restore all missing accents (étudiant, développeur, précédent, Séquence, métropole, etc.) across PAGE_COPY, HOME_COPY, and GENERIC_COPY
+- Add aria-live="polite" to ChatWidget message list so screen readers announce new assistant replies
+- Add error.tsx: branded 500 page with try-again and go-home actions
+- Add not-found.tsx: branded 404 page consistent with site design
+- Add loading.tsx: animated bounce dots shown during route transitions on slow connections
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01VcEoceqxMDTGdsAMXZxeDw
+---
+ app/api/chat/route.ts           |  23 ++++++-
+ app/api/contact/route.ts        |  72 ++++++++++++++++++++
+ app/error.tsx                   |  41 ++++++++++++
+ app/layout.tsx                  |  30 ++++++++-
+ app/loading.tsx                 |  18 +++++
+ app/not-found.tsx               |  21 ++++++
+ app/opengraph-image.tsx         | 113 ++++++++++++++++++++++++++++++++
+ app/robots.ts                   |  12 ++++
+ app/sitemap.ts                  |  23 +++++++
+ components/sections/Contact.tsx |  98 ++++++++++++++++++++++++++-
+ components/ui/ChatWidget.tsx    |   6 +-
+ lib/i18n.ts                     |  60 +++++++++++------
+ package-lock.json               |  76 +++++++++++++++++++--
+ package.json                    |   1 +
+ 14 files changed, 565 insertions(+), 29 deletions(-)
+ create mode 100644 app/api/contact/route.ts
+ create mode 100644 app/error.tsx
+ create mode 100644 app/loading.tsx
+ create mode 100644 app/not-found.tsx
+ create mode 100644 app/opengraph-image.tsx
+ create mode 100644 app/robots.ts
+ create mode 100644 app/sitemap.ts
+
+diff --git a/app/api/chat/route.ts b/app/api/chat/route.ts
+index 7d81f01..18ded5f 100644
+--- a/app/api/chat/route.ts
++++ b/app/api/chat/route.ts
+@@ -52,9 +52,11 @@ export async function POST(request: Request) {
+     );
+   }
+ 
+-  let body: { message?: unknown };
++  type HistoryEntry = { role: "user" | "assistant"; text: string };
++
++  let body: { message?: unknown; history?: unknown };
+   try {
+-    body = (await request.json()) as { message?: unknown };
++    body = (await request.json()) as { message?: unknown; history?: unknown };
+   } catch {
+     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+   }
+@@ -67,6 +69,17 @@ export async function POST(request: Request) {
+     );
+   }
+ 
++  const rawHistory = Array.isArray(body.history) ? body.history : [];
++  const history: HistoryEntry[] = rawHistory
++    .filter(
++      (e): e is HistoryEntry =>
++        typeof e === "object" &&
++        e !== null &&
++        ((e as HistoryEntry).role === "user" || (e as HistoryEntry).role === "assistant") &&
++        typeof (e as HistoryEntry).text === "string",
++    )
++    .slice(-6);
++
+   const knowledge = knowledgeBase as KnowledgeBase;
+   const context = retrieveContext(knowledge, message, 5);
+   const systemPrompt = [
+@@ -77,6 +90,11 @@ export async function POST(request: Request) {
+     "Keep answers concise: one short paragraph or at most 3 bullets.",
+   ].join("\n");
+ 
++  const historyMessages = history.map((entry) => ({
++    role: entry.role,
++    content: entry.text,
++  }));
++
+   try {
+     const modelResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+       method: "POST",
+@@ -91,6 +109,7 @@ export async function POST(request: Request) {
+         reasoning_effort: "none",
+         messages: [
+           { role: "system", content: systemPrompt },
++          ...historyMessages,
+           {
+             role: "user",
+             content: [
+diff --git a/app/api/contact/route.ts b/app/api/contact/route.ts
+new file mode 100644
+index 0000000..2d7f584
+--- /dev/null
++++ b/app/api/contact/route.ts
+@@ -0,0 +1,72 @@
++import { NextResponse } from "next/server";
++import { Resend } from "resend";
++import { SITE, SOCIALS } from "@/lib/constants";
++
++export const runtime = "nodejs";
++export const maxDuration = 15;
++
++const MAX_NAME = 100;
++const MAX_EMAIL = 200;
++const MAX_MESSAGE = 2000;
++
++function isValidEmail(email: string): boolean {
++  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
++}
++
++export async function POST(request: Request) {
++  if (!process.env.RESEND_API_KEY) {
++    return NextResponse.json(
++      { error: "Contact form is not configured yet." },
++      { status: 503 },
++    );
++  }
++
++  let body: { name?: unknown; email?: unknown; message?: unknown };
++  try {
++    body = (await request.json()) as typeof body;
++  } catch {
++    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
++  }
++
++  const name = typeof body.name === "string" ? body.name.trim() : "";
++  const email = typeof body.email === "string" ? body.email.trim() : "";
++  const message = typeof body.message === "string" ? body.message.trim() : "";
++
++  if (!name || name.length > MAX_NAME) {
++    return NextResponse.json({ error: "Please provide your name (max 100 chars)." }, { status: 400 });
++  }
++  if (!email || !isValidEmail(email) || email.length > MAX_EMAIL) {
++    return NextResponse.json({ error: "Please provide a valid email address." }, { status: 400 });
++  }
++  if (!message || message.length > MAX_MESSAGE) {
++    return NextResponse.json({ error: "Please include a message (max 2000 chars)." }, { status: 400 });
++  }
++
++  const resend = new Resend(process.env.RESEND_API_KEY);
++
++  try {
++    await resend.emails.send({
++      from: `Portfolio Contact <onboarding@resend.dev>`,
++      to: SOCIALS.email,
++      replyTo: email,
++      subject: `Portfolio message from ${name}`,
++      text: [
++        `From: ${name} <${email}>`,
++        "",
++        message,
++        "",
++        `— Sent via ${SITE.url}`,
++      ].join("\n"),
++    });
++
++    return NextResponse.json({ ok: true });
++  } catch (error) {
++    console.error("Contact form email failed", {
++      detail: error instanceof Error ? error.message : String(error),
++    });
++    return NextResponse.json(
++      { error: "Could not send the message. Please email directly." },
++      { status: 502 },
++    );
++  }
++}
+diff --git a/app/error.tsx b/app/error.tsx
+new file mode 100644
+index 0000000..926e367
+--- /dev/null
++++ b/app/error.tsx
+@@ -0,0 +1,41 @@
++"use client";
++
++import { useEffect } from "react";
++
++export default function Error({
++  error,
++  reset,
++}: {
++  error: Error & { digest?: string };
++  reset: () => void;
++}) {
++  useEffect(() => {
++    console.error(error);
++  }, [error]);
++
++  return (
++    <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
++      <p className="font-display text-6xl font-bold text-accent">500</p>
++      <h1 className="mt-4 font-display text-2xl font-semibold text-heading">
++        Something went wrong
++      </h1>
++      <p className="mt-4 max-w-md text-muted">
++        An unexpected error occurred. Try refreshing the page or going back.
++      </p>
++      <div className="mt-8 flex gap-4">
++        <button
++          onClick={reset}
++          className="rounded-lg border border-accent px-5 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-surface"
++        >
++          Try again
++        </button>
++        <a
++          href="/"
++          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-body transition-colors hover:border-accent/50 hover:text-heading"
++        >
++          Go home
++        </a>
++      </div>
++    </div>
++  );
++}
+diff --git a/app/layout.tsx b/app/layout.tsx
+index aa5eecf..8cb354f 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -1,12 +1,27 @@
+ import type { Metadata, Viewport } from "next";
+ import { Inter, Space_Grotesk } from "next/font/google";
+ import { Analytics } from "@vercel/analytics/react";
+-import { HOME_THEME, SITE } from "@/lib/constants";
++import { HOME_THEME, SITE, SOCIALS } from "@/lib/constants";
+ import { Ambient } from "@/components/layout/Ambient";
+ import { LanguageProvider } from "@/components/layout/LanguageProvider";
+ import { ChatWidget } from "@/components/ui/ChatWidget";
+ import "@/styles/globals.css";
+ 
++const jsonLd = {
++  "@context": "https://schema.org",
++  "@type": "Person",
++  name: SITE.name,
++  url: SITE.url,
++  jobTitle: SITE.title,
++  description: SITE.description,
++  address: {
++    "@type": "PostalAddress",
++    addressLocality: "Lille",
++    addressCountry: "FR",
++  },
++  sameAs: [SOCIALS.github, SOCIALS.linkedin],
++};
++
+ /** Body and interface text. Variable weight, so no weight list is needed. */
+ const inter = Inter({
+   subsets: ["latin"],
+@@ -40,11 +55,20 @@ export const metadata: Metadata = {
+     siteName: SITE.name,
+     title: `${SITE.name}, ${SITE.title}`,
+     description: SITE.description,
++    images: [
++      {
++        url: `${SITE.url}/opengraph-image`,
++        width: 1200,
++        height: 630,
++        alt: `${SITE.name} — ${SITE.title}`,
++      },
++    ],
+   },
+   twitter: {
+     card: "summary_large_image",
+     title: `${SITE.name}, ${SITE.title}`,
+     description: SITE.description,
++    images: [`${SITE.url}/opengraph-image`],
+   },
+   robots: {
+     index: true,
+@@ -68,6 +92,10 @@ export default function RootLayout({
+       suppressHydrationWarning
+     >
+       <body className="bg-surface text-body antialiased">
++        <script
++          type="application/ld+json"
++          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
++        />
+         {/*
+           First tab stop on the page. Visually hidden until focused, at which
+           point it becomes a normal button so keyboard users can jump past the
+diff --git a/app/loading.tsx b/app/loading.tsx
+new file mode 100644
+index 0000000..eb501a0
+--- /dev/null
++++ b/app/loading.tsx
+@@ -0,0 +1,18 @@
++export default function Loading() {
++  return (
++    <div
++      className="flex min-h-screen items-center justify-center"
++      aria-label="Loading page"
++    >
++      <div className="flex gap-2">
++        {[0, 1, 2].map((i) => (
++          <span
++            key={i}
++            className="size-2 animate-bounce rounded-full bg-accent"
++            style={{ animationDelay: `${i * 0.15}s` }}
++          />
++        ))}
++      </div>
++    </div>
++  );
++}
+diff --git a/app/not-found.tsx b/app/not-found.tsx
+new file mode 100644
+index 0000000..010faa3
+--- /dev/null
++++ b/app/not-found.tsx
+@@ -0,0 +1,21 @@
++import Link from "next/link";
++
++export default function NotFound() {
++  return (
++    <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
++      <p className="font-display text-7xl font-bold text-accent">404</p>
++      <h1 className="mt-4 font-display text-2xl font-semibold text-heading">
++        Page not found
++      </h1>
++      <p className="mt-4 max-w-md text-muted">
++        The page you are looking for does not exist or may have been moved.
++      </p>
++      <Link
++        href="/"
++        className="mt-8 rounded-lg border border-accent px-5 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-surface"
++      >
++        Back to home
++      </Link>
++    </div>
++  );
++}
+diff --git a/app/opengraph-image.tsx b/app/opengraph-image.tsx
+new file mode 100644
+index 0000000..b5c03f8
+--- /dev/null
++++ b/app/opengraph-image.tsx
+@@ -0,0 +1,113 @@
++import { ImageResponse } from "next/og";
++import { SITE } from "@/lib/constants";
++
++export const runtime = "edge";
++export const alt = `${SITE.name} — ${SITE.title}`;
++export const size = { width: 1200, height: 630 };
++export const contentType = "image/png";
++
++export default function OgImage() {
++  return new ImageResponse(
++    (
++      <div
++        style={{
++          width: "100%",
++          height: "100%",
++          display: "flex",
++          flexDirection: "column",
++          justifyContent: "center",
++          padding: "80px 100px",
++          background: "#0a192f",
++          fontFamily: "sans-serif",
++          position: "relative",
++        }}
++      >
++        {/* Accent glow */}
++        <div
++          style={{
++            position: "absolute",
++            top: 0,
++            right: 0,
++            width: 500,
++            height: 500,
++            borderRadius: "50%",
++            background: "radial-gradient(circle, rgba(100,255,218,0.12) 0%, transparent 70%)",
++          }}
++        />
++
++        {/* Top bar */}
++        <div
++          style={{
++            display: "flex",
++            alignItems: "center",
++            marginBottom: 60,
++          }}
++        >
++          <div
++            style={{
++              width: 10,
++              height: 10,
++              borderRadius: "50%",
++              background: "#64ffda",
++              marginRight: 12,
++            }}
++          />
++          <span style={{ color: "#64ffda", fontSize: 18, letterSpacing: 2 }}>
++            {SITE.url.replace("https://", "")}
++          </span>
++        </div>
++
++        {/* Name */}
++        <div
++          style={{
++            fontSize: 80,
++            fontWeight: 700,
++            color: "#e6f1ff",
++            lineHeight: 1.1,
++            marginBottom: 24,
++            letterSpacing: "-1px",
++          }}
++        >
++          {SITE.name}
++        </div>
++
++        {/* Title */}
++        <div
++          style={{
++            fontSize: 32,
++            color: "#8892b0",
++            fontWeight: 400,
++            marginBottom: 48,
++            lineHeight: 1.4,
++          }}
++        >
++          {SITE.title}
++        </div>
++
++        {/* Divider */}
++        <div
++          style={{
++            width: 80,
++            height: 3,
++            background: "#64ffda",
++            marginBottom: 40,
++            borderRadius: 2,
++          }}
++        />
++
++        {/* Tagline */}
++        <div
++          style={{
++            fontSize: 22,
++            color: "#a8b2d8",
++            maxWidth: 700,
++            lineHeight: 1.5,
++          }}
++        >
++          {SITE.location} · {SITE.availability}
++        </div>
++      </div>
++    ),
++    { ...size },
++  );
++}
+diff --git a/app/robots.ts b/app/robots.ts
+new file mode 100644
+index 0000000..c7acf85
+--- /dev/null
++++ b/app/robots.ts
+@@ -0,0 +1,12 @@
++import type { MetadataRoute } from "next";
++import { SITE } from "@/lib/constants";
++
++export default function robots(): MetadataRoute.Robots {
++  return {
++    rules: {
++      userAgent: "*",
++      allow: "/",
++    },
++    sitemap: `${SITE.url}/sitemap.xml`,
++  };
++}
+diff --git a/app/sitemap.ts b/app/sitemap.ts
+new file mode 100644
+index 0000000..d795af8
+--- /dev/null
++++ b/app/sitemap.ts
+@@ -0,0 +1,23 @@
++import type { MetadataRoute } from "next";
++import { PAGES, SITE } from "@/lib/constants";
++
++export default function sitemap(): MetadataRoute.Sitemap {
++  const now = new Date();
++
++  const sectionRoutes = PAGES.map((page) => ({
++    url: `${SITE.url}${page.href}`,
++    lastModified: now,
++    changeFrequency: "monthly" as const,
++    priority: 0.8,
++  }));
++
++  return [
++    {
++      url: SITE.url,
++      lastModified: now,
++      changeFrequency: "monthly",
++      priority: 1,
++    },
++    ...sectionRoutes,
++  ];
++}
+diff --git a/components/sections/Contact.tsx b/components/sections/Contact.tsx
+index 26f0eda..52d9462 100644
+--- a/components/sections/Contact.tsx
++++ b/components/sections/Contact.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import { useRef } from "react";
++import { useRef, useState, FormEvent } from "react";
+ import { motion, useMotionTemplate, useMotionValue } from "motion/react";
+ import { CV_PATH, SOCIALS } from "@/lib/constants";
+ import { t } from "@/lib/i18n";
+@@ -19,10 +19,43 @@ import { ArrowUpRightIcon } from "@/components/ui/Icons";
+  * replace on touch devices or under reduced motion, where it simply rests at
+  * the centre.
+  */
++type FormStatus = "idle" | "sending" | "success" | "error";
++
+ export function Contact() {
+   const panelRef = useRef<HTMLDivElement>(null);
+   const { language } = useLanguage();
+   const copy = t(language).generic;
++  const formCopy = copy.contactForm;
++
++  const [name, setName] = useState("");
++  const [email, setEmail] = useState("");
++  const [message, setMessage] = useState("");
++  const [formStatus, setFormStatus] = useState<FormStatus>("idle");
++  const [errorMsg, setErrorMsg] = useState("");
++
++  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
++    e.preventDefault();
++    setFormStatus("sending");
++    setErrorMsg("");
++    try {
++      const res = await fetch("/api/contact", {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ name, email, message }),
++      });
++      const data = (await res.json()) as { ok?: boolean; error?: string };
++      if (!res.ok || !data.ok) {
++        throw new Error(data.error ?? formCopy.errorFallback);
++      }
++      setFormStatus("success");
++      setName("");
++      setEmail("");
++      setMessage("");
++    } catch (err) {
++      setErrorMsg(err instanceof Error ? err.message : formCopy.errorFallback);
++      setFormStatus("error");
++    }
++  }
+ 
+   const glowX = useMotionValue(50);
+   const glowY = useMotionValue(50);
+@@ -101,6 +134,69 @@ export function Contact() {
+             />
+           </a>
+         </div>
++
++        {/* Contact form */}
++        <div className="mt-20 max-w-xl">
++          {formStatus === "success" ? (
++            <div
++              role="status"
++              className="rounded-2xl border border-accent/30 bg-accent/5 px-8 py-10 text-center"
++            >
++              <p className="font-display text-xl font-semibold text-accent">
++                {formCopy.successHeading}
++              </p>
++              <p className="mt-2 text-muted">{formCopy.successBody}</p>
++            </div>
++          ) : (
++            <form
++              onSubmit={(e) => { void handleSubmit(e); }}
++              noValidate
++              className="flex flex-col gap-4"
++            >
++              <div className="flex flex-col gap-4 sm:flex-row">
++                <input
++                  type="text"
++                  required
++                  value={name}
++                  onChange={(e) => setName(e.target.value)}
++                  placeholder={formCopy.namePlaceholder}
++                  className="flex-1 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
++                />
++                <input
++                  type="email"
++                  required
++                  value={email}
++                  onChange={(e) => setEmail(e.target.value)}
++                  placeholder={formCopy.emailPlaceholder}
++                  className="flex-1 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
++                />
++              </div>
++
++              <textarea
++                required
++                rows={5}
++                value={message}
++                onChange={(e) => setMessage(e.target.value)}
++                placeholder={formCopy.messagePlaceholder}
++                className="resize-none rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
++              />
++
++              {formStatus === "error" && (
++                <p role="alert" className="text-sm text-red-400">
++                  {errorMsg}
++                </p>
++              )}
++
++              <button
++                type="submit"
++                disabled={formStatus === "sending"}
++                className="self-start rounded-xl border border-accent px-6 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:bg-accent hover:text-surface disabled:cursor-not-allowed disabled:opacity-50"
++              >
++                {formStatus === "sending" ? formCopy.sending : formCopy.send}
++              </button>
++            </form>
++          )}
++        </div>
+       </div>
+     </div>
+   );
+diff --git a/components/ui/ChatWidget.tsx b/components/ui/ChatWidget.tsx
+index 6853c2f..4d3601c 100644
+--- a/components/ui/ChatWidget.tsx
++++ b/components/ui/ChatWidget.tsx
+@@ -156,7 +156,11 @@ export function ChatWidget() {
+                 </header>
+ 
+                 {/* Custom scrollbar styling for a cleaner look */}
+-                <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-line/80">
++                <div
++                  aria-live="polite"
++                  aria-label="Chat messages"
++                  className="flex-1 space-y-4 overflow-y-auto px-4 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-line/80"
++                >
+                   <AnimatePresence mode="popLayout">
+                     {messages.map((message) => (
+                         <motion.div
+diff --git a/lib/i18n.ts b/lib/i18n.ts
+index 620c69d..1a76668 100644
+--- a/lib/i18n.ts
++++ b/lib/i18n.ts
+@@ -43,32 +43,32 @@ const PAGE_COPY: Record<Language, Record<string, PageCopy>> = {
+     "/about": {
+       label: "Profil",
+       title: "Profil",
+-      blurb: "Etudiant en ingenierie, developpeur en production, et le lien entre les deux.",
++      blurb: "Étudiant en ingénierie, développeur en production, et le lien entre les deux.",
+     },
+     "/experience": {
+-      label: "Experience",
+-      title: "Experience",
+-      blurb: "Trois roles, du systeme de flotte bus a Bejaia au scanner en production dans le retail en France.",
++      label: "Expérience",
++      title: "Expérience",
++      blurb: "Trois rôles, du système de flotte bus à Béjaïa au scanner en production dans le retail en France.",
+     },
+     "/projects": {
+       label: "Projets",
+       title: "Projets",
+-      blurb: "Du scanner en production dans le retail a un planificateur d'emploi du temps en deep learning.",
++      blurb: "Du scanner en production dans le retail à un planificateur d'emploi du temps en deep learning.",
+     },
+     "/education": {
+       label: "Formation",
+       title: "Formation",
+-      blurb: "D'ESTIN en Algerie au Master d'Intelligence Artificielle a l'Universite de Lille.",
++      blurb: "D'ESTIN en Algérie au Master d'Intelligence Artificielle à l'Université de Lille.",
+     },
+     "/skills": {
+-      label: "Competences",
+-      title: "Competences",
++      label: "Compétences",
++      title: "Compétences",
+       blurb: "Les langages, frameworks et outils d'infrastructure que j'utilise vraiment.",
+     },
+     "/contact": {
+       label: "Contact",
+       title: "Me contacter",
+-      blurb: "En recherche d'alternance a partir de septembre 2026, a Lille et autour.",
++      blurb: "En recherche d'alternance à partir de septembre 2026, à Lille et alentours.",
+     },
+   },
+ };
+@@ -95,20 +95,20 @@ const HOME_COPY = {
+   },
+   fr: {
+     indexLabel: "Sections",
+-    footerBuiltWith: "Cree avec Next.js et Tailwind CSS.",
++    footerBuiltWith: "Créé avec Next.js et Tailwind CSS.",
+     startWithWork: "Voir les projets",
+     getInTouch: "Me contacter",
+     availability: "Disponible pour une alternance, septembre 2026",
+     location: "Lille, France",
+     tagline:
+-      "Formation en IA et Data Science a ESTIN, stage en production chez Limpidius, et Master en Intelligence Artificielle a l'Universite de Lille a partir de septembre.",
++      "Formation en IA et Data Science à ESTIN, stage en production chez Limpidius, et Master en Intelligence Artificielle à l'Université de Lille à partir de septembre.",
+     rotatingTitle: {
+       start: "Je construis",
+       end: "qui livrent",
+       middle: [
+         "des sites et apps web",
+         "des applications mobiles",
+-        "des systemes IA et data",
++        "des systèmes IA et data",
+       ],
+     },
+   },
+@@ -141,23 +141,33 @@ const GENERIC_COPY = {
+       "Cloud and Infrastructure": "Cloud and Infrastructure",
+       Tools: "Tools",
+     } as Record<string, string>,
++    contactForm: {
++      namePlaceholder: "Your name",
++      emailPlaceholder: "your@email.com",
++      messagePlaceholder: "What would you like to talk about?",
++      send: "Send message",
++      sending: "Sending…",
++      successHeading: "Message sent",
++      successBody: "Thanks — I will get back to you soon.",
++      errorFallback: "Something went wrong. Please try again or email directly.",
++    },
+   },
+   fr: {
+-    previous: "Precedent",
++    previous: "Précédent",
+     next: "Suivant",
+     backTo: "Retour",
+     index: "Accueil",
+     siteSections: "Sections du site",
+-    pageSequence: "Sequence des pages",
+-    downloadCv: "Telecharger le CV",
++    pageSequence: "Séquence des pages",
++    downloadCv: "Télécharger le CV",
+     contactLead:
+-      "Je recherche une alternance a partir de septembre 2026 en IA, Data Science ou Software Engineering, a Lille et sa metropole.",
++      "Je recherche une alternance à partir de septembre 2026 en IA, Data Science ou Software Engineering, à Lille et sa métropole.",
+     contactBody:
+-      "Si vous souhaitez collaborer avec moi, ou simplement echanger sur ce que j'ai construit, ecrivez-moi.",
++      "Si vous souhaitez collaborer avec moi, ou simplement échanger sur ce que j'ai construit, écrivez-moi.",
+     aboutParagraphs: [
+-      "Je suis etudiant en Master d'Intelligence Artificielle a l'Universite de Lille, avec une formation d'ingenieur en IA et Data Science a ESTIN en Algerie. Ce qui me passionne, c'est l'endroit ou le machine learning rencontre des logiciels utilises en vrai.",
+-      "J'ai recemment termine un stage de quatre mois chez Limpidius a EuraTechnologies (Lille). J'y ai livre une bibliotheque de scan de codes-barres dans le navigateur, en production chez Castorama et d'autres clients retail, avec environ 3 000 scans par jour. Faire cooperer traitement GPU d'image et decodeur WASM dans un onglet navigateur m'a appris plus sur la performance que beaucoup de cours.",
+-      "Je suis a l'aise sur toute la stack : frontend en Angular et React, backend en NestJS et Spring Boot, mobile en Kotlin, et pipelines ML en Python. Je cherche actuellement une alternance a partir de septembre 2026 en IA, Data Science ou software engineering autour de Lille.",
++      "Je suis étudiant en Master d'Intelligence Artificielle à l'Université de Lille, avec une formation d'ingénieur en IA et Data Science à ESTIN en Algérie. Ce qui me passionne, c'est l'endroit où le machine learning rencontre des logiciels utilisés en vrai.",
++      "J'ai récemment terminé un stage de quatre mois chez Limpidius à EuraTechnologies (Lille). J'y ai livré une bibliothèque de scan de codes-barres dans le navigateur, en production chez Castorama et d'autres clients retail, avec environ 3 000 scans par jour. Faire coopérer traitement GPU d'image et décodeur WASM dans un onglet navigateur m'a appris plus sur la performance que beaucoup de cours.",
++      "Je suis à l'aise sur toute la stack : frontend en Angular et React, backend en NestJS et Spring Boot, mobile en Kotlin, et pipelines ML en Python. Je cherche actuellement une alternance à partir de septembre 2026 en IA, Data Science ou software engineering autour de Lille.",
+     ],
+     skillsCategory: {
+       Languages: "Langages",
+@@ -168,6 +178,16 @@ const GENERIC_COPY = {
+       "Cloud and Infrastructure": "Cloud et Infrastructure",
+       Tools: "Outils",
+     } as Record<string, string>,
++    contactForm: {
++      namePlaceholder: "Votre nom",
++      emailPlaceholder: "votre@email.com",
++      messagePlaceholder: "De quoi souhaitez-vous parler ?",
++      send: "Envoyer",
++      sending: "Envoi…",
++      successHeading: "Message envoyé",
++      successBody: "Merci — je vous répondrai bientôt.",
++      errorFallback: "Une erreur est survenue. Réessayez ou écrivez-moi directement.",
++    },
+   },
+ } as const;
+ 
+diff --git a/package-lock.json b/package-lock.json
+index 7c09815..38b465c 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -16,6 +16,7 @@
+         "react-dom": "^19.0.0",
+         "react-markdown": "^10.1.0",
+         "remark-gfm": "^4.0.1",
++        "resend": "^6.18.1",
+         "tailwind-merge": "^2.6.0"
+       },
+       "devDependencies": {
+@@ -40,6 +41,28 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/@emnapi/core": {
++      "version": "1.11.3",
++      "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.3.tgz",
++      "integrity": "sha512-zLpS5asjEb7lq8jYLq37N6XKaE41DIexlY1rF/z4/tIl3wo13Sqm28fRyfIsKZD+NZ8mM5RoKkpW/rBcuoSZSg==",
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "dependencies": {
++        "@emnapi/wasi-threads": "1.2.3",
++        "tslib": "^2.4.0"
++      }
++    },
++    "node_modules/@emnapi/runtime": {
++      "version": "1.11.3",
++      "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.3.tgz",
++      "integrity": "sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==",
++      "license": "MIT",
++      "optional": true,
++      "dependencies": {
++        "tslib": "^2.4.0"
++      }
++    },
+     "node_modules/@emnapi/wasi-threads": {
+       "version": "1.2.3",
+       "resolved": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.3.tgz",
+@@ -701,6 +724,12 @@
+         "node": ">= 10"
+       }
+     },
++    "node_modules/@stablelib/base64": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/@stablelib/base64/-/base64-1.0.1.tgz",
++      "integrity": "sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==",
++      "license": "MIT"
++    },
+     "node_modules/@swc/helpers": {
+       "version": "0.5.15",
+       "resolved": "https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.15.tgz",
+@@ -1089,7 +1118,6 @@
+       "resolved": "https://registry.npmjs.org/@types/react/-/react-19.2.17.tgz",
+       "integrity": "sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "csstype": "^3.2.2"
+       }
+@@ -1385,6 +1413,12 @@
+       "integrity": "sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==",
+       "license": "MIT"
+     },
++    "node_modules/fast-sha256": {
++      "version": "1.3.0",
++      "resolved": "https://registry.npmjs.org/fast-sha256/-/fast-sha256-1.3.0.tgz",
++      "integrity": "sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==",
++      "license": "Unlicense"
++    },
+     "node_modules/framer-motion": {
+       "version": "12.42.2",
+       "resolved": "https://registry.npmjs.org/framer-motion/-/framer-motion-12.42.2.tgz",
+@@ -2735,7 +2769,6 @@
+       "resolved": "https://registry.npmjs.org/next/-/next-16.2.11.tgz",
+       "integrity": "sha512-B339zaqbyK8cmxhoAvLrcwoabwCP1wz21zSzfqxqXAemTu2BXnH7tQnfcglKv1vnMUIDBc+Hth7XODQriTZiRQ==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@next/env": "16.2.11",
+         "@swc/helpers": "0.5.15",
+@@ -2843,6 +2876,12 @@
+       "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==",
+       "license": "ISC"
+     },
++    "node_modules/postal-mime": {
++      "version": "2.7.5",
++      "resolved": "https://registry.npmjs.org/postal-mime/-/postal-mime-2.7.5.tgz",
++      "integrity": "sha512-GNEXKvWFQnbgO5NlrGzVa0FmWzBZ24PersAWErttSg1Hjpf0ATxTwS5DOMGaOpTG6bUh5cTr7xi0jAD942wCJA==",
++      "license": "MIT-0"
++    },
+     "node_modules/postcss": {
+       "version": "8.5.23",
+       "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.23.tgz",
+@@ -2887,7 +2926,6 @@
+       "resolved": "https://registry.npmjs.org/react/-/react-19.2.8.tgz",
+       "integrity": "sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==",
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=0.10.0"
+       }
+@@ -2897,7 +2935,6 @@
+       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.8.tgz",
+       "integrity": "sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "scheduler": "^0.27.0"
+       },
+@@ -2998,6 +3035,27 @@
+         "url": "https://opencollective.com/unified"
+       }
+     },
++    "node_modules/resend": {
++      "version": "6.18.1",
++      "resolved": "https://registry.npmjs.org/resend/-/resend-6.18.1.tgz",
++      "integrity": "sha512-XN8XIaDdKF+ziSQ3K23ndUcyhP7U3ze2gky6SPgYkuAOq54mH4Wdhwm7QylEQ3zlz0NzdX7/l1AgmJUZbdPI/Q==",
++      "license": "MIT",
++      "dependencies": {
++        "postal-mime": "2.7.5",
++        "standardwebhooks": "1.0.0"
++      },
++      "engines": {
++        "node": ">=20"
++      },
++      "peerDependencies": {
++        "@react-email/render": "*"
++      },
++      "peerDependenciesMeta": {
++        "@react-email/render": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/scheduler": {
+       "version": "0.27.0",
+       "resolved": "https://registry.npmjs.org/scheduler/-/scheduler-0.27.0.tgz",
+@@ -3081,6 +3139,16 @@
+         "url": "https://github.com/sponsors/wooorm"
+       }
+     },
++    "node_modules/standardwebhooks": {
++      "version": "1.0.0",
++      "resolved": "https://registry.npmjs.org/standardwebhooks/-/standardwebhooks-1.0.0.tgz",
++      "integrity": "sha512-BbHGOQK9olHPMvQNHWul6MYlrRTAOKn03rOe4A8O3CLWhNf4YHBqq2HJKKC+sfqpxiBY52pNeesD6jIiLDz8jg==",
++      "license": "MIT",
++      "dependencies": {
++        "@stablelib/base64": "^1.0.0",
++        "fast-sha256": "^1.3.0"
++      }
++    },
+     "node_modules/stringify-entities": {
+       "version": "4.0.4",
+       "resolved": "https://registry.npmjs.org/stringify-entities/-/stringify-entities-4.0.4.tgz",
+diff --git a/package.json b/package.json
+index 199ab3a..62cd443 100644
+--- a/package.json
++++ b/package.json
+@@ -17,6 +17,7 @@
+     "react-dom": "^19.0.0",
+     "react-markdown": "^10.1.0",
+     "remark-gfm": "^4.0.1",
++    "resend": "^6.18.1",
+     "tailwind-merge": "^2.6.0"
+   },
+   "devDependencies": {
+-- 
+2.43.0
+
+
+From 49bb1c2cddf165c9e2c4f59dd10b857b5e918ba2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 31 Jul 2026 14:59:14 +0000
+Subject: [PATCH 2/2] Replace portrait with interactive 3D planet hero
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Adds a teal procedural planet (Uranus-inspired) built with Three.js and
+React Three Fiber in place of the static portrait/video on the home page.
+
+- PlanetHero.tsx: custom GLSL shader with animated horizontal banding and
+  Fresnel rim glow; additive atmosphere sphere; Stars background from drei;
+  OrbitControls with auto-rotate and damping (stops on prefers-reduced-motion)
+- Six section points (About, Experience, Contact on the front hemisphere;
+  Projects, Education, Skills hidden behind the globe) — each a pulsing dot
+  with a pill label that fades in/out via dot-product occlusion check every
+  frame, no React re-renders; clicking any point navigates to that section
+- PlanetHeroLoader.tsx: thin "use client" wrapper so the ssr:false dynamic
+  import is legal from the server-side app/page.tsx
+- Hero.tsx: removes mouse-parallax from the portrait slot (would conflict
+  with OrbitControls pointer handling)
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01VcEoceqxMDTGdsAMXZxeDw
+---
+ app/page.tsx                       |  24 +-
+ components/sections/Hero.tsx       |   7 +-
+ components/ui/PlanetHero.tsx       | 289 ++++++++++++
+ components/ui/PlanetHeroLoader.tsx |  13 +
+ package-lock.json                  | 696 ++++++++++++++++++++++++++++-
+ package.json                       |   6 +-
+ 6 files changed, 1007 insertions(+), 28 deletions(-)
+ create mode 100644 components/ui/PlanetHero.tsx
+ create mode 100644 components/ui/PlanetHeroLoader.tsx
+
+diff --git a/app/page.tsx b/app/page.tsx
+index e73704c..7bf9c26 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -1,13 +1,11 @@
+ import type { Viewport } from "next";
+-import { resolveImage, resolveVideo } from "@/lib/assets";
+-import { HOME_THEME, SITE } from "@/lib/constants";
++import { HOME_THEME } from "@/lib/constants";
+ import { ThemeStyle } from "@/components/layout/ThemeStyle";
+ import { Hero } from "@/components/sections/Hero";
+ import { IndexNav } from "@/components/layout/IndexNav";
+ import { HomeFooterNote } from "@/components/layout/HomeFooterNote";
+-import { Portrait } from "@/components/ui/Portrait";
+-import { PortraitMotion } from "@/components/ui/PortraitMotion";
+ import { SocialLinks } from "@/components/ui/SocialLinks";
++import { PlanetHeroLoader } from "@/components/ui/PlanetHeroLoader";
+ 
+ export const viewport: Viewport = {
+   themeColor: HOME_THEME.surface,
+@@ -23,29 +21,13 @@ export const viewport: Viewport = {
+  * deliberate scroll rather than the first thing in view.
+  */
+ export default function HomePage() {
+-  /*
+-    Both are optional and both are matched against /public at build time. With
+-    the loop present the portrait animates; with only a still it holds; with
+-    neither the masthead simply lays out full width. Nothing here 404s.
+-  */
+-  const portrait = resolveImage("/images/anis");
+-  const loop = resolveVideo("/media/anis");
+-
+-  const alt = `Illustrated portrait of ${SITE.name}, arms folded, drawn in front of a grand hotel facade in ${SITE.location}`;
+-
+-  const plate = loop ? (
+-    <PortraitMotion video={loop} poster={portrait} alt={alt} />
+-  ) : portrait ? (
+-    <Portrait src={portrait} alt={alt} />
+-  ) : null;
+-
+   return (
+     <>
+       <ThemeStyle theme={HOME_THEME} />
+ 
+       <div className="mx-auto max-w-5xl px-6 pb-14 pt-8 md:px-10 md:pb-20">
+         <main id="content">
+-          <Hero portrait={plate} />
++          <Hero portrait={<PlanetHeroLoader />} />
+ 
+           <div className="pt-16 md:pt-24">
+             <IndexNav />
+diff --git a/components/sections/Hero.tsx b/components/sections/Hero.tsx
+index 2fa61a0..e1a7d6e 100644
+--- a/components/sections/Hero.tsx
++++ b/components/sections/Hero.tsx
+@@ -215,12 +215,9 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
+             </div>
+ 
+             {portrait ? (
+-                <motion.div
+-                    className="md:pl-2"
+-                    style={reduced ? {} : { x: portraitX, y: portraitY }}
+-                >
++                <div className="md:pl-2">
+                   {portrait}
+-                </motion.div>
++                </div>
+             ) : null}
+           </div>
+         </div>
+diff --git a/components/ui/PlanetHero.tsx b/components/ui/PlanetHero.tsx
+new file mode 100644
+index 0000000..c9e4edf
+--- /dev/null
++++ b/components/ui/PlanetHero.tsx
+@@ -0,0 +1,289 @@
++"use client";
++
++import { useRef, useState } from "react";
++import { Canvas, useFrame, useThree } from "@react-three/fiber";
++import { OrbitControls, Html, Stars } from "@react-three/drei";
++import * as THREE from "three";
++import { useRouter } from "next/navigation";
++import { useReducedMotion } from "motion/react";
++
++/* ─────────────────────────────────── shaders ─────────────────────────────── */
++
++const PLANET_VERT = /* glsl */ `
++  varying vec2 vUv;
++  varying vec3 vNormal;
++  varying vec3 vViewPos;
++  void main() {
++    vUv = uv;
++    vNormal = normalize(normalMatrix * normal);
++    vec4 mv = modelViewMatrix * vec4(position, 1.0);
++    vViewPos = -mv.xyz;
++    gl_Position = projectionMatrix * mv;
++  }
++`;
++
++const PLANET_FRAG = /* glsl */ `
++  varying vec2 vUv;
++  varying vec3 vNormal;
++  varying vec3 vViewPos;
++  uniform float uTime;
++
++  void main() {
++    float y = vUv.y;
++    // Layered horizontal bands (Uranus-style)
++    float b1 = sin(y * 14.0 + uTime * 0.08)        * 0.5 + 0.5;
++    float b2 = sin(y *  8.0 - uTime * 0.05 + 1.2)  * 0.5 + 0.5;
++    float b3 = sin(y * 22.0 + uTime * 0.12 + 2.4)  * 0.5 + 0.5;
++    float bands = b1 * 0.50 + b2 * 0.35 + b3 * 0.15;
++
++    // Colour palette: deep navy → teal
++    vec3 teal = vec3(0.392, 1.000, 0.855); // #64ffda — site accent
++    vec3 mid  = vec3(0.140, 0.550, 0.720);
++    vec3 deep = vec3(0.040, 0.120, 0.220);
++
++    vec3 col = mix(deep, mid, bands * 0.6 + 0.15);
++    col      = mix(col, teal, bands * bands * 0.25);
++
++    // Fresnel rim glow
++    vec3 vd = normalize(vViewPos);
++    float fr = pow(1.0 - abs(dot(vNormal, vd)), 2.5);
++    col += teal * fr * 0.85;
++
++    // Diffuse shading
++    vec3 ld = normalize(vec3(1.2, 0.8, 1.0));
++    float diff = dot(vNormal, ld) * 0.5 + 0.5;
++    col *= 0.55 + diff * 0.55;
++
++    gl_FragColor = vec4(col, 1.0);
++  }
++`;
++
++const ATMO_VERT = /* glsl */ `
++  varying vec3 vNormal;
++  varying vec3 vViewPos;
++  void main() {
++    vNormal = normalize(normalMatrix * normal);
++    vec4 mv = modelViewMatrix * vec4(position, 1.0);
++    vViewPos = -mv.xyz;
++    gl_Position = projectionMatrix * mv;
++  }
++`;
++
++const ATMO_FRAG = /* glsl */ `
++  varying vec3 vNormal;
++  varying vec3 vViewPos;
++  void main() {
++    vec3 vd = normalize(vViewPos);
++    float fr = pow(1.0 - abs(dot(vNormal, vd)), 4.0);
++    gl_FragColor = vec4(0.392, 1.0, 0.855, fr * 0.42);
++  }
++`;
++
++/* ──────────────────────────────── section data ───────────────────────────── */
++
++type Section = {
++  href:  string;
++  label: string;
++  color: string;
++  pos:   THREE.Vector3;
++  phase: number;
++};
++
++// Front hemisphere (z > 0) = visible at start; back (z < 0) = found by rotating.
++const SECTIONS: Section[] = [
++  { href: "/about",      label: "About",      color: "#7fe9ff", pos: new THREE.Vector3(-0.58,  0.46,  0.67), phase: 0 },
++  { href: "/experience", label: "Experience", color: "#8fb4ff", pos: new THREE.Vector3( 0.65,  0.37,  0.66), phase: 1 },
++  { href: "/contact",    label: "Contact",    color: "#64ffda", pos: new THREE.Vector3( 0.18, -0.64,  0.75), phase: 2 },
++  { href: "/projects",   label: "Projects",   color: "#ffb877", pos: new THREE.Vector3( 0.72,  0.38, -0.58), phase: 3 },
++  { href: "/education",  label: "Education",  color: "#c0a4ff", pos: new THREE.Vector3(-0.54, -0.52, -0.66), phase: 4 },
++  { href: "/skills",     label: "Skills",     color: "#78ecb4", pos: new THREE.Vector3(-0.12,  0.79, -0.60), phase: 5 },
++].map((s) => ({ ...s, pos: s.pos.clone().normalize() }));
++
++/* ─────────────────────────────── sub-components ─────────────────────────── */
++
++function Planet() {
++  const matRef = useRef<THREE.ShaderMaterial>(null!);
++  useFrame(({ clock }) => {
++    if (matRef.current) matRef.current.uniforms.uTime.value = clock.elapsedTime;
++  });
++  return (
++    <mesh>
++      <sphereGeometry args={[1, 64, 64]} />
++      <shaderMaterial
++        ref={matRef}
++        vertexShader={PLANET_VERT}
++        fragmentShader={PLANET_FRAG}
++        uniforms={{ uTime: { value: 0 } }}
++      />
++    </mesh>
++  );
++}
++
++function Atmosphere() {
++  return (
++    <mesh scale={1.14}>
++      <sphereGeometry args={[1, 32, 32]} />
++      <shaderMaterial
++        vertexShader={ATMO_VERT}
++        fragmentShader={ATMO_FRAG}
++        transparent
++        depthWrite={false}
++        blending={THREE.AdditiveBlending}
++      />
++    </mesh>
++  );
++}
++
++function SectionPoint({ section }: { section: Section }) {
++  const router = useRouter();
++  const { camera } = useThree();
++  const [hovered, setHovered] = useState(false);
++
++  const dotRef   = useRef<THREE.Mesh>(null!);
++  const glowRef  = useRef<THREE.Mesh>(null!);
++  const groupRef = useRef<THREE.Group>(null!);
++  const labelRef = useRef<HTMLSpanElement | null>(null);
++
++  // Surface position slightly above sphere (avoids z-fighting)
++  const pos = section.pos.clone().multiplyScalar(1.03);
++
++  useFrame(({ clock }) => {
++    // Front-hemisphere check: dot product of camera direction with point normal.
++    // When positive the point faces the camera; when negative it's on the far side.
++    const camDir = camera.position.clone().normalize();
++    const facing = section.pos.dot(camDir);
++    const visible = facing > -0.05;
++
++    if (groupRef.current) groupRef.current.visible = visible;
++    if (labelRef.current) {
++      labelRef.current.style.opacity        = visible ? "1" : "0";
++      labelRef.current.style.pointerEvents  = visible ? "auto" : "none";
++    }
++
++    const t = clock.elapsedTime + section.phase * 1.1;
++    const pulse = 1 + Math.sin(t * 2.5) * 0.15;
++
++    if (dotRef.current)  dotRef.current.scale.setScalar(hovered ? 1.6 : pulse);
++    if (glowRef.current) {
++      (glowRef.current.material as THREE.MeshBasicMaterial).opacity =
++        hovered ? 0.35 : 0.1 + Math.sin(t * 2.5) * 0.06;
++      glowRef.current.scale.setScalar(hovered ? 3.2 : 2.2 + Math.sin(t * 2.5) * 0.4);
++    }
++  });
++
++  return (
++    <group ref={groupRef} position={pos}>
++      {/* Pulsing glow halo */}
++      <mesh ref={glowRef}>
++        <sphereGeometry args={[0.03, 12, 12]} />
++        <meshBasicMaterial color={section.color} transparent depthWrite={false} />
++      </mesh>
++
++      {/* Solid dot — receives pointer events */}
++      <mesh
++        ref={dotRef}
++        onPointerOver={(e) => {
++          e.stopPropagation();
++          setHovered(true);
++          document.body.style.cursor = "pointer";
++        }}
++        onPointerOut={() => {
++          setHovered(false);
++          document.body.style.cursor = "default";
++        }}
++        onClick={(e) => {
++          e.stopPropagation();
++          void router.push(section.href);
++        }}
++      >
++        <sphereGeometry args={[0.028, 16, 16]} />
++        <meshBasicMaterial color={section.color} />
++      </mesh>
++
++      {/* HTML label — positioned above the dot.
++          No distanceFactor so the element renders at natural CSS pixel size. */}
++      <Html center style={{ pointerEvents: "none" }}>
++        <span
++          ref={labelRef}
++          onClick={() => void router.push(section.href)}
++          style={{
++            display: "inline-block",
++            marginTop: "-22px",
++            padding: "2px 8px",
++            borderRadius: "20px",
++            border: `1px solid ${hovered ? section.color : "rgba(100,255,218,0.22)"}`,
++            background: hovered ? `${section.color}18` : "rgba(10,25,47,0.80)",
++            color: hovered ? section.color : "rgba(200,230,255,0.75)",
++            fontSize: "10px",
++            fontWeight: hovered ? 600 : 400,
++            fontFamily: "system-ui,-apple-system,sans-serif",
++            whiteSpace: "nowrap",
++            transition: "border 0.2s, color 0.2s, background 0.2s",
++            backdropFilter: "blur(6px)",
++            WebkitBackdropFilter: "blur(6px)",
++            cursor: "pointer",
++            pointerEvents: "auto",
++            userSelect: "none",
++          }}
++        >
++          {section.label}
++        </span>
++      </Html>
++    </group>
++  );
++}
++
++function Scene({ autoRotate }: { autoRotate: boolean }) {
++  return (
++    <>
++      <Stars radius={60} depth={60} count={2500} factor={3} saturation={0} fade speed={0.4} />
++      <ambientLight intensity={0.15} />
++      <pointLight position={[4, 3, 4]} intensity={2} />
++      <Planet />
++      <Atmosphere />
++      {SECTIONS.map((s) => (
++        <SectionPoint key={s.href} section={s} />
++      ))}
++      <OrbitControls
++        enableZoom={false}
++        enablePan={false}
++        autoRotate={autoRotate}
++        autoRotateSpeed={0.4}
++        dampingFactor={0.08}
++        enableDamping
++        rotateSpeed={0.6}
++        minPolarAngle={Math.PI * 0.1}
++        maxPolarAngle={Math.PI * 0.9}
++      />
++    </>
++  );
++}
++
++/* ────────────────────────────── exported component ──────────────────────── */
++
++export function PlanetHero() {
++  const reduced = useReducedMotion() ?? false;
++
++  return (
++    <div
++      role="img"
++      aria-label="Interactive globe showing portfolio sections — drag to rotate, click a point to navigate"
++      style={{
++        width: "100%",
++        aspectRatio: "1",
++        maxWidth: "480px",
++        margin: "0 auto",
++        position: "relative",
++      }}
++    >
++      <Canvas
++        camera={{ position: [0, 0, 3.2], fov: 40 }}
++        dpr={[1, 2]}
++        gl={{ antialias: true, alpha: true }}
++        style={{ width: "100%", height: "100%" }}
++      >
++        <Scene autoRotate={!reduced} />
++      </Canvas>
++    </div>
++  );
++}
+diff --git a/components/ui/PlanetHeroLoader.tsx b/components/ui/PlanetHeroLoader.tsx
+new file mode 100644
+index 0000000..1597ac9
+--- /dev/null
++++ b/components/ui/PlanetHeroLoader.tsx
+@@ -0,0 +1,13 @@
++"use client";
++
++import dynamic from "next/dynamic";
++
++// Three.js uses browser APIs; ssr: false must live in a client component.
++const PlanetHero = dynamic(
++  () => import("@/components/ui/PlanetHero").then((m) => ({ default: m.PlanetHero })),
++  { ssr: false },
++);
++
++export function PlanetHeroLoader() {
++  return <PlanetHero />;
++}
+diff --git a/package-lock.json b/package-lock.json
+index 38b465c..8cc5075 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -8,6 +8,8 @@
+       "name": "portfolio-website",
+       "version": "0.1.0",
+       "dependencies": {
++        "@react-three/drei": "^10.7.7",
++        "@react-three/fiber": "^9.6.1",
+         "@vercel/analytics": "^2.0.1",
+         "clsx": "^2.1.1",
+         "motion": "^12.0.0",
+@@ -17,13 +19,15 @@
+         "react-markdown": "^10.1.0",
+         "remark-gfm": "^4.0.1",
+         "resend": "^6.18.1",
+-        "tailwind-merge": "^2.6.0"
++        "tailwind-merge": "^2.6.0",
++        "three": "^0.185.1"
+       },
+       "devDependencies": {
+         "@tailwindcss/postcss": "^4.0.0",
+         "@types/node": "^24.0.0",
+         "@types/react": "^19.0.0",
+         "@types/react-dom": "^19.0.0",
++        "@types/three": "^0.185.1",
+         "tailwindcss": "^4.0.0",
+         "typescript": "^5.7.0"
+       }
+@@ -41,6 +45,21 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/@babel/runtime": {
++      "version": "7.29.7",
++      "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.7.tgz",
++      "integrity": "sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=6.9.0"
++      }
++    },
++    "node_modules/@dimforge/rapier3d-compat": {
++      "version": "0.12.0",
++      "resolved": "https://registry.npmjs.org/@dimforge/rapier3d-compat/-/rapier3d-compat-0.12.0.tgz",
++      "integrity": "sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow==",
++      "license": "Apache-2.0"
++    },
+     "node_modules/@emnapi/core": {
+       "version": "1.11.3",
+       "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-1.11.3.tgz",
+@@ -590,6 +609,24 @@
+         "@jridgewell/sourcemap-codec": "^1.4.14"
+       }
+     },
++    "node_modules/@mediapipe/tasks-vision": {
++      "version": "0.10.17",
++      "resolved": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-0.10.17.tgz",
++      "integrity": "sha512-CZWV/q6TTe8ta61cZXjfnnHsfWIdFhms03M9T7Cnd5y2mdpylJM0rF1qRq+wsQVRMLz1OYPVEBU9ph2Bx8cxrg==",
++      "license": "Apache-2.0"
++    },
++    "node_modules/@monogrid/gainmap-js": {
++      "version": "3.4.0",
++      "resolved": "https://registry.npmjs.org/@monogrid/gainmap-js/-/gainmap-js-3.4.0.tgz",
++      "integrity": "sha512-2Z0FATFHaoYJ8b+Y4y4Hgfn3FRFwuU5zRrk+9dFWp4uGAdHGqVEdP7HP+gLA3X469KXHmfupJaUbKo1b/aDKIg==",
++      "license": "MIT",
++      "dependencies": {
++        "promise-worker-transferable": "^1.0.4"
++      },
++      "peerDependencies": {
++        "three": ">= 0.159.0"
++      }
++    },
+     "node_modules/@next/env": {
+       "version": "16.2.11",
+       "resolved": "https://registry.npmjs.org/@next/env/-/env-16.2.11.tgz",
+@@ -724,6 +761,94 @@
+         "node": ">= 10"
+       }
+     },
++    "node_modules/@react-three/drei": {
++      "version": "10.7.7",
++      "resolved": "https://registry.npmjs.org/@react-three/drei/-/drei-10.7.7.tgz",
++      "integrity": "sha512-ff+J5iloR0k4tC++QtD/j9u3w5fzfgFAWDtAGQah9pF2B1YgOq/5JxqY0/aVoQG5r3xSZz0cv5tk2YuBob4xEQ==",
++      "license": "MIT",
++      "dependencies": {
++        "@babel/runtime": "^7.26.0",
++        "@mediapipe/tasks-vision": "0.10.17",
++        "@monogrid/gainmap-js": "^3.0.6",
++        "@use-gesture/react": "^10.3.1",
++        "camera-controls": "^3.1.0",
++        "cross-env": "^7.0.3",
++        "detect-gpu": "^5.0.56",
++        "glsl-noise": "^0.0.0",
++        "hls.js": "^1.5.17",
++        "maath": "^0.10.8",
++        "meshline": "^3.3.1",
++        "stats-gl": "^2.2.8",
++        "stats.js": "^0.17.0",
++        "suspend-react": "^0.1.3",
++        "three-mesh-bvh": "^0.8.3",
++        "three-stdlib": "^2.35.6",
++        "troika-three-text": "^0.52.4",
++        "tunnel-rat": "^0.1.2",
++        "use-sync-external-store": "^1.4.0",
++        "utility-types": "^3.11.0",
++        "zustand": "^5.0.1"
++      },
++      "peerDependencies": {
++        "@react-three/fiber": "^9.0.0",
++        "react": "^19",
++        "react-dom": "^19",
++        "three": ">=0.159"
++      },
++      "peerDependenciesMeta": {
++        "react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@react-three/fiber": {
++      "version": "9.6.1",
++      "resolved": "https://registry.npmjs.org/@react-three/fiber/-/fiber-9.6.1.tgz",
++      "integrity": "sha512-zF0rsKcVYpcJwbFEnv2HkHX9cvOEgsfQo/X8lwmR2dn13S4qEQJXir9fxf5js2LQFoXqxOY7MDkOkYx2uZ4gSg==",
++      "license": "MIT",
++      "dependencies": {
++        "@babel/runtime": "^7.17.8",
++        "@types/webxr": "*",
++        "base64-js": "^1.5.1",
++        "buffer": "^6.0.3",
++        "its-fine": "^2.0.0",
++        "react-use-measure": "^2.1.7",
++        "scheduler": "^0.27.0",
++        "suspend-react": "^0.1.3",
++        "use-sync-external-store": "^1.4.0",
++        "zustand": "^5.0.3"
++      },
++      "peerDependencies": {
++        "expo": ">=43.0",
++        "expo-asset": ">=8.4",
++        "expo-file-system": ">=11.0",
++        "expo-gl": ">=11.0",
++        "react": ">=19 <19.3",
++        "react-dom": ">=19 <19.3",
++        "react-native": ">=0.78",
++        "three": ">=0.156"
++      },
++      "peerDependenciesMeta": {
++        "expo": {
++          "optional": true
++        },
++        "expo-asset": {
++          "optional": true
++        },
++        "expo-file-system": {
++          "optional": true
++        },
++        "expo-gl": {
++          "optional": true
++        },
++        "react-dom": {
++          "optional": true
++        },
++        "react-native": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@stablelib/base64": {
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/@stablelib/base64/-/base64-1.0.1.tgz",
+@@ -1055,6 +1180,12 @@
+         "tailwindcss": "4.3.3"
+       }
+     },
++    "node_modules/@tweenjs/tween.js": {
++      "version": "23.1.3",
++      "resolved": "https://registry.npmjs.org/@tweenjs/tween.js/-/tween.js-23.1.3.tgz",
++      "integrity": "sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==",
++      "license": "MIT"
++    },
+     "node_modules/@types/debug": {
+       "version": "4.1.13",
+       "resolved": "https://registry.npmjs.org/@types/debug/-/debug-4.1.13.tgz",
+@@ -1064,6 +1195,12 @@
+         "@types/ms": "*"
+       }
+     },
++    "node_modules/@types/draco3d": {
++      "version": "1.4.10",
++      "resolved": "https://registry.npmjs.org/@types/draco3d/-/draco3d-1.4.10.tgz",
++      "integrity": "sha512-AX22jp8Y7wwaBgAixaSvkoG4M/+PlAcm3Qs4OW8yT9DM4xUpWKeFhLueTAyZF39pviAdcDdeJoACapiAceqNcw==",
++      "license": "MIT"
++    },
+     "node_modules/@types/estree": {
+       "version": "1.0.9",
+       "resolved": "https://registry.npmjs.org/@types/estree/-/estree-1.0.9.tgz",
+@@ -1113,6 +1250,12 @@
+         "undici-types": "~7.18.0"
+       }
+     },
++    "node_modules/@types/offscreencanvas": {
++      "version": "2019.7.3",
++      "resolved": "https://registry.npmjs.org/@types/offscreencanvas/-/offscreencanvas-2019.7.3.tgz",
++      "integrity": "sha512-ieXiYmgSRXUDeOntE1InxjWyvEelZGP63M+cGuquuRLuIKKT1osnkXjxev9B7d1nXSug5vpunx+gNlbVxMlC9A==",
++      "license": "MIT"
++    },
+     "node_modules/@types/react": {
+       "version": "19.2.17",
+       "resolved": "https://registry.npmjs.org/@types/react/-/react-19.2.17.tgz",
+@@ -1132,18 +1275,71 @@
+         "@types/react": "^19.2.0"
+       }
+     },
++    "node_modules/@types/react-reconciler": {
++      "version": "0.28.9",
++      "resolved": "https://registry.npmjs.org/@types/react-reconciler/-/react-reconciler-0.28.9.tgz",
++      "integrity": "sha512-HHM3nxyUZ3zAylX8ZEyrDNd2XZOnQ0D5XfunJF5FLQnZbHHYq4UWvW1QfelQNXv1ICNkwYhfxjwfnqivYB6bFg==",
++      "license": "MIT",
++      "peerDependencies": {
++        "@types/react": "*"
++      }
++    },
++    "node_modules/@types/stats.js": {
++      "version": "0.17.4",
++      "resolved": "https://registry.npmjs.org/@types/stats.js/-/stats.js-0.17.4.tgz",
++      "integrity": "sha512-jIBvWWShCvlBqBNIZt0KAshWpvSjhkwkEu4ZUcASoAvhmrgAUI2t1dXrjSL4xXVLB4FznPrIsX3nKXFl/Dt4vA==",
++      "license": "MIT"
++    },
++    "node_modules/@types/three": {
++      "version": "0.185.1",
++      "resolved": "https://registry.npmjs.org/@types/three/-/three-0.185.1.tgz",
++      "integrity": "sha512-db1xTb+EgYF2didW+eudSvVPtn75zo+fGsY8ShQrJY/B5ZBmC2Fiaykv3aImHAlCNEGuMPkPGXBJGLwzu5mC7A==",
++      "license": "MIT",
++      "dependencies": {
++        "@dimforge/rapier3d-compat": "~0.12.0",
++        "@tweenjs/tween.js": "~23.1.3",
++        "@types/stats.js": "*",
++        "@types/webxr": ">=0.5.17",
++        "fflate": "~0.8.2",
++        "meshoptimizer": "~1.1.1"
++      }
++    },
+     "node_modules/@types/unist": {
+       "version": "3.0.3",
+       "resolved": "https://registry.npmjs.org/@types/unist/-/unist-3.0.3.tgz",
+       "integrity": "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==",
+       "license": "MIT"
+     },
++    "node_modules/@types/webxr": {
++      "version": "0.5.24",
++      "resolved": "https://registry.npmjs.org/@types/webxr/-/webxr-0.5.24.tgz",
++      "integrity": "sha512-h8fgEd/DpoS9CBrjEQXR+dIDraopAEfu4wYVNY2tEPwk60stPWhvZMf4Foo5FakuQ7HFZoa8WceaWFervK2Ovg==",
++      "license": "MIT"
++    },
+     "node_modules/@ungap/structured-clone": {
+       "version": "1.3.3",
+       "resolved": "https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.3.3.tgz",
+       "integrity": "sha512-60YRaenCQcVjYEKOcG824+DRGGIQ3VKErcBoAEDJZz5bKIs2ZG+X/H9Nk+Q6EVkwJk5QNApxbrc5QtBSwtrXAg==",
+       "license": "ISC"
+     },
++    "node_modules/@use-gesture/core": {
++      "version": "10.3.1",
++      "resolved": "https://registry.npmjs.org/@use-gesture/core/-/core-10.3.1.tgz",
++      "integrity": "sha512-WcINiDt8WjqBdUXye25anHiNxPc0VOrlT8F6LLkU6cycrOGUDyY/yyFmsg3k8i5OLvv25llc0QC45GhR/C8llw==",
++      "license": "MIT"
++    },
++    "node_modules/@use-gesture/react": {
++      "version": "10.3.1",
++      "resolved": "https://registry.npmjs.org/@use-gesture/react/-/react-10.3.1.tgz",
++      "integrity": "sha512-Yy19y6O2GJq8f7CHf7L0nxL8bf4PZCPaVOCgJrusOeFHY1LvHgYXnmnXg6N5iwAnbgbZCDjo60SiM6IPJi9C5g==",
++      "license": "MIT",
++      "dependencies": {
++        "@use-gesture/core": "10.3.1"
++      },
++      "peerDependencies": {
++        "react": ">= 16.8.0"
++      }
++    },
+     "node_modules/@vercel/analytics": {
+       "version": "2.0.1",
+       "resolved": "https://registry.npmjs.org/@vercel/analytics/-/analytics-2.0.1.tgz",
+@@ -1196,6 +1392,26 @@
+         "url": "https://github.com/sponsors/wooorm"
+       }
+     },
++    "node_modules/base64-js": {
++      "version": "1.5.1",
++      "resolved": "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz",
++      "integrity": "sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==",
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/feross"
++        },
++        {
++          "type": "patreon",
++          "url": "https://www.patreon.com/feross"
++        },
++        {
++          "type": "consulting",
++          "url": "https://feross.org/support"
++        }
++      ],
++      "license": "MIT"
++    },
+     "node_modules/baseline-browser-mapping": {
+       "version": "2.11.1",
+       "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.1.tgz",
+@@ -1208,6 +1424,52 @@
+         "node": ">=6.0.0"
+       }
+     },
++    "node_modules/bidi-js": {
++      "version": "1.0.3",
++      "resolved": "https://registry.npmjs.org/bidi-js/-/bidi-js-1.0.3.tgz",
++      "integrity": "sha512-RKshQI1R3YQ+n9YJz2QQ147P66ELpa1FQEg20Dk8oW9t2KgLbpDLLp9aGZ7y8WHSshDknG0bknqGw5/tyCs5tw==",
++      "license": "MIT",
++      "dependencies": {
++        "require-from-string": "^2.0.2"
++      }
++    },
++    "node_modules/buffer": {
++      "version": "6.0.3",
++      "resolved": "https://registry.npmjs.org/buffer/-/buffer-6.0.3.tgz",
++      "integrity": "sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==",
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/feross"
++        },
++        {
++          "type": "patreon",
++          "url": "https://www.patreon.com/feross"
++        },
++        {
++          "type": "consulting",
++          "url": "https://feross.org/support"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "base64-js": "^1.3.1",
++        "ieee754": "^1.2.1"
++      }
++    },
++    "node_modules/camera-controls": {
++      "version": "3.1.2",
++      "resolved": "https://registry.npmjs.org/camera-controls/-/camera-controls-3.1.2.tgz",
++      "integrity": "sha512-xkxfpG2ECZ6Ww5/9+kf4mfg1VEYAoe9aDSY+IwF0UEs7qEzwy0aVRfs2grImIECs/PoBtWFrh7RXsQkwG922JA==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=22.0.0",
++        "npm": ">=10.5.1"
++      },
++      "peerDependencies": {
++        "three": ">=0.126.1"
++      }
++    },
+     "node_modules/caniuse-lite": {
+       "version": "1.0.30001806",
+       "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001806.tgz",
+@@ -1303,6 +1565,38 @@
+         "url": "https://github.com/sponsors/wooorm"
+       }
+     },
++    "node_modules/cross-env": {
++      "version": "7.0.3",
++      "resolved": "https://registry.npmjs.org/cross-env/-/cross-env-7.0.3.tgz",
++      "integrity": "sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==",
++      "license": "MIT",
++      "dependencies": {
++        "cross-spawn": "^7.0.1"
++      },
++      "bin": {
++        "cross-env": "src/bin/cross-env.js",
++        "cross-env-shell": "src/bin/cross-env-shell.js"
++      },
++      "engines": {
++        "node": ">=10.14",
++        "npm": ">=6",
++        "yarn": ">=1"
++      }
++    },
++    "node_modules/cross-spawn": {
++      "version": "7.0.6",
++      "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz",
++      "integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
++      "license": "MIT",
++      "dependencies": {
++        "path-key": "^3.1.0",
++        "shebang-command": "^2.0.0",
++        "which": "^2.0.1"
++      },
++      "engines": {
++        "node": ">= 8"
++      }
++    },
+     "node_modules/csstype": {
+       "version": "3.2.3",
+       "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz",
+@@ -1348,6 +1642,15 @@
+         "node": ">=6"
+       }
+     },
++    "node_modules/detect-gpu": {
++      "version": "5.0.70",
++      "resolved": "https://registry.npmjs.org/detect-gpu/-/detect-gpu-5.0.70.tgz",
++      "integrity": "sha512-bqerEP1Ese6nt3rFkwPnGbsUF9a4q+gMmpTVVOEzoCyeCc+y7/RvJnQZJx1JwhgQI5Ntg0Kgat8Uu7XpBqnz1w==",
++      "license": "MIT",
++      "dependencies": {
++        "webgl-constants": "^1.1.1"
++      }
++    },
+     "node_modules/detect-libc": {
+       "version": "2.1.2",
+       "resolved": "https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz",
+@@ -1371,6 +1674,12 @@
+         "url": "https://github.com/sponsors/wooorm"
+       }
+     },
++    "node_modules/draco3d": {
++      "version": "1.5.7",
++      "resolved": "https://registry.npmjs.org/draco3d/-/draco3d-1.5.7.tgz",
++      "integrity": "sha512-m6WCKt/erDXcw+70IJXnG7M3awwQPAsZvJGX5zY7beBqpELw6RDGkYVU0W43AFxye4pDZ5i2Lbyc/NNGqwjUVQ==",
++      "license": "Apache-2.0"
++    },
+     "node_modules/enhanced-resolve": {
+       "version": "5.24.3",
+       "resolved": "https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.24.3.tgz",
+@@ -1419,6 +1728,12 @@
+       "integrity": "sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==",
+       "license": "Unlicense"
+     },
++    "node_modules/fflate": {
++      "version": "0.8.3",
++      "resolved": "https://registry.npmjs.org/fflate/-/fflate-0.8.3.tgz",
++      "integrity": "sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==",
++      "license": "MIT"
++    },
+     "node_modules/framer-motion": {
+       "version": "12.42.2",
+       "resolved": "https://registry.npmjs.org/framer-motion/-/framer-motion-12.42.2.tgz",
+@@ -1446,6 +1761,12 @@
+         }
+       }
+     },
++    "node_modules/glsl-noise": {
++      "version": "0.0.0",
++      "resolved": "https://registry.npmjs.org/glsl-noise/-/glsl-noise-0.0.0.tgz",
++      "integrity": "sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==",
++      "license": "MIT"
++    },
+     "node_modules/graceful-fs": {
+       "version": "4.2.11",
+       "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
+@@ -1493,6 +1814,12 @@
+         "url": "https://opencollective.com/unified"
+       }
+     },
++    "node_modules/hls.js": {
++      "version": "1.6.16",
++      "resolved": "https://registry.npmjs.org/hls.js/-/hls.js-1.6.16.tgz",
++      "integrity": "sha512-VSIRpLfRwlAAdGL4wiTucx2ScRipo0ed1FBatWkyt832jC4CReKstga6yIhYVwGu9LOBjuX9wzmRMeQdBJtzEA==",
++      "license": "Apache-2.0"
++    },
+     "node_modules/html-url-attributes": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/html-url-attributes/-/html-url-attributes-3.0.1.tgz",
+@@ -1503,6 +1830,32 @@
+         "url": "https://opencollective.com/unified"
+       }
+     },
++    "node_modules/ieee754": {
++      "version": "1.2.1",
++      "resolved": "https://registry.npmjs.org/ieee754/-/ieee754-1.2.1.tgz",
++      "integrity": "sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==",
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/feross"
++        },
++        {
++          "type": "patreon",
++          "url": "https://www.patreon.com/feross"
++        },
++        {
++          "type": "consulting",
++          "url": "https://feross.org/support"
++        }
++      ],
++      "license": "BSD-3-Clause"
++    },
++    "node_modules/immediate": {
++      "version": "3.0.6",
++      "resolved": "https://registry.npmjs.org/immediate/-/immediate-3.0.6.tgz",
++      "integrity": "sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==",
++      "license": "MIT"
++    },
+     "node_modules/inline-style-parser": {
+       "version": "0.2.7",
+       "resolved": "https://registry.npmjs.org/inline-style-parser/-/inline-style-parser-0.2.7.tgz",
+@@ -1565,6 +1918,30 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/is-promise": {
++      "version": "2.2.2",
++      "resolved": "https://registry.npmjs.org/is-promise/-/is-promise-2.2.2.tgz",
++      "integrity": "sha512-+lP4/6lKUBfQjZ2pdxThZvLUAafmZb8OAxFb8XXtiQmS35INgr85hdOGoEs124ez1FCnZJt6jau/T+alh58QFQ==",
++      "license": "MIT"
++    },
++    "node_modules/isexe": {
++      "version": "2.0.0",
++      "resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz",
++      "integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==",
++      "license": "ISC"
++    },
++    "node_modules/its-fine": {
++      "version": "2.0.0",
++      "resolved": "https://registry.npmjs.org/its-fine/-/its-fine-2.0.0.tgz",
++      "integrity": "sha512-KLViCmWx94zOvpLwSlsx6yOCeMhZYaxrJV87Po5k/FoZzcPSahvK5qJ7fYhS61sZi5ikmh2S3Hz55A2l3U69ng==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/react-reconciler": "^0.28.9"
++      },
++      "peerDependencies": {
++        "react": "^19.0.0"
++      }
++    },
+     "node_modules/jiti": {
+       "version": "2.7.0",
+       "resolved": "https://registry.npmjs.org/jiti/-/jiti-2.7.0.tgz",
+@@ -1575,6 +1952,15 @@
+         "jiti": "lib/jiti-cli.mjs"
+       }
+     },
++    "node_modules/lie": {
++      "version": "3.3.0",
++      "resolved": "https://registry.npmjs.org/lie/-/lie-3.3.0.tgz",
++      "integrity": "sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==",
++      "license": "MIT",
++      "dependencies": {
++        "immediate": "~3.0.5"
++      }
++    },
+     "node_modules/lightningcss": {
+       "version": "1.32.0",
+       "resolved": "https://registry.npmjs.org/lightningcss/-/lightningcss-1.32.0.tgz",
+@@ -1846,6 +2232,16 @@
+         "url": "https://github.com/sponsors/wooorm"
+       }
+     },
++    "node_modules/maath": {
++      "version": "0.10.8",
++      "resolved": "https://registry.npmjs.org/maath/-/maath-0.10.8.tgz",
++      "integrity": "sha512-tRvbDF0Pgqz+9XUa4jjfgAQ8/aPKmQdWXilFu2tMy4GWj4NOsx99HlULO4IeREfbO3a0sA145DZYyvXPkybm0g==",
++      "license": "MIT",
++      "peerDependencies": {
++        "@types/three": ">=0.134.0",
++        "three": ">=0.134.0"
++      }
++    },
+     "node_modules/magic-string": {
+       "version": "0.30.21",
+       "resolved": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.21.tgz",
+@@ -2136,6 +2532,21 @@
+         "url": "https://opencollective.com/unified"
+       }
+     },
++    "node_modules/meshline": {
++      "version": "3.3.1",
++      "resolved": "https://registry.npmjs.org/meshline/-/meshline-3.3.1.tgz",
++      "integrity": "sha512-/TQj+JdZkeSUOl5Mk2J7eLcYTLiQm2IDzmlSvYm7ov15anEcDJ92GHqqazxTSreeNgfnYu24kiEvvv0WlbCdFQ==",
++      "license": "MIT",
++      "peerDependencies": {
++        "three": ">=0.137"
++      }
++    },
++    "node_modules/meshoptimizer": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/meshoptimizer/-/meshoptimizer-1.1.1.tgz",
++      "integrity": "sha512-oRFNWJRDA/WTrVj7NWvqa5HqE1t9MYDj2VaWirQCzCCrAd2GHrqR/sQezCxiWATPNlKTcRaPRHPJwIRoPBAp5g==",
++      "license": "MIT"
++    },
+     "node_modules/micromark": {
+       "version": "4.0.2",
+       "resolved": "https://registry.npmjs.org/micromark/-/micromark-4.0.2.tgz",
+@@ -2870,6 +3281,15 @@
+       "integrity": "sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==",
+       "license": "MIT"
+     },
++    "node_modules/path-key": {
++      "version": "3.1.1",
++      "resolved": "https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz",
++      "integrity": "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=8"
++      }
++    },
+     "node_modules/picocolors": {
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz",
+@@ -2911,6 +3331,22 @@
+         "node": "^10 || ^12 || >=14"
+       }
+     },
++    "node_modules/potpack": {
++      "version": "1.0.2",
++      "resolved": "https://registry.npmjs.org/potpack/-/potpack-1.0.2.tgz",
++      "integrity": "sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==",
++      "license": "ISC"
++    },
++    "node_modules/promise-worker-transferable": {
++      "version": "1.0.4",
++      "resolved": "https://registry.npmjs.org/promise-worker-transferable/-/promise-worker-transferable-1.0.4.tgz",
++      "integrity": "sha512-bN+0ehEnrXfxV2ZQvU2PetO0n4gqBD4ulq3MI1WOPLgr7/Mg9yRQkX5+0v1vagr74ZTsl7XtzlaYDo2EuCeYJw==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "is-promise": "^2.1.0",
++        "lie": "^3.0.2"
++      }
++    },
+     "node_modules/property-information": {
+       "version": "7.2.0",
+       "resolved": "https://registry.npmjs.org/property-information/-/property-information-7.2.0.tgz",
+@@ -2969,6 +3405,21 @@
+         "react": ">=18"
+       }
+     },
++    "node_modules/react-use-measure": {
++      "version": "2.1.7",
++      "resolved": "https://registry.npmjs.org/react-use-measure/-/react-use-measure-2.1.7.tgz",
++      "integrity": "sha512-KrvcAo13I/60HpwGO5jpW7E9DfusKyLPLvuHlUyP5zqnmAPhNc6qTRjUQrdTADl0lpPpDVU2/Gg51UlOGHXbdg==",
++      "license": "MIT",
++      "peerDependencies": {
++        "react": ">=16.13",
++        "react-dom": ">=16.13"
++      },
++      "peerDependenciesMeta": {
++        "react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/remark-gfm": {
+       "version": "4.0.1",
+       "resolved": "https://registry.npmjs.org/remark-gfm/-/remark-gfm-4.0.1.tgz",
+@@ -3035,6 +3486,15 @@
+         "url": "https://opencollective.com/unified"
+       }
+     },
++    "node_modules/require-from-string": {
++      "version": "2.0.2",
++      "resolved": "https://registry.npmjs.org/require-from-string/-/require-from-string-2.0.2.tgz",
++      "integrity": "sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
+     "node_modules/resend": {
+       "version": "6.18.1",
+       "resolved": "https://registry.npmjs.org/resend/-/resend-6.18.1.tgz",
+@@ -3120,6 +3580,27 @@
+         "@img/sharp-win32-x64": "0.34.5"
+       }
+     },
++    "node_modules/shebang-command": {
++      "version": "2.0.0",
++      "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz",
++      "integrity": "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==",
++      "license": "MIT",
++      "dependencies": {
++        "shebang-regex": "^3.0.0"
++      },
++      "engines": {
++        "node": ">=8"
++      }
++    },
++    "node_modules/shebang-regex": {
++      "version": "3.0.0",
++      "resolved": "https://registry.npmjs.org/shebang-regex/-/shebang-regex-3.0.0.tgz",
++      "integrity": "sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=8"
++      }
++    },
+     "node_modules/source-map-js": {
+       "version": "1.2.1",
+       "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+@@ -3149,6 +3630,32 @@
+         "fast-sha256": "^1.3.0"
+       }
+     },
++    "node_modules/stats-gl": {
++      "version": "2.4.2",
++      "resolved": "https://registry.npmjs.org/stats-gl/-/stats-gl-2.4.2.tgz",
++      "integrity": "sha512-g5O9B0hm9CvnM36+v7SFl39T7hmAlv541tU81ME8YeSb3i1CIP5/QdDeSB3A0la0bKNHpxpwxOVRo2wFTYEosQ==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/three": "*",
++        "three": "^0.170.0"
++      },
++      "peerDependencies": {
++        "@types/three": "*",
++        "three": "*"
++      }
++    },
++    "node_modules/stats-gl/node_modules/three": {
++      "version": "0.170.0",
++      "resolved": "https://registry.npmjs.org/three/-/three-0.170.0.tgz",
++      "integrity": "sha512-FQK+LEpYc0fBD+J8g6oSEyyNzjp+Q7Ks1C568WWaoMRLW+TkNNWmenWeGgJjV105Gd+p/2ql1ZcjYvNiPZBhuQ==",
++      "license": "MIT"
++    },
++    "node_modules/stats.js": {
++      "version": "0.17.0",
++      "resolved": "https://registry.npmjs.org/stats.js/-/stats.js-0.17.0.tgz",
++      "integrity": "sha512-hNKz8phvYLPEcRkeG1rsGmV5ChMjKDAWU7/OJJdDErPBNChQXxCo3WZurGpnWc6gZhAzEPFad1aVgyOANH1sMw==",
++      "license": "MIT"
++    },
+     "node_modules/stringify-entities": {
+       "version": "4.0.4",
+       "resolved": "https://registry.npmjs.org/stringify-entities/-/stringify-entities-4.0.4.tgz",
+@@ -3204,6 +3711,15 @@
+         }
+       }
+     },
++    "node_modules/suspend-react": {
++      "version": "0.1.3",
++      "resolved": "https://registry.npmjs.org/suspend-react/-/suspend-react-0.1.3.tgz",
++      "integrity": "sha512-aqldKgX9aZqpoDp3e8/BZ8Dm7x1pJl+qI3ZKxDN0i/IQTWUwBx/ManmlVJ3wowqbno6c2bmiIfs+Um6LbsjJyQ==",
++      "license": "MIT",
++      "peerDependencies": {
++        "react": ">=17.0"
++      }
++    },
+     "node_modules/tailwind-merge": {
+       "version": "2.6.1",
+       "resolved": "https://registry.npmjs.org/tailwind-merge/-/tailwind-merge-2.6.1.tgz",
+@@ -3235,6 +3751,44 @@
+         "url": "https://opencollective.com/webpack"
+       }
+     },
++    "node_modules/three": {
++      "version": "0.185.1",
++      "resolved": "https://registry.npmjs.org/three/-/three-0.185.1.tgz",
++      "integrity": "sha512-5aojFCXKwnjBRZvUnt3WFfEcvUJgkN5LlijRFN95hMy8WVkG4I0QNcJE+OuWvuJ0bOdStrbfXn0pkd6/QyiAlg==",
++      "license": "MIT"
++    },
++    "node_modules/three-mesh-bvh": {
++      "version": "0.8.3",
++      "resolved": "https://registry.npmjs.org/three-mesh-bvh/-/three-mesh-bvh-0.8.3.tgz",
++      "integrity": "sha512-4G5lBaF+g2auKX3P0yqx+MJC6oVt6sB5k+CchS6Ob0qvH0YIhuUk1eYr7ktsIpY+albCqE80/FVQGV190PmiAg==",
++      "license": "MIT",
++      "peerDependencies": {
++        "three": ">= 0.159.0"
++      }
++    },
++    "node_modules/three-stdlib": {
++      "version": "2.36.1",
++      "resolved": "https://registry.npmjs.org/three-stdlib/-/three-stdlib-2.36.1.tgz",
++      "integrity": "sha512-XyGQrFmNQ5O/IoKm556ftwKsBg11TIb301MB5dWNicziQBEs2g3gtOYIf7pFiLa0zI2gUwhtCjv9fmjnxKZ1Cg==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/draco3d": "^1.4.0",
++        "@types/offscreencanvas": "^2019.6.4",
++        "@types/webxr": "^0.5.2",
++        "draco3d": "^1.4.1",
++        "fflate": "^0.6.9",
++        "potpack": "^1.0.1"
++      },
++      "peerDependencies": {
++        "three": ">=0.128.0"
++      }
++    },
++    "node_modules/three-stdlib/node_modules/fflate": {
++      "version": "0.6.11",
++      "resolved": "https://registry.npmjs.org/fflate/-/fflate-0.6.11.tgz",
++      "integrity": "sha512-3JyEFWGjFn7zHmoa9+zG1BmW7X2okcmAB+0Cnu9UFbVs/jCBnl2A8o065ZlXiw145K3eBM3uLuzrYXC0RK7eDg==",
++      "license": "MIT"
++    },
+     "node_modules/trim-lines": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/trim-lines/-/trim-lines-3.0.1.tgz",
+@@ -3245,6 +3799,36 @@
+         "url": "https://github.com/sponsors/wooorm"
+       }
+     },
++    "node_modules/troika-three-text": {
++      "version": "0.52.5",
++      "resolved": "https://registry.npmjs.org/troika-three-text/-/troika-three-text-0.52.5.tgz",
++      "integrity": "sha512-Ry3jRhic9pzcY4JduSvRRyDmVOSqEW19gT4vtK+aCiPNVcDlmkxvGG0YbFd36RTDq1wExOupXnvNF/j1oiHHDA==",
++      "license": "MIT",
++      "dependencies": {
++        "bidi-js": "^1.0.2",
++        "troika-three-utils": "^0.52.5",
++        "troika-worker-utils": "^0.52.0",
++        "webgl-sdf-generator": "1.1.1"
++      },
++      "peerDependencies": {
++        "three": ">=0.125.0"
++      }
++    },
++    "node_modules/troika-three-utils": {
++      "version": "0.52.5",
++      "resolved": "https://registry.npmjs.org/troika-three-utils/-/troika-three-utils-0.52.5.tgz",
++      "integrity": "sha512-WsePbcX8RtfidRfsxK1eCZCjF81ZDzAKHH/evLs0hdV2wpoCb0vArGZHdzdOJrSS3k4zfdtbKDaBh8+phkrYnw==",
++      "license": "MIT",
++      "peerDependencies": {
++        "three": ">=0.125.0"
++      }
++    },
++    "node_modules/troika-worker-utils": {
++      "version": "0.52.0",
++      "resolved": "https://registry.npmjs.org/troika-worker-utils/-/troika-worker-utils-0.52.0.tgz",
++      "integrity": "sha512-W1CpvTHykaPH5brv5VHLfQo9D1OYuo0cSBEUQFFT/nBUzM8iD6Lq2/tgG/f1OelbAS1WtaTPQzE5uM49egnngw==",
++      "license": "MIT"
++    },
+     "node_modules/trough": {
+       "version": "2.2.0",
+       "resolved": "https://registry.npmjs.org/trough/-/trough-2.2.0.tgz",
+@@ -3261,6 +3845,43 @@
+       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==",
+       "license": "0BSD"
+     },
++    "node_modules/tunnel-rat": {
++      "version": "0.1.2",
++      "resolved": "https://registry.npmjs.org/tunnel-rat/-/tunnel-rat-0.1.2.tgz",
++      "integrity": "sha512-lR5VHmkPhzdhrM092lI2nACsLO4QubF0/yoOhzX7c+wIpbN1GjHNzCc91QlpxBi+cnx8vVJ+Ur6vL5cEoQPFpQ==",
++      "license": "MIT",
++      "dependencies": {
++        "zustand": "^4.3.2"
++      }
++    },
++    "node_modules/tunnel-rat/node_modules/zustand": {
++      "version": "4.5.7",
++      "resolved": "https://registry.npmjs.org/zustand/-/zustand-4.5.7.tgz",
++      "integrity": "sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==",
++      "license": "MIT",
++      "dependencies": {
++        "use-sync-external-store": "^1.2.2"
++      },
++      "engines": {
++        "node": ">=12.7.0"
++      },
++      "peerDependencies": {
++        "@types/react": ">=16.8",
++        "immer": ">=9.0.6",
++        "react": ">=16.8"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "immer": {
++          "optional": true
++        },
++        "react": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/typescript": {
+       "version": "5.9.3",
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+@@ -3369,6 +3990,24 @@
+         "url": "https://opencollective.com/unified"
+       }
+     },
++    "node_modules/use-sync-external-store": {
++      "version": "1.6.0",
++      "resolved": "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz",
++      "integrity": "sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==",
++      "license": "MIT",
++      "peerDependencies": {
++        "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
++      }
++    },
++    "node_modules/utility-types": {
++      "version": "3.11.0",
++      "resolved": "https://registry.npmjs.org/utility-types/-/utility-types-3.11.0.tgz",
++      "integrity": "sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 4"
++      }
++    },
+     "node_modules/vfile": {
+       "version": "6.0.3",
+       "resolved": "https://registry.npmjs.org/vfile/-/vfile-6.0.3.tgz",
+@@ -3397,6 +4036,61 @@
+         "url": "https://opencollective.com/unified"
+       }
+     },
++    "node_modules/webgl-constants": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/webgl-constants/-/webgl-constants-1.1.1.tgz",
++      "integrity": "sha512-LkBXKjU5r9vAW7Gcu3T5u+5cvSvh5WwINdr0C+9jpzVB41cjQAP5ePArDtk/WHYdVj0GefCgM73BA7FlIiNtdg=="
++    },
++    "node_modules/webgl-sdf-generator": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/webgl-sdf-generator/-/webgl-sdf-generator-1.1.1.tgz",
++      "integrity": "sha512-9Z0JcMTFxeE+b2x1LJTdnaT8rT8aEp7MVxkNwoycNmJWwPdzoXzMh0BjJSh/AEFP+KPYZUli814h8bJZFIZ2jA==",
++      "license": "MIT"
++    },
++    "node_modules/which": {
++      "version": "2.0.2",
++      "resolved": "https://registry.npmjs.org/which/-/which-2.0.2.tgz",
++      "integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
++      "license": "ISC",
++      "dependencies": {
++        "isexe": "^2.0.0"
++      },
++      "bin": {
++        "node-which": "bin/node-which"
++      },
++      "engines": {
++        "node": ">= 8"
++      }
++    },
++    "node_modules/zustand": {
++      "version": "5.0.14",
++      "resolved": "https://registry.npmjs.org/zustand/-/zustand-5.0.14.tgz",
++      "integrity": "sha512-/8tAspM5LMPr28b3fwLYrtdj77ECpfZviaP75CMTnwO8ISyaE4GDIG/9rDDYq/cH9D2Xw2A2RXglLInmVBQB/g==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=12.20.0"
++      },
++      "peerDependencies": {
++        "@types/react": ">=18.0.0",
++        "immer": ">=9.0.6",
++        "react": ">=18.0.0",
++        "use-sync-external-store": ">=1.2.0"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "immer": {
++          "optional": true
++        },
++        "react": {
++          "optional": true
++        },
++        "use-sync-external-store": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/zwitch": {
+       "version": "2.0.4",
+       "resolved": "https://registry.npmjs.org/zwitch/-/zwitch-2.0.4.tgz",
+diff --git a/package.json b/package.json
+index 62cd443..ff79ed3 100644
+--- a/package.json
++++ b/package.json
+@@ -9,6 +9,8 @@
+     "lint": "next lint"
+   },
+   "dependencies": {
++    "@react-three/drei": "^10.7.7",
++    "@react-three/fiber": "^9.6.1",
+     "@vercel/analytics": "^2.0.1",
+     "clsx": "^2.1.1",
+     "motion": "^12.0.0",
+@@ -18,13 +20,15 @@
+     "react-markdown": "^10.1.0",
+     "remark-gfm": "^4.0.1",
+     "resend": "^6.18.1",
+-    "tailwind-merge": "^2.6.0"
++    "tailwind-merge": "^2.6.0",
++    "three": "^0.185.1"
+   },
+   "devDependencies": {
+     "@tailwindcss/postcss": "^4.0.0",
+     "@types/node": "^24.0.0",
+     "@types/react": "^19.0.0",
+     "@types/react-dom": "^19.0.0",
++    "@types/three": "^0.185.1",
+     "tailwindcss": "^4.0.0",
+     "typescript": "^5.7.0"
+   }
+-- 
+2.43.0
+

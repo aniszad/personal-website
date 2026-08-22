@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, FormEvent } from "react";
 import { motion, useMotionTemplate, useMotionValue } from "motion/react";
 import { CV_PATH, SOCIALS } from "@/lib/constants";
 import { t } from "@/lib/i18n";
@@ -19,10 +19,43 @@ import { ArrowUpRightIcon } from "@/components/ui/Icons";
  * replace on touch devices or under reduced motion, where it simply rests at
  * the centre.
  */
+type FormStatus = "idle" | "sending" | "success" | "error";
+
 export function Contact() {
   const panelRef = useRef<HTMLDivElement>(null);
   const { language } = useLanguage();
   const copy = t(language).generic;
+  const formCopy = copy.contactForm;
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [formStatus, setFormStatus] = useState<FormStatus>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setFormStatus("sending");
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error ?? formCopy.errorFallback);
+      }
+      setFormStatus("success");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : formCopy.errorFallback);
+      setFormStatus("error");
+    }
+  }
 
   const glowX = useMotionValue(50);
   const glowY = useMotionValue(50);
@@ -100,6 +133,69 @@ export function Contact() {
               className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
             />
           </a>
+        </div>
+
+        {/* Contact form */}
+        <div className="mt-20 max-w-xl">
+          {formStatus === "success" ? (
+            <div
+              role="status"
+              className="rounded-2xl border border-accent/30 bg-accent/5 px-8 py-10 text-center"
+            >
+              <p className="font-display text-xl font-semibold text-accent">
+                {formCopy.successHeading}
+              </p>
+              <p className="mt-2 text-muted">{formCopy.successBody}</p>
+            </div>
+          ) : (
+            <form
+              onSubmit={(e) => { void handleSubmit(e); }}
+              noValidate
+              className="flex flex-col gap-4"
+            >
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={formCopy.namePlaceholder}
+                  className="flex-1 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
+                />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={formCopy.emailPlaceholder}
+                  className="flex-1 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
+                />
+              </div>
+
+              <textarea
+                required
+                rows={5}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={formCopy.messagePlaceholder}
+                className="resize-none rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
+              />
+
+              {formStatus === "error" && (
+                <p role="alert" className="text-sm text-red-400">
+                  {errorMsg}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={formStatus === "sending"}
+                className="self-start rounded-xl border border-accent px-6 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:bg-accent hover:text-surface disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {formStatus === "sending" ? formCopy.sending : formCopy.send}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>
