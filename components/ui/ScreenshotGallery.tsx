@@ -6,6 +6,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { CloseIcon, ExpandIcon, PlayIcon } from "@/components/ui/Icons";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 
 /**
  * Project media, and the viewer they open into.
@@ -44,6 +46,8 @@ export function ScreenshotGallery({
   demoPoster?: string | null;
 }) {
   const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
+  const copy = t(language).generic.gallery;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -123,8 +127,8 @@ export function ScreenshotGallery({
   function tileBody(item: MediaItem, index: number) {
     const label =
       item.kind === "video"
-        ? `Play the ${projectName} demonstration video`
-        : `Enlarge screenshot ${index + 1} for ${projectName}`;
+        ? copy.playVideo.replace("{name}", projectName)
+        : copy.enlargeScreenshot.replace("{number}", String(index + 1)).replace("{name}", projectName);
 
     return (
       <button
@@ -186,7 +190,7 @@ export function ScreenshotGallery({
               className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-surface/80 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-heading backdrop-blur-sm"
             >
               <PlayIcon width={12} height={12} className="text-accent" />
-              Demonstration video
+              {copy.demonstrationVideo}
             </span>
           </>
         ) : (
@@ -195,7 +199,7 @@ export function ScreenshotGallery({
             className="absolute bottom-3 right-3 flex translate-y-2 items-center gap-2 rounded-sm bg-surface/85 px-3 py-2 text-xs text-heading opacity-0 backdrop-blur-sm transition duration-300 ease-out group-hover/shot:translate-y-0 group-hover/shot:opacity-100 motion-reduce:transition-none"
           >
             <ExpandIcon width={14} height={14} />
-            Enlarge
+            {copy.enlarge}
           </span>
         )}
 
@@ -257,7 +261,7 @@ export function ScreenshotGallery({
                     transition={{ delay: reduced ? 0 : 0.2, duration: 0.25 }}
                   >
                     <CloseIcon width={20} height={20} />
-                    <span className="sr-only">Close</span>
+                    <span className="sr-only">{copy.close}</span>
                   </motion.button>
 
                   <figure className="relative z-10 w-full max-w-5xl">
@@ -309,8 +313,8 @@ export function ScreenshotGallery({
                       </span>
                       <span className="text-sm text-muted">
                         {openItem.kind === "video"
-                          ? "Demonstration. Press Escape to close."
-                          : "Press Escape to close."}
+                      ? copy.demonstration
+                      : copy.pressEscape}
                       </span>
                     </motion.figcaption>
                   </figure>

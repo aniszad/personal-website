@@ -3,6 +3,8 @@ import type { ResolvedProject } from "@/lib/data";
 import { TagList } from "@/components/ui/TagList";
 import { ScreenshotGallery } from "@/components/ui/ScreenshotGallery";
 import { ExternalLinkIcon, GitHubIcon } from "@/components/ui/Icons";
+import { localizeContent, t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 
 /**
  * One project, set as a hairline separated row rather than a card.
@@ -17,6 +19,8 @@ import { ExternalLinkIcon, GitHubIcon } from "@/components/ui/Icons";
  * sit above that overlay so they stay independently reachable.
  */
 export function ProjectEntry({ project }: { project: ResolvedProject }) {
+  const { language } = useLanguage();
+  const copy = t(language).generic;
   const hasWriteup = Boolean(project.writeup);
   const { screenshots, demoVideo } = project;
 
@@ -40,7 +44,7 @@ export function ProjectEntry({ project }: { project: ResolvedProject }) {
         <div className="min-w-0">
           {project.featured ? (
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-              Featured
+              {copy.featured}
             </p>
           ) : null}
 
@@ -61,7 +65,7 @@ export function ProjectEntry({ project }: { project: ResolvedProject }) {
         <div className="relative z-10 flex shrink-0 items-center gap-5 pt-1">
           {project.proprietary ? (
             <span className="hidden text-sm text-muted sm:inline">
-              Proprietary source
+              {copy.proprietarySource}
             </span>
           ) : null}
 
@@ -74,7 +78,7 @@ export function ProjectEntry({ project }: { project: ResolvedProject }) {
             >
               <GitHubIcon width={20} height={20} />
               <span className="sr-only">
-                {project.name} source on GitHub (opens in a new tab)
+                {project.name} {copy.sourceOnGithub}
               </span>
             </a>
           ) : null}
@@ -88,7 +92,7 @@ export function ProjectEntry({ project }: { project: ResolvedProject }) {
             >
               <ExternalLinkIcon width={20} height={20} />
               <span className="sr-only">
-                {project.name} live demo (opens in a new tab)
+                {project.name} {copy.liveDemo}
               </span>
             </a>
           ) : null}
@@ -96,13 +100,13 @@ export function ProjectEntry({ project }: { project: ResolvedProject }) {
       </div>
 
       <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
-        {project.description}
+        {localizeContent(language, project.description)}
       </p>
 
       <TagList
         labels={project.tags}
         className="mt-6"
-        ariaLabel={`Technologies used in ${project.name}`}
+        ariaLabel={`${copy.technologiesUsedIn} ${project.name}`}
       />
 
       {hasMedia ? (

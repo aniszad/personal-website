@@ -101,6 +101,7 @@ function MobileDrawer({
   location: string;
 }) {
   const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
 
   return (
     <AnimatePresence>
@@ -133,7 +134,7 @@ function MobileDrawer({
                 <button
                   type="button"
                   onClick={onClose}
-                  aria-label="Close menu"
+                  aria-label={t(language).generic.closeMenu}
                   className="text-muted transition-colors duration-200 hover:text-heading"
                 >
                   <CloseIcon width={20} height={20} />

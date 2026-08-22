@@ -4,6 +4,8 @@ import { motion, useReducedMotion } from "motion/react";
 import type { ResolvedEducationEntry } from "@/lib/data";
 import { LogoPlate } from "@/components/ui/LogoPlate";
 import { cn } from "@/lib/utils";
+import { localizeContent } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 
 /**
  * Builds a short badge from an institution name, used when no logo file exists.
@@ -43,6 +45,7 @@ export function TimelineNode({
   isActive: boolean;
 }) {
   const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
   const isLeft = entry.side === "left";
 
   // Entries travel in from the side they occupy. On mobile every entry is on
@@ -75,7 +78,7 @@ export function TimelineNode({
         animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: offscreenX }}
         transition={{ duration: reduced ? 0.2 : 0.5, ease: "easeOut" }}
       >
-        <p className="text-sm text-muted">{entry.dates}</p>
+        <p className="text-sm text-muted">{localizeContent(language, entry.dates)}</p>
 
         <div
           className={cn(
@@ -109,10 +112,10 @@ export function TimelineNode({
           </h3>
         </div>
 
-        <p className="mt-4 text-base text-body">{entry.degree}</p>
-        <p className="mt-1 text-sm text-muted">{entry.location}</p>
+        <p className="mt-4 text-base text-body">{localizeContent(language, entry.degree)}</p>
+        <p className="mt-1 text-sm text-muted">{localizeContent(language, entry.location)}</p>
         <p className="mt-4 text-base leading-relaxed text-muted">
-          {entry.description}
+          {localizeContent(language, entry.description)}
         </p>
       </motion.div>
     </li>

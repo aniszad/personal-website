@@ -3,6 +3,8 @@
 import { FormEvent, useState, useRef, useEffect, KeyboardEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SITE } from "@/lib/constants";
+import { t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 import { CloseIcon } from "@/components/ui/Icons";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -13,25 +15,20 @@ type ChatMessage = {
   text: string;
 };
 
-const QUICK_PROMPTS = [
-  "Tell me about your background",
-  "What projects are you proud of?",
-  "What role are you looking for?",
-] as const;
-
-const INITIAL_MESSAGE: ChatMessage = {
-  id: "welcome",
-  role: "assistant",
-  text: `Hi, I am ${SITE.name}'s portfolio assistant. Ask me about projects, experience, skills, or availability.`,
-};
-
 export function ChatWidget() {
   const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
+  const chatCopy = t(language).generic.chat;
+  const quickPrompts = chatCopy.quickPrompts;
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [status, setStatus] = useState("Ready to chat");
-  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
+  const [status, setStatus] = useState<string>(chatCopy.ready);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [{
+    id: "welcome",
+    role: "assistant",
+    text: chatCopy.welcome.replace("{name}", SITE.name),
+  }]);
   const [showSuggestions, setShowSuggestions] = useState(true);
 
   // Refs for premium UX
@@ -104,7 +101,7 @@ export function ChatWidget() {
 
     pushUserMessage(message);
     setIsTyping(true);
-    setStatus("Thinking...");
+    setStatus(chatCopy.thinking);
 
     if (showSuggestions) setShowSuggestions(false);
 
@@ -122,10 +119,10 @@ export function ChatWidget() {
       pushAssistantMessage(payload.answer);
     } catch (error) {
       const textValue = error instanceof Error ? error.message : String(error);
-      pushAssistantMessage(`Unable to answer right now: ${textValue}`);
+      pushAssistantMessage(chatCopy.statusError.replace("{error}", textValue));
     } finally {
       setIsTyping(false);
-      setStatus("Ready to chat");
+      setStatus(chatCopy.ready);
     }
   }
 
@@ -146,7 +143,7 @@ export function ChatWidget() {
                 <header className="flex items-center justify-between border-b border-line px-4 py-3 bg-surface-raised">
                   <div>
                     <p className="font-display text-sm font-semibold text-heading bg-gradient-to-r from-heading to-heading/70 bg-clip-text text-transparent">
-                      Ask {SITE.name.split(" ")[0]}
+                      {chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
                     </p>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className={`size-1.5 rounded-full ${isTyping ? 'bg-accent animate-pulse' : 'bg-green-500'}`} />
@@ -157,7 +154,7 @@ export function ChatWidget() {
                       type="button"
                       onClick={() => setOpen(false)}
                       className="grid size-8 place-items-center rounded-full text-muted transition-colors hover:bg-line/50 hover:text-heading"
-                      aria-label="Close chat"
+                      aria-label={chatCopy.close}
                   >
                     <CloseIcon width={16} height={16} />
                   </button>
@@ -166,7 +163,7 @@ export function ChatWidget() {
                 {/* Custom scrollbar styling for a cleaner look */}
                 <div
                   aria-live="polite"
-                  aria-label="Chat messages"
+                  aria-label={chatCopy.messages}
                   className="flex-1 space-y-4 overflow-y-auto px-4 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-line/80"
                 >
                   <AnimatePresence mode="popLayout">
@@ -229,7 +226,7 @@ export function ChatWidget() {
                         onClick={() => setShowSuggestions(!showSuggestions)}
                         className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-muted transition-colors hover:text-heading group"
                     >
-                      <span>{showSuggestions ? "Hide suggestions" : "Show suggestions"}</span>
+                        <span>{showSuggestions ? chatCopy.hideSuggestions : chatCopy.showSuggestions}</span>
                       <svg
                           className={`size-3 text-muted transition-transform duration-300 group-hover:text-heading ${
                               showSuggestions ? "rotate-180" : ""
@@ -253,7 +250,7 @@ export function ChatWidget() {
                             className="overflow-hidden"
                         >
                           <div className="mb-3 flex flex-wrap gap-2 pt-1">
-                            {QUICK_PROMPTS.map((prompt) => (
+                            {quickPrompts.map((prompt) => (
                                 <button
                                     key={prompt}
                                     type="button"
@@ -279,14 +276,14 @@ export function ChatWidget() {
                     onKeyDown={handleKeyDown}
                     rows={1}
                     className="min-h-[40px] max-h-[120px] flex-1 resize-none overflow-y-auto rounded-xl border border-line bg-surface py-2.5 px-3 text-sm text-body placeholder:text-muted focus:border-accent/60 focus:ring-1 focus:ring-accent/30 focus:outline-none transition-shadow scrollbar-thin scrollbar-thumb-line"
-                    placeholder="Ask a question... (Shift+Enter for new line)"
+                    placeholder={chatCopy.placeholder}
                 />
                     <button
                         type="submit"
                         disabled={!canSend}
                         className="mb-[1px] flex h-[38px] items-center justify-center rounded-xl bg-accent px-4 text-sm font-semibold text-surface transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-45 hover:shadow-md active:scale-95"
                     >
-                      Send
+                      {chatCopy.send}
                     </button>
                   </form>
                 </div>
@@ -298,13 +295,13 @@ export function ChatWidget() {
             type="button"
             onClick={() => setOpen((current) => !current)}
             className="group flex items-center gap-2.5 rounded-full border border-line bg-surface-raised/95 px-5 py-3 text-sm font-medium text-heading shadow-[0_8px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 hover:border-accent/60 hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.8)] hover:-translate-y-0.5 active:translate-y-0"
-            aria-label={open ? "Hide chat" : "Open chat"}
+            aria-label={open ? chatCopy.close : chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
         >
         <span className="relative flex size-2.5">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-50"></span>
           <span className="relative inline-flex size-2.5 rounded-full bg-accent transition-opacity group-hover:opacity-90"></span>
         </span>
-          Chat with my AI
+          {chatCopy.ask.replace("{name}", `${SITE.name.split(" ")[0]}'s AI`)}
         </button>
       </div>
   );
