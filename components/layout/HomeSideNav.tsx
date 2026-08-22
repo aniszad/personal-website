@@ -10,7 +10,6 @@ import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { CloseIcon, MenuIcon } from "@/components/ui/Icons";
 import { PaletteTrigger, PaletteTriggerIcon } from "@/components/ui/PaletteTrigger";
-import { InspectTrigger } from "@/components/ui/InspectMode";
 
 /**
  * The homepage's only navigation: a fixed rail on the left from md upward,
@@ -44,7 +43,6 @@ export function HomeSideNav() {
           {SITE.name}
         </Link>
         <div className="flex items-center gap-4">
-          <InspectTrigger />
           <PaletteTriggerIcon />
           <button
             type="button"
@@ -65,7 +63,7 @@ export function HomeSideNav() {
         location={copy.home.location}
       />
 
-      <aside data-inspect="homeNav" className="hidden md:fixed md:inset-y-0 md:left-0 md:z-20 md:flex md:w-72 md:flex-col md:justify-between md:overflow-y-auto md:border-r md:border-line md:px-8 md:py-10 lg:w-80">
+      <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:z-20 md:flex md:w-72 md:flex-col md:justify-between md:overflow-y-auto md:border-r md:border-line md:px-8 md:py-10 lg:w-80">
         <div>
           <Link
             href="/"
@@ -76,7 +74,6 @@ export function HomeSideNav() {
           <p className="mt-1 text-sm text-muted">{copy.home.location}</p>
 
           <PaletteTrigger className="mt-8 w-full" />
-          <InspectTrigger className="mt-5" />
 
           <NavList pages={pages} label={copy.home.indexLabel} />
         </div>

@@ -133,15 +133,6 @@ export function CommandPalette() {
         run: () => window.dispatchEvent(new CustomEvent("portfolio:open-chat")),
       },
       {
-        id: "inspect",
-        group: "actions",
-        label: cc.inspectPage,
-        hint: cc.inspectPageHint,
-        accent: HOME_THEME.accent,
-        keywords: "build code source technical engineering inspect behind",
-        run: () => window.dispatchEvent(new CustomEvent("portfolio:open-inspector")),
-      },
-      {
         id: "copy-email",
         group: "actions",
         label: copied ? cc.copyEmailDone : cc.copyEmail,

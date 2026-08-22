@@ -24,7 +24,7 @@ export default function HomePage() {
       <HomeSideNav />
 
       <div className="md:pl-72 lg:pl-80">
-        <div data-inspect="pageContent" className="mx-auto max-w-4xl px-6 pb-14 pt-8 md:px-10 md:pb-20">
+        <div className="mx-auto max-w-4xl px-6 pb-14 pt-8 md:px-10 md:pb-20">
           <main id="content">
             <Hero />
           </main>

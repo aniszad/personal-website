@@ -119,7 +119,6 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
 
   return (
       <motion.section
-          data-inspect="hero"
           initial="hidden"
           animate="visible"
           variants={container}

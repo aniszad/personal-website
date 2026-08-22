@@ -38,7 +38,7 @@ export function PageShell({
       */}
       <ThemeStyle theme={page.theme} />
 
-      <div data-inspect="pageContent" className="mx-auto max-w-5xl px-6 pb-24 md:px-10">
+      <div className="mx-auto max-w-5xl px-6 pb-24 md:px-10">
         <SiteNav />
 
         <PageHeading title={localizedPage.title} blurb={localizedPage.blurb} />

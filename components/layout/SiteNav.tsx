@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { PaletteTriggerIcon } from "@/components/ui/PaletteTrigger";
-import { InspectTrigger } from "@/components/ui/InspectMode";
 
 /**
  * Slim bar carried by every page except the index.
@@ -28,7 +27,6 @@ export function SiteNav() {
 
   return (
     <nav
-      data-inspect="siteNav"
       aria-label={copy.generic.siteSections}
       className="sticky top-0 z-30 -mx-6 mb-20 border-b border-line bg-surface/90 px-6 backdrop-blur-sm md:-mx-10 md:px-10"
     >
@@ -73,10 +71,7 @@ export function SiteNav() {
           })}
         </ul>
 
-        <div className="flex shrink-0 items-center gap-4">
-          <InspectTrigger />
-          <PaletteTriggerIcon />
-        </div>
+        <PaletteTriggerIcon className="shrink-0" />
       </div>
     </nav>
   );
