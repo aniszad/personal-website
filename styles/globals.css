@@ -108,8 +108,8 @@
   left: -52px;
   top: -52px;
   z-index: 92;
-  width: 104px;
-  height: 104px;
+  width: 150px;
+  height: 150px;
   pointer-events: none;
   border: 1px solid color-mix(in srgb, var(--color-accent) 70%, transparent);
   border-radius: 9999px;

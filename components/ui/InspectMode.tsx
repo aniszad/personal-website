@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { CloseIcon } from "@/components/ui/Icons";
 
 type Inspectable = { name: string; file: string; source: string };
 
@@ -49,19 +47,17 @@ export function InspectTrigger({ className = "" }: { className?: string }) {
 }
 
 export function InspectMode() {
-  const reduced = useReducedMotion() ?? false;
   const [active, setActive] = useState(false);
-  const [selected, setSelected] = useState<Inspectable | null>(null);
-  const [bounds, setBounds] = useState<DOMRect | null>(null);
+  const [hovered, setHovered] = useState<Inspectable | null>(null);
   const cursor = useRef<HTMLDivElement>(null);
+  const reveal = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
   const point = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const toggle = () => {
       setActive((value) => !value);
-      setSelected(null);
-      setBounds(null);
+      setHovered(null);
     };
     window.addEventListener("portfolio:toggle-inspect", toggle);
     return () => window.removeEventListener("portfolio:toggle-inspect", toggle);
@@ -75,68 +71,50 @@ export function InspectMode() {
       point.current = { x: event.clientX, y: event.clientY };
       if (frame.current) return;
       frame.current = requestAnimationFrame(() => {
-        cursor.current?.style.setProperty("transform", `translate3d(${point.current.x}px, ${point.current.y}px, 0)`);
+        const { x, y } = point.current;
+        cursor.current?.style.setProperty("transform", `translate3d(${x}px, ${y}px, 0)`);
+        const mask = `radial-gradient(circle 150px at ${x}px ${y}px, black 0%, black 58%, transparent 100%)`;
+        reveal.current?.style.setProperty("mask-image", mask);
+        reveal.current?.style.setProperty("-webkit-mask-image", mask);
+
+        const element = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-inspect]");
+        const source = element ? SOURCES[element.dataset.inspect ?? ""] : undefined;
+        setHovered(source ?? null);
         frame.current = 0;
       });
     };
-    const click = (event: MouseEvent) => {
-      const element = (event.target as HTMLElement).closest<HTMLElement>("[data-inspect]");
-      if (!element) return;
-      event.preventDefault();
-      event.stopPropagation();
-      const source = SOURCES[element.dataset.inspect ?? ""];
-      if (source) {
-        setSelected(source);
-        setBounds(element.getBoundingClientRect());
-      }
-    };
+
     const escape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setActive(false);
-        setSelected(null);
-        setBounds(null);
+        setHovered(null);
       }
     };
+
     window.addEventListener("mousemove", move);
-    window.addEventListener("click", click, true);
     window.addEventListener("keydown", escape);
     return () => {
       document.body.classList.remove("inspect-mode-active");
       window.removeEventListener("mousemove", move);
-      window.removeEventListener("click", click, true);
       window.removeEventListener("keydown", escape);
       if (frame.current) cancelAnimationFrame(frame.current);
     };
   }, [active]);
 
-  return (
+  return active ? (
     <>
-      {active ? (
-        <>
-          <div ref={cursor} aria-hidden="true" className="inspect-cursor" />
-          <div className="fixed left-1/2 top-5 z-[90] -translate-x-1/2 border border-accent/40 bg-surface-raised/90 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent backdrop-blur-sm">
-            Inspect mode · click a surface · Esc to exit
+      <div ref={cursor} aria-hidden="true" className="inspect-cursor" />
+      <div ref={reveal} aria-hidden="true" style={{ maskImage: "radial-gradient(circle 150px at 0 0, black 0%, black 58%, transparent 100%)", WebkitMaskImage: "radial-gradient(circle 150px at 0 0, black 0%, black 58%, transparent 100%)" }} className="pointer-events-none fixed inset-0 z-[88] overflow-hidden bg-[#080908]/95 text-[#b7f34a] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat]">
+        {hovered ? (
+          <div className="absolute left-1/2 top-1/2 w-[min(92vw,34rem)] -translate-x-1/2 -translate-y-1/2 font-mono text-xs leading-relaxed opacity-90">
+            <p className="mb-3 text-[10px] uppercase tracking-[0.18em] text-[#b7f34a]/70">{hovered.name} · {hovered.file}</p>
+            <pre className="whitespace-pre-wrap">{hovered.source}</pre>
           </div>
-        </>
-      ) : null}
-      {bounds && selected ? (
-        <div aria-hidden="true" className="pointer-events-none fixed z-[89] border border-accent shadow-[0_0_0_9999px_rgba(0,0,0,0.12)]"
-          style={{ left: bounds.left, top: bounds.top, width: bounds.width, height: bounds.height }} />
-      ) : null}
-      <AnimatePresence>
-        {selected ? (
-          <motion.aside role="dialog" aria-label={`Source for ${selected.name}`}
-            className="fixed bottom-5 right-5 z-[91] w-[min(92vw,34rem)] max-w-full overflow-hidden border border-line bg-surface-raised shadow-2xl"
-            initial={{ opacity: 0, y: reduced ? 0 : 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduced ? 0 : 12 }}>
-            <div className="flex items-center justify-between border-b border-line px-4 py-3">
-              <div><p className="font-display text-sm font-semibold text-heading">{selected.name}</p><p className="mt-0.5 font-mono text-[10px] text-accent">{selected.file}</p></div>
-              <button type="button" onClick={() => setSelected(null)} aria-label="Close source preview" className="text-muted hover:text-heading"><CloseIcon width={18} height={18} /></button>
-            </div>
-            <pre className="max-h-64 overflow-auto p-4 text-xs leading-relaxed text-body"><code>{selected.source}</code></pre>
-            <div className="border-t border-line px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-muted">Actual source excerpt</div>
-          </motion.aside>
         ) : null}
-      </AnimatePresence>
+      </div>
+      <div className="fixed left-1/2 top-5 z-[90] -translate-x-1/2 border border-accent/40 bg-surface-raised/90 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent backdrop-blur-sm">
+        Inspect mode · move over a surface · Esc to exit
+      </div>
     </>
-  );
+  ) : null;
 }
