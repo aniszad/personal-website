@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { PAGES, SITE, type PageMeta } from "@/lib/constants";
@@ -20,6 +21,7 @@ import { PaletteTrigger, PaletteTriggerIcon } from "@/components/ui/PaletteTrigg
  * happens to run.
  */
 export function HomeSideNav() {
+  const pathname = usePathname();
   const { language } = useLanguage();
   const copy = t(language);
   const pages = getLocalizedPages(language, PAGES);
@@ -67,6 +69,7 @@ export function HomeSideNav() {
         <div>
           <Link
             href="/"
+            aria-current={pathname === "/" ? "page" : undefined}
             className="font-display text-xl font-semibold text-heading transition-colors duration-200 hover:text-accent"
           >
             {SITE.name}
@@ -75,7 +78,7 @@ export function HomeSideNav() {
 
           <PaletteTrigger className="mt-8 w-full" />
 
-          <NavList pages={pages} label={copy.home.indexLabel} />
+          <NavList pages={pages} label={copy.home.indexLabel} pathname={pathname} />
         </div>
 
         <div className="flex items-center justify-between">
@@ -102,6 +105,7 @@ function MobileDrawer({
 }) {
   const reduced = useReducedMotion() ?? false;
   const { language } = useLanguage();
+  const pathname = usePathname();
 
   return (
     <AnimatePresence>
@@ -144,7 +148,7 @@ function MobileDrawer({
 
               <PaletteTrigger className="mt-6 w-full" onClick={onClose} />
 
-              <NavList pages={pages} label={label} onNavigate={onClose} />
+              <NavList pages={pages} label={label} pathname={pathname} onNavigate={onClose} />
             </div>
 
             <div className="flex items-center justify-between">
@@ -161,10 +165,12 @@ function MobileDrawer({
 function NavList({
   pages,
   label,
+  pathname,
   onNavigate,
 }: {
   pages: PageMeta[];
   label: string;
+  pathname: string;
   onNavigate?: () => void;
 }): ReactNode {
   const reduced = useReducedMotion() ?? false;
@@ -190,12 +196,13 @@ function NavList({
           >
             <Link
               href={page.href}
+              aria-current={pathname === page.href || pathname === `${page.href}/` ? "page" : undefined}
               onClick={onNavigate}
-              className="group relative flex items-baseline gap-3 py-3 pl-4"
+              className={`group relative flex items-baseline gap-3 py-3 pl-4 ${pathname === page.href || pathname === `${page.href}/` ? "text-accent" : ""}`}
             >
               <span
                 aria-hidden="true"
-                className="absolute inset-y-1.5 left-0 w-px scale-y-0 bg-[var(--row)] transition-transform duration-300 ease-out group-hover:scale-y-100 group-focus-visible:scale-y-100 motion-reduce:transition-none"
+                className={`absolute inset-y-1.5 left-0 w-px bg-[var(--row)] transition-transform duration-300 ease-out group-hover:scale-y-100 group-focus-visible:scale-y-100 motion-reduce:transition-none ${pathname === page.href || pathname === `${page.href}/` ? "scale-y-100" : "scale-y-0"}`}
               />
 
               <span className="font-display text-xs text-muted transition-colors duration-200 group-hover:text-[var(--row)]">

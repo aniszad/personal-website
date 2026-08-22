@@ -6,7 +6,7 @@ import { getNeighbours, type PageMeta } from "@/lib/constants";
 import { getPageCopy, t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 import { PageHeading } from "@/components/layout/PageHeading";
-import { SiteNav } from "@/components/layout/SiteNav";
+import { HomeSideNav } from "@/components/layout/HomeSideNav";
 import { ThemeStyle } from "@/components/layout/ThemeStyle";
 
 /**
@@ -37,9 +37,10 @@ export function PageShell({
         accent up lives in the root layout, outside the route template.
       */}
       <ThemeStyle theme={page.theme} />
+      <HomeSideNav />
 
-      <div className="mx-auto max-w-5xl px-6 pb-24 md:px-10">
-        <SiteNav />
+      <div className="md:pl-72 lg:pl-80">
+        <div className="mx-auto max-w-5xl px-6 pb-24 pt-8 md:px-10 md:pt-10">
 
         <PageHeading title={localizedPage.title} blurb={localizedPage.blurb} />
 
@@ -75,6 +76,7 @@ export function PageShell({
             />
           )}
         </nav>
+        </div>
       </div>
     </>
   );
