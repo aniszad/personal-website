@@ -51,7 +51,6 @@ export function InspectMode() {
   const [hovered, setHovered] = useState<Inspectable | null>(null);
   const cursor = useRef<HTMLDivElement>(null);
   const reveal = useRef<HTMLDivElement>(null);
-  const code = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
   const point = useRef({ x: 0, y: 0 });
 
@@ -74,7 +73,6 @@ export function InspectMode() {
       frame.current = requestAnimationFrame(() => {
         const { x, y } = point.current;
         cursor.current?.style.setProperty("transform", `translate3d(${x}px, ${y}px, 0)`);
-        code.current?.style.setProperty("transform", `translate3d(${x - 150}px, ${y - 82}px, 0)`);
         const mask = `radial-gradient(circle 150px at ${x}px ${y}px, black 0%, black 58%, transparent 100%)`;
         reveal.current?.style.setProperty("mask-image", mask);
         reveal.current?.style.setProperty("-webkit-mask-image", mask);
@@ -111,11 +109,11 @@ export function InspectMode() {
       <div ref={cursor} aria-hidden="true" className="inspect-cursor" />
           <div ref={reveal} aria-hidden="true" style={{ maskImage: "radial-gradient(circle 150px at 0 0, black 0%, black 58%, transparent 100%)", WebkitMaskImage: "radial-gradient(circle 150px at 0 0, black 0%, black 58%, transparent 100%)" }} className="pointer-events-none fixed inset-0 z-[88] overflow-hidden bg-[#080908]/95 text-[#b7f34a] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat]">
             {hovered ? (
-          <div ref={code} className="absolute left-0 top-0 w-[min(92vw,34rem)] font-mono text-xs leading-relaxed opacity-90">
-            <p className="mb-3 text-[10px] uppercase tracking-[0.18em] text-[#b7f34a]/70">{hovered.name} · {hovered.file}</p>
-            <pre className="whitespace-pre-wrap">{hovered.source}</pre>
-          </div>
-        ) : null}
+              <div className="absolute inset-0 overflow-hidden p-8 font-mono text-xs leading-relaxed opacity-90">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.18em] text-[#b7f34a]/70">{hovered.name} · {hovered.file}</p>
+                <pre className="whitespace-pre-wrap">{hovered.source}</pre>
+              </div>
+            ) : null}
       </div>
       <div className="fixed left-1/2 top-5 z-[90] -translate-x-1/2 border border-accent/40 bg-surface-raised/90 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent backdrop-blur-sm">
         Inspect mode · move over a surface · Esc to exit
