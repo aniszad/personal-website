@@ -14,7 +14,7 @@ function isValidEmail(email: string): boolean {
 }
 
 export async function POST(request: Request) {
-  if (!process.env.RESEND_API_KEY) {
+  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
     return NextResponse.json(
       { error: "Contact form is not configured yet." },
       { status: 503 },
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
   try {
     await resend.emails.send({
-      from: `Portfolio Contact <onboarding@resend.dev>`,
+      from: `Portfolio Contact <${process.env.RESEND_FROM_EMAIL}>`,
       to: SOCIALS.email,
       replyTo: email,
       subject: `Portfolio message from ${name}`,
