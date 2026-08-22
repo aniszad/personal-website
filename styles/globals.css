@@ -97,3 +97,24 @@
     scroll-behavior: auto !important;
   }
 }
+
+.inspect-mode-active,
+.inspect-mode-active * {
+  cursor: none !important;
+}
+
+.inspect-cursor {
+  position: fixed;
+  left: -52px;
+  top: -52px;
+  z-index: 92;
+  width: 104px;
+  height: 104px;
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 70%, transparent);
+  border-radius: 9999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 62%);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--color-accent) 14%, transparent);
+  opacity: 0.9;
+  will-change: transform;
+}
