@@ -17,7 +17,7 @@ export default function OgImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px 100px",
-          background: "#0a192f",
+            background: "#0b0b0a",
           fontFamily: "sans-serif",
           position: "relative",
         }}
@@ -48,11 +48,11 @@ export default function OgImage() {
               width: 10,
               height: 10,
               borderRadius: "50%",
-              background: "#64ffda",
+              background: "#d6b27c",
               marginRight: 12,
             }}
           />
-          <span style={{ color: "#64ffda", fontSize: 18, letterSpacing: 2 }}>
+          <span style={{ color: "#d6b27c", fontSize: 18, letterSpacing: 2 }}>
             {SITE.url.replace("https://", "")}
           </span>
         </div>
@@ -62,7 +62,7 @@ export default function OgImage() {
           style={{
             fontSize: 80,
             fontWeight: 700,
-            color: "#e6f1ff",
+            color: "#f0ede5",
             lineHeight: 1.1,
             marginBottom: 24,
             letterSpacing: "-1px",
@@ -75,7 +75,7 @@ export default function OgImage() {
         <div
           style={{
             fontSize: 32,
-            color: "#8892b0",
+            color: "#8f8b82",
             fontWeight: 400,
             marginBottom: 48,
             lineHeight: 1.4,
@@ -89,7 +89,7 @@ export default function OgImage() {
           style={{
             width: 80,
             height: 3,
-            background: "#64ffda",
+            background: "#d6b27c",
             marginBottom: 40,
             borderRadius: 2,
           }}
@@ -99,7 +99,7 @@ export default function OgImage() {
         <div
           style={{
             fontSize: 22,
-            color: "#a8b2d8",
+            color: "#c9c5bb",
             maxWidth: 700,
             lineHeight: 1.5,
           }}

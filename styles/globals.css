@@ -6,17 +6,17 @@
  */
 @theme {
   /* Surfaces, darkest to lightest */
-  --color-surface: #0a192f;
-  --color-surface-raised: #112240;
-  --color-line: #233554;
+  --color-surface: #0b0b0a;
+  --color-surface-raised: #141412;
+  --color-line: #2b2a26;
 
   /* Text, muted to strongest. All clear 7:1 against the surface. */
-  --color-muted: #8892b0;
-  --color-body: #ccd6f6;
-  --color-heading: #e6f1ff;
+  --color-muted: #8f8b82;
+  --color-body: #c9c5bb;
+  --color-heading: #f0ede5;
 
   /* The single accent. Links, rules under active items, timeline fill. */
-  --color-accent: #64ffda;
+  --color-accent: #d6b27c;
 
   /*
    * Paper. Backs artwork that was drawn on white, so the illustration reads as

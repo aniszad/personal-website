@@ -29,11 +29,10 @@ export const CV_PATH = "/cv_ia_Anis_ZADRI.pdf";
 /**
  * A page's colour identity.
  *
- * The navy is the site, so it never leaves: every surface here sits between 10
- * and 13 percent lightness in the 200 to 240 degree range, and the shift
- * between them is small enough that no page looks like a different website.
- * What actually carries the section is the accent, which the ambient wash then
- * spreads across the whole background.
+ * The site uses a near-black editorial palette. Pages vary only slightly in
+ * surface tone, while one warm brass accent carries links, rules, and markers
+ * throughout the system. Keeping the palette restrained makes typography,
+ * spacing, and project evidence do the visual work.
  *
  * Text tokens are deliberately absent. Muted, body, and heading hold still on
  * every page, which is what keeps the contrast ratios fixed and means a theme
@@ -64,15 +63,15 @@ export type PageMeta = {
 };
 
 /**
- * The index keeps the canonical palette, so the accent a visitor meets first is
- * the one the site is built on. Every section then departs from it and Contact
- * returns, which closes the sequence where it opened.
+ * The index establishes the canonical palette. Other pages keep the same
+ * accent and introduce only near-black surface variations, so navigation feels
+ * like one considered publication rather than a set of themed screens.
  */
 export const HOME_THEME: Theme = {
-  accent: "#64ffda",
-  surface: "#0a192f",
-  raised: "#112240",
-  line: "#233554",
+  accent: "#d6b27c",
+  surface: "#0b0b0a",
+  raised: "#141412",
+  line: "#2b2a26",
 };
 
 /**
@@ -80,10 +79,8 @@ export const HOME_THEME: Theme = {
  * order: the index listing, the top bar, the previous and next links at the
  * foot of each page, and each page's metadata all read from it.
  *
- * The accents walk once around the wheel in reading order, teal to cyan to
- * periwinkle to amber to violet to green and back to teal. Moving in one
- * direction is what makes the colour read as a journey rather than as six
- * unrelated decisions.
+ * The surfaces shift by only a few values of lightness. The accent does not
+ * change between routes: restraint is part of the visual identity.
  */
 export const PAGES: readonly PageMeta[] = [
   {
@@ -93,10 +90,10 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "Engineering student, production developer, and the path between the two.",
     theme: {
-      accent: "#7fe9ff",
-      surface: "#07182a",
-      raised: "#0f2138",
-      line: "#1f3b56",
+      accent: "#d6b27c",
+      surface: "#0d0d0c",
+      raised: "#161614",
+      line: "#2e2d28",
     },
   },
   {
@@ -106,10 +103,10 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "Three roles, from a bus fleet system in Béjaïa to a scanner running in French retail.",
     theme: {
-      accent: "#8fb4ff",
-      surface: "#0a1730",
-      raised: "#131f3f",
-      line: "#25365c",
+      accent: "#d6b27c",
+      surface: "#0a0a09",
+      raised: "#131311",
+      line: "#292824",
     },
   },
   {
@@ -119,10 +116,10 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "From a scanner running in French retail to a deep learning timetable planner.",
     theme: {
-      accent: "#ffb877",
-      surface: "#0c1526",
-      raised: "#151e34",
-      line: "#2c3450",
+      accent: "#d6b27c",
+      surface: "#0c0c0b",
+      raised: "#151513",
+      line: "#2c2b27",
     },
   },
   {
@@ -132,10 +129,10 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "From ESTIN in Algeria to a Master's in Artificial Intelligence at Université de Lille.",
     theme: {
-      accent: "#c0a4ff",
-      surface: "#0b1533",
-      raised: "#141e42",
-      line: "#293361",
+      accent: "#d6b27c",
+      surface: "#0e0e0c",
+      raised: "#171714",
+      line: "#302f29",
     },
   },
   {
@@ -145,10 +142,10 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "The languages, frameworks, and infrastructure I actually reach for.",
     theme: {
-      accent: "#78ecb4",
-      surface: "#08192b",
-      raised: "#10233a",
-      line: "#1e3b52",
+      accent: "#d6b27c",
+      surface: "#0b0b0a",
+      raised: "#141412",
+      line: "#2b2a26",
     },
   },
   {

@@ -38,7 +38,7 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
   const spotlightBackground = useMotionTemplate`
     radial-gradient(
       600px circle at ${mouseX}px ${mouseY}px,
-      rgba(45, 212, 191, 0.04),
+      rgba(214, 178, 124, 0.04),
       transparent 80%
     )
   `;
