@@ -51,6 +51,7 @@ export function InspectMode() {
   const [hovered, setHovered] = useState<Inspectable | null>(null);
   const cursor = useRef<HTMLDivElement>(null);
   const reveal = useRef<HTMLDivElement>(null);
+  const code = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
   const point = useRef({ x: 0, y: 0 });
 
@@ -73,13 +74,17 @@ export function InspectMode() {
       frame.current = requestAnimationFrame(() => {
         const { x, y } = point.current;
         cursor.current?.style.setProperty("transform", `translate3d(${x}px, ${y}px, 0)`);
+        code.current?.style.setProperty("transform", `translate3d(${x - 150}px, ${y - 82}px, 0)`);
         const mask = `radial-gradient(circle 150px at ${x}px ${y}px, black 0%, black 58%, transparent 100%)`;
         reveal.current?.style.setProperty("mask-image", mask);
         reveal.current?.style.setProperty("-webkit-mask-image", mask);
 
         const element = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-inspect]");
         const source = element ? SOURCES[element.dataset.inspect ?? ""] : undefined;
-        setHovered(source ?? null);
+        // The entire page remains inspectable. Untagged whitespace and
+        // structural areas fall back to the page composition source instead
+        // of leaving an empty reveal circle.
+        setHovered(source ?? SOURCES.pageContent);
         frame.current = 0;
       });
     };
@@ -104,9 +109,9 @@ export function InspectMode() {
   return active ? (
     <>
       <div ref={cursor} aria-hidden="true" className="inspect-cursor" />
-      <div ref={reveal} aria-hidden="true" style={{ maskImage: "radial-gradient(circle 150px at 0 0, black 0%, black 58%, transparent 100%)", WebkitMaskImage: "radial-gradient(circle 150px at 0 0, black 0%, black 58%, transparent 100%)" }} className="pointer-events-none fixed inset-0 z-[88] overflow-hidden bg-[#080908]/95 text-[#b7f34a] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat]">
-        {hovered ? (
-          <div className="absolute left-1/2 top-1/2 w-[min(92vw,34rem)] -translate-x-1/2 -translate-y-1/2 font-mono text-xs leading-relaxed opacity-90">
+          <div ref={reveal} aria-hidden="true" style={{ maskImage: "radial-gradient(circle 150px at 0 0, black 0%, black 58%, transparent 100%)", WebkitMaskImage: "radial-gradient(circle 150px at 0 0, black 0%, black 58%, transparent 100%)" }} className="pointer-events-none fixed inset-0 z-[88] overflow-hidden bg-[#080908]/95 text-[#b7f34a] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat]">
+            {hovered ? (
+          <div ref={code} className="absolute left-0 top-0 w-[min(92vw,34rem)] font-mono text-xs leading-relaxed opacity-90">
             <p className="mb-3 text-[10px] uppercase tracking-[0.18em] text-[#b7f34a]/70">{hovered.name} · {hovered.file}</p>
             <pre className="whitespace-pre-wrap">{hovered.source}</pre>
           </div>
