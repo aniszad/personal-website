@@ -53,13 +53,30 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
   useEffect(() => {
     if (reduced) return;
 
+    let frame = 0;
+    let nextX = 0;
+    let nextY = 0;
+
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+      nextX = e.clientX;
+      nextY = e.clientY;
+
+      // Pointer events can arrive much faster than the screen can paint.
+      // Coalescing them keeps the spotlight visually identical while avoiding
+      // needless gradient updates between animation frames.
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        mouseX.set(nextX);
+        mouseY.set(nextY);
+        frame = 0;
+      });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, [mouseX, mouseY, reduced]);
 
   const container: Variants = {

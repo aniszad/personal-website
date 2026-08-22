@@ -137,7 +137,9 @@ export function PortraitMotion({
           autoPlay={shouldAutoplay}
           muted
           playsInline
-          preload="auto"
+          // Metadata lets the browser size the video without downloading the
+          // whole 2.4 MB clip before the rest of the page is usable.
+          preload="metadata"
           poster={poster ?? undefined}
           aria-hidden="true"
           onEnded={() => setPlaying(false)}

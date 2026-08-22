@@ -34,7 +34,7 @@ export function Ambient() {
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
     >
       <motion.div
-        className="absolute -right-[15%] -top-[25%] size-[65vmax] rounded-full bg-accent opacity-[0.13] blur-[110px] transition-colors duration-700 ease-out"
+        className="absolute -right-[15%] -top-[25%] size-[65vmax] rounded-full bg-accent opacity-[0.13] blur-[90px] will-change-transform transition-colors duration-700 ease-out"
         animate={
           reduced ? undefined : { x: [0, -60, 20, 0], y: [0, 40, -30, 0] }
         }
@@ -42,7 +42,7 @@ export function Ambient() {
       />
 
       <motion.div
-        className="absolute -bottom-[30%] -left-[20%] size-[55vmax] rounded-full bg-accent opacity-[0.1] blur-[120px] transition-colors duration-700 ease-out"
+        className="absolute -bottom-[30%] -left-[20%] size-[55vmax] rounded-full bg-accent opacity-[0.1] blur-[95px] will-change-transform transition-colors duration-700 ease-out"
         animate={
           reduced ? undefined : { x: [0, 70, -20, 0], y: [0, -50, 25, 0] }
         }
