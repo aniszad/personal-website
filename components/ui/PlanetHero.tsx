@@ -43,12 +43,12 @@ type Section = {
 
 // Front hemisphere (z > 0) = visible at start; back (z < 0) = found by rotating.
 const SECTIONS: Section[] = [
-  { href: "/about",      label: "About",      color: "#d6b27c", pos: new THREE.Vector3(-0.58,  0.46,  0.67), phase: 0 },
-  { href: "/experience", label: "Experience", color: "#d6b27c", pos: new THREE.Vector3( 0.65,  0.37,  0.66), phase: 1 },
-  { href: "/contact",    label: "Contact",    color: "#d6b27c", pos: new THREE.Vector3( 0.18, -0.64,  0.75), phase: 2 },
-  { href: "/projects",   label: "Projects",   color: "#d6b27c", pos: new THREE.Vector3( 0.72,  0.38, -0.58), phase: 3 },
-  { href: "/education",  label: "Education",  color: "#d6b27c", pos: new THREE.Vector3(-0.54, -0.52, -0.66), phase: 4 },
-  { href: "/skills",     label: "Skills",     color: "#d6b27c", pos: new THREE.Vector3(-0.12,  0.79, -0.60), phase: 5 },
+  { href: "/about",      label: "About",      color: "#b7f34a", pos: new THREE.Vector3(-0.58,  0.46,  0.67), phase: 0 },
+  { href: "/experience", label: "Experience", color: "#b7f34a", pos: new THREE.Vector3( 0.65,  0.37,  0.66), phase: 1 },
+  { href: "/contact",    label: "Contact",    color: "#b7f34a", pos: new THREE.Vector3( 0.18, -0.64,  0.75), phase: 2 },
+  { href: "/projects",   label: "Projects",   color: "#b7f34a", pos: new THREE.Vector3( 0.72,  0.38, -0.58), phase: 3 },
+  { href: "/education",  label: "Education",  color: "#b7f34a", pos: new THREE.Vector3(-0.54, -0.52, -0.66), phase: 4 },
+  { href: "/skills",     label: "Skills",     color: "#b7f34a", pos: new THREE.Vector3(-0.12,  0.79, -0.60), phase: 5 },
 ].map((s) => ({ ...s, pos: s.pos.clone().normalize() }));
 
 /* ─────────────────────────────── sub-components ─────────────────────────── */

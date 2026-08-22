@@ -48,11 +48,11 @@ export default function OgImage() {
               width: 10,
               height: 10,
               borderRadius: "50%",
-              background: "#d6b27c",
+              background: "#b7f34a",
               marginRight: 12,
             }}
           />
-          <span style={{ color: "#d6b27c", fontSize: 18, letterSpacing: 2 }}>
+          <span style={{ color: "#b7f34a", fontSize: 18, letterSpacing: 2 }}>
             {SITE.url.replace("https://", "")}
           </span>
         </div>

@@ -30,7 +30,7 @@ export const CV_PATH = "/cv_ia_Anis_ZADRI.pdf";
  * A page's colour identity.
  *
  * The site uses a near-black editorial palette. Pages vary only slightly in
- * surface tone, while one warm brass accent carries links, rules, and markers
+ * surface tone, while one signal-green accent carries links, rules, and markers
  * throughout the system. Keeping the palette restrained makes typography,
  * spacing, and project evidence do the visual work.
  *
@@ -68,7 +68,7 @@ export type PageMeta = {
  * like one considered publication rather than a set of themed screens.
  */
 export const HOME_THEME: Theme = {
-  accent: "#d6b27c",
+  accent: "#b7f34a",
   surface: "#0b0b0a",
   raised: "#141412",
   line: "#2b2a26",
@@ -90,7 +90,7 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "Engineering student, production developer, and the path between the two.",
     theme: {
-      accent: "#d6b27c",
+      accent: "#b7f34a",
       surface: "#0d0d0c",
       raised: "#161614",
       line: "#2e2d28",
@@ -103,7 +103,7 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "Three roles, from a bus fleet system in Béjaïa to a scanner running in French retail.",
     theme: {
-      accent: "#d6b27c",
+      accent: "#b7f34a",
       surface: "#0a0a09",
       raised: "#131311",
       line: "#292824",
@@ -116,7 +116,7 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "From a scanner running in French retail to a deep learning timetable planner.",
     theme: {
-      accent: "#d6b27c",
+      accent: "#b7f34a",
       surface: "#0c0c0b",
       raised: "#151513",
       line: "#2c2b27",
@@ -129,7 +129,7 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "From ESTIN in Algeria to a Master's in Artificial Intelligence at Université de Lille.",
     theme: {
-      accent: "#d6b27c",
+      accent: "#b7f34a",
       surface: "#0e0e0c",
       raised: "#171714",
       line: "#302f29",
@@ -142,7 +142,7 @@ export const PAGES: readonly PageMeta[] = [
     blurb:
       "The languages, frameworks, and infrastructure I actually reach for.",
     theme: {
-      accent: "#d6b27c",
+      accent: "#b7f34a",
       surface: "#0b0b0a",
       raised: "#141412",
       line: "#2b2a26",
