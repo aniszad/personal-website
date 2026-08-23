@@ -66,7 +66,7 @@ export function Education({
   });
 
   return (
-    <div ref={trackRef} className="relative">
+    <div ref={trackRef} className="retro-record-list relative">
       {/* Wavy track that threads through the milestone dots. */}
       <WavyRail
         containerRef={trackRef}

@@ -52,9 +52,7 @@ export function Contact() {
   }
 
   return (
-    <div
-      className="relative isolate py-20 md:py-28"
-    >
+    <div className="retro-terminal relative isolate py-20 md:py-28">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -inset-x-12 -inset-y-16 -z-10 opacity-70"
@@ -68,6 +66,8 @@ export function Contact() {
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-line" />
 
       <div className="relative max-w-3xl">
+        <p className="retro-terminal-prompt mb-4">INPUT // CONNECTION REQUEST</p>
+
         <p className="font-display text-2xl font-semibold leading-snug tracking-tight text-heading md:text-4xl">
           {copy.contactLead}
         </p>
@@ -120,7 +120,8 @@ export function Contact() {
         </div>
 
         {/* Contact form */}
-        <div className="mt-20 max-w-xl">
+        <div className="retro-terminal-form mt-20 max-w-xl">
+          <p className="retro-terminal-prompt mb-5">MESSAGE BUFFER // READY</p>
           {formStatus === "success" ? (
             <div
               role="status"

@@ -35,7 +35,7 @@ export function Experience({
   });
 
   return (
-    <div ref={railRef} className="relative pl-8 md:pl-12">
+    <div ref={railRef} className="retro-record-list relative pl-8 md:pl-12">
       {/* Same wavy rail as the education timeline, threaded through the role
           markers. */}
       <WavyRail

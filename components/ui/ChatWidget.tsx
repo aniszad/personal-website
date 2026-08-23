@@ -136,7 +136,7 @@ export function ChatWidget() {
                   animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
                   exit={reduced ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.98 }}
                   transition={{ duration: reduced ? 0.2 : 0.28, ease: "easeOut" }}
-                  className="mb-3 flex h-[min(75svh,38rem)] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-2xl border border-line bg-surface-raised/95 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] backdrop-blur-xl"
+                  className="retro-chat-panel mb-3 flex h-[min(75svh,38rem)] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-2xl border border-line bg-surface-raised/95 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] backdrop-blur-xl"
                   aria-label="Portfolio chatbot"
               >
                 {/* Header with animated gradient text hint */}
@@ -294,7 +294,7 @@ export function ChatWidget() {
         <button
             type="button"
             onClick={() => setOpen((current) => !current)}
-            className="group flex items-center gap-2.5 rounded-full border border-line bg-surface-raised/95 px-5 py-3 text-sm font-medium text-heading shadow-[0_8px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 hover:border-accent/60 hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.8)] hover:-translate-y-0.5 active:translate-y-0"
+            className="retro-chat-trigger group flex items-center gap-2.5 rounded-full border border-line bg-surface-raised/95 px-5 py-3 text-sm font-medium text-heading shadow-[0_8px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 hover:border-accent/60 hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.8)] hover:-translate-y-0.5 active:translate-y-0"
             aria-label={open ? chatCopy.close : chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
         >
         <span className="relative flex size-2.5">

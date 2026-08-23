@@ -242,7 +242,7 @@ export function CommandPalette() {
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="fixed inset-x-0 top-[12vh] z-[71] mx-auto flex w-[min(92vw,34rem)] flex-col overflow-hidden rounded-xl border border-line bg-surface-raised shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
+            className="retro-command-panel fixed inset-x-0 top-[12vh] z-[71] mx-auto flex w-[min(92vw,34rem)] flex-col overflow-hidden rounded-xl border border-line bg-surface-raised shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
             initial={{ opacity: 0, y: reduced ? 0 : -12, scale: reduced ? 1 : 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: reduced ? 0 : -12, scale: reduced ? 1 : 0.98 }}
