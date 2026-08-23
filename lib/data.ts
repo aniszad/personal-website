@@ -148,9 +148,7 @@ export const PROJECTS: readonly Project[] = [
     tags: ["Angular", "TypeScript", "WebGL", "WASM", "Emscripten", "Web Workers"],
     featured: true,
     proprietary: true,
-    // Flip to true once /projects/limpscanner exists, which turns the card
-    // title into a link to the writeup.
-    writeup: false,
+    writeup: true,
   },
   {
     slug: "timetable-scheduler",
