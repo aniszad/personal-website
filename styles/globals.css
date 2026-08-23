@@ -117,3 +117,9 @@ html.timeline-snap-page .snap-item {
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
+
+/* Give the page-sequence controls a final landing point after the last item. */
+html.timeline-snap-page .timeline-sequence-nav {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}

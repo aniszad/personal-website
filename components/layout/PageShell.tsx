@@ -48,7 +48,7 @@ export function PageShell({
 
         <nav
           aria-label={copy.generic.pageSequence}
-          className="mt-32 grid gap-px border-t border-line sm:grid-cols-2"
+          className="timeline-sequence-nav mt-32 grid gap-px border-t border-line sm:grid-cols-2"
         >
           {previous ? (
             <SequenceLink
