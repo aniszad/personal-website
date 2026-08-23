@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { HOME_THEME, SITE, SOCIALS } from "@/lib/constants";
 import { Ambient } from "@/components/layout/Ambient";
@@ -25,18 +25,18 @@ const jsonLd = {
   sameAs: [SOCIALS.github, SOCIALS.linkedin],
 };
 
-/** Body and interface text. Variable weight, so no weight list is needed. */
-const inter = Inter({
+/** Primary interface and display face. */
+const geist = Geist({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-geist",
 });
 
-/** Display face, used for headings and anything set large. */
-const spaceGrotesk = Space_Grotesk({
+/** Technical metadata, tags, and command-line details. */
+const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-space-grotesk",
+  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
@@ -94,7 +94,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable}`}
+      className={`${geist.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
       <body className="bg-surface text-body antialiased">

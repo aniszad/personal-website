@@ -43,7 +43,7 @@ export function ProjectEntry({ project }: { project: ResolvedProject }) {
       <div className="flex items-start justify-between gap-6">
         <div className="min-w-0">
           {project.featured ? (
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+            <p className="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
               {copy.featured}
             </p>
           ) : null}

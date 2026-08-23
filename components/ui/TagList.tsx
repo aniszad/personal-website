@@ -23,7 +23,7 @@ export function TagList({
       aria-label={ariaLabel}
     >
       {labels.map((label, position) => (
-        <li key={label} className="flex items-center gap-3 text-sm text-muted">
+        <li key={label} className="flex items-center gap-3 font-mono text-xs text-muted">
           {label}
           {position < labels.length - 1 ? (
             <span aria-hidden="true" className="text-line">

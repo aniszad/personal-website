@@ -25,15 +25,13 @@
   --color-paper: #f7f4ee;
 
   /*
-   * Two families doing two jobs. Space Grotesk carries the headings, where its
-   * geometric forms and cut terminals give the page personality. Inter carries
-   * body copy, where it is simply the most readable option at small sizes.
-   *
-   * The contrast between them is the point. One family doing both jobs is what
-   * makes a page look defaulted.
+   * Geist keeps the interface and display hierarchy in one precise system.
+   * Geist Mono is reserved for technical metadata so the code-oriented detail
+   * feels intentional without turning the whole site into a terminal.
    */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
@@ -63,7 +61,7 @@
     color: var(--color-heading);
     font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     line-height: 1.1;
   }
 

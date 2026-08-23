@@ -16,7 +16,7 @@ export function ExperienceEntry({ entry }: { entry: ResolvedExperience }) {
   const translate = (value: string) => localizeContent(language, value);
   return (
     <article>
-      <p className="text-sm text-muted">{translate(entry.dates)}</p>
+      <p className="font-mono text-xs tracking-[0.02em] text-muted">{translate(entry.dates)}</p>
 
       <h3 className="mt-2 text-3xl text-heading md:text-4xl">
         {translate(entry.role)}

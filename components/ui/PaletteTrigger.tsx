@@ -34,7 +34,7 @@ export function PaletteTrigger({
     >
       <SearchIcon width={15} height={15} />
       <span className="flex-1 text-left">{label}</span>
-      <kbd className="rounded border border-line px-1.5 py-0.5 font-sans text-[10px] text-muted transition-colors duration-200 group-hover:text-heading">
+      <kbd className="rounded border border-line px-1.5 py-0.5 font-mono text-[10px] text-muted transition-colors duration-200 group-hover:text-heading">
         ⌘K
       </kbd>
     </button>

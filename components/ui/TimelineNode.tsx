@@ -80,7 +80,7 @@ export function TimelineNode({
         animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: offscreenX }}
         transition={{ duration: reduced ? 0.2 : 0.5, ease: "easeOut" }}
       >
-        <p className="text-sm text-muted">{localizeContent(language, entry.dates)}</p>
+        <p className="font-mono text-xs tracking-[0.02em] text-muted">{localizeContent(language, entry.dates)}</p>
 
         <div
           className={cn(
