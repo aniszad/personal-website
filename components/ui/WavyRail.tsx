@@ -29,7 +29,9 @@ type Metrics = { width: number; height: number; centerX: number; ys: number[] };
  *
  * The line runs from the first dot to the last, not from the top of the
  * container, so there is no bulge above the first dot: that stray bulge was the
- * little hook at the start.
+ * little hook at the start. A restrained tail continues below the last dot so
+ * the rail remains present through the final full-height milestone instead of
+ * disappearing at its top edge.
  *
  * Each gap between dots is a half sine, and the direction always alternates.
  * Alternating is what makes the line pass THROUGH each dot: a half sine has its
@@ -66,6 +68,10 @@ function buildPath(metrics: Metrics, amplitude: number): string {
       path += `L${x.toFixed(2)} ${y.toFixed(2)} `;
     }
   }
+
+  // Keep the rail visible beside the final entry and let its draw progress
+  // finish at the end of the actual timeline, not at the last marker.
+  path += `L${centerX.toFixed(2)} ${metrics.height.toFixed(2)}`;
   return path.trim();
 }
 
@@ -130,7 +136,7 @@ export function WavyRail({
   return (
     <svg
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+      className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
       viewBox={`0 0 ${metrics.width} ${metrics.height}`}
       fill="none"
     >

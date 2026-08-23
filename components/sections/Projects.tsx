@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import type { ResolvedProject } from "@/lib/data";
 import { ProjectEntry } from "@/components/ui/ProjectEntry";
@@ -19,6 +20,13 @@ export function Projects({
 }) {
   const reduced = useReducedMotion() ?? false;
 
+  useEffect(() => {
+    if (reduced) return;
+
+    document.documentElement.classList.add("timeline-snap-page");
+    return () => document.documentElement.classList.remove("timeline-snap-page");
+  }, [reduced]);
+
   const ordered = [
     ...projects.filter((project) => project.featured),
     ...projects.filter((project) => !project.featured),
@@ -29,7 +37,7 @@ export function Projects({
       {ordered.map((project, position) => (
         <motion.div
           key={project.slug}
-          className="border-t border-line"
+          className="snap-item flex min-h-[calc(100svh-2rem)] items-center border-t border-line py-12 md:min-h-svh md:py-16"
           initial={{ opacity: 0, y: reduced ? 0 : 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}

@@ -31,7 +31,7 @@ export function Experience({
 
   const { scrollYProgress } = useScroll({
     target: railRef,
-    offset: ["start 0.8", "end 0.7"],
+    offset: ["start start", "end end"],
   });
 
   return (

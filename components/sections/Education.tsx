@@ -49,7 +49,7 @@ export function Education({
 
   const { scrollYProgress } = useScroll({
     target: trackRef,
-    offset: ["start 0.85", "end 0.55"],
+    offset: ["start start", "end end"],
   });
 
   // Number of milestones passed so far. Nodes below this index are dormant.

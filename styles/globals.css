@@ -112,7 +112,8 @@ html.timeline-snap-page {
 }
 
 html.timeline-snap-page main > div > ol > li,
-html.timeline-snap-page main > div > ol > div {
+html.timeline-snap-page main > div > ol > div,
+html.timeline-snap-page .snap-item {
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
