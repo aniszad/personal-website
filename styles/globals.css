@@ -97,3 +97,11 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Replace the native pointer only where a custom pointer can be used well. */
+@media (hover: hover) and (pointer: fine) {
+  body.has-precision-cursor,
+  body.has-precision-cursor * {
+    cursor: none !important;
+  }
+}

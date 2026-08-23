@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { HOME_THEME, SITE, SOCIALS } from "@/lib/constants";
 import { Ambient } from "@/components/layout/Ambient";
 import { CursorGlow } from "@/components/layout/CursorGlow";
+import { PrecisionCursor } from "@/components/ui/PrecisionCursor";
 import { LanguageProvider } from "@/components/layout/LanguageProvider";
 import { ChatWidget } from "@/components/ui/ChatWidget";
 import { CommandPalette } from "@/components/ui/CommandPalette";
@@ -123,6 +124,7 @@ export default function RootLayout({
         <LanguageProvider>
           <Ambient />
           <CursorGlow />
+          <PrecisionCursor />
 
           {children}
           <ChatWidget />
