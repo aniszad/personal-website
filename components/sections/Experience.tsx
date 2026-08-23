@@ -61,7 +61,7 @@ export function Experience({
             <span
               aria-hidden="true"
               data-wavy-node
-              className="absolute -left-8 top-2 z-10 size-2.5 rounded-full bg-accent md:-left-12"
+              className="absolute -left-8 top-1/2 z-10 size-2.5 -translate-y-1/2 rounded-full bg-accent md:-left-12"
             />
             <motion.div
               initial={{ opacity: 0, x: reduced ? 0 : -24 }}

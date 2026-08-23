@@ -63,7 +63,7 @@ export function TimelineNode({
         aria-hidden="true"
         data-wavy-node
         className={cn(
-          "absolute left-0 top-2 z-10 size-3 rounded-full border",
+          "absolute left-0 top-1/2 z-10 size-3 -translate-y-1/2 rounded-full border",
           "md:left-1/2 md:-translate-x-1/2",
           isActive ? "border-accent bg-accent" : "border-line bg-surface",
         )}
