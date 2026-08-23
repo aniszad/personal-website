@@ -105,3 +105,14 @@
     cursor: none !important;
   }
 }
+
+/* Timeline pages become a sequence of deliberate, full-height milestones. */
+html.timeline-snap-page {
+  scroll-snap-type: y mandatory;
+}
+
+html.timeline-snap-page main > div > ol > li,
+html.timeline-snap-page main > div > ol > div {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useMotionValueEvent,
   useReducedMotion,
@@ -34,6 +34,13 @@ export function Education({
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
+
+  useEffect(() => {
+    if (reduced) return;
+
+    document.documentElement.classList.add("timeline-snap-page");
+    return () => document.documentElement.classList.remove("timeline-snap-page");
+  }, [reduced]);
 
   // Fraction of scroll progress at which each node lights up.
   const thresholds = entries.map(
@@ -73,6 +80,7 @@ export function Education({
             key={`${entry.institution}-${entry.dates}`}
             entry={entry}
             isActive={reduced || index < activeCount}
+            className="flex min-h-[calc(100svh-2rem)] items-center py-12 md:min-h-svh md:py-16"
           />
         ))}
       </ol>

@@ -40,9 +40,11 @@ function initialsFor(name: string): string {
 export function TimelineNode({
   entry,
   isActive,
+  className,
 }: {
   entry: ResolvedEducationEntry;
   isActive: boolean;
+  className?: string;
 }) {
   const reduced = useReducedMotion() ?? false;
   const { language } = useLanguage();
@@ -53,7 +55,7 @@ export function TimelineNode({
   const offscreenX = reduced ? 0 : isLeft ? -32 : 32;
 
   return (
-    <li className="relative pl-10 md:grid md:grid-cols-2 md:gap-x-16 md:pl-0">
+    <li className={cn("relative pl-10 md:grid md:grid-cols-2 md:gap-x-16 md:pl-0", className)}>
       {/* Dot on the line. Left edge on mobile, centered on desktop. The
           data attribute lets the wavy rail measure this point and thread the
           line through it. */}

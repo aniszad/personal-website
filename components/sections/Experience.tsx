@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useReducedMotion, useScroll } from "motion/react";
 import type { ResolvedExperience } from "@/lib/data";
 import { ExperienceEntry } from "@/components/ui/ExperienceEntry";
@@ -22,6 +22,13 @@ export function Experience({
   const railRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
 
+  useEffect(() => {
+    if (reduced) return;
+
+    document.documentElement.classList.add("timeline-snap-page");
+    return () => document.documentElement.classList.remove("timeline-snap-page");
+  }, [reduced]);
+
   const { scrollYProgress } = useScroll({
     target: railRef,
     offset: ["start 0.8", "end 0.7"],
@@ -40,7 +47,10 @@ export function Experience({
 
       <ol className="space-y-16">
         {entries.map((entry) => (
-          <li key={`${entry.company}-${entry.role}`} className="relative">
+          <li
+            key={`${entry.company}-${entry.role}`}
+            className="relative flex min-h-[calc(100svh-2rem)] items-center py-12 md:min-h-svh md:py-16"
+          >
             {/*
               Marker sitting on the rail, aligned with the role title. It is a
               static sibling of the sliding content on purpose: the wavy rail
