@@ -2,7 +2,6 @@ import type { Viewport } from "next";
 import { HOME_THEME } from "@/lib/constants";
 import { ThemeStyle } from "@/components/layout/ThemeStyle";
 import { Hero } from "@/components/sections/Hero";
-import { HomeSideNav } from "@/components/layout/HomeSideNav";
 import { HomeFooterNote } from "@/components/layout/HomeFooterNote";
 
 export const viewport: Viewport = {
@@ -20,8 +19,6 @@ export default function HomePage() {
   return (
     <>
       <ThemeStyle theme={HOME_THEME} />
-
-      <HomeSideNav />
 
       <div className="md:pl-72 lg:pl-80">
         <div className="mx-auto max-w-4xl px-6 pb-14 pt-8 md:px-10 md:pb-20">

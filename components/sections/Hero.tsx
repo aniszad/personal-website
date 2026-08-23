@@ -80,6 +80,10 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
               }
           >
             <div className="min-w-0">
+              <div className="retro-bootline mb-10" aria-hidden="true">
+                <span>USER PROFILE // ANIS</span>
+                <span>SESSION READY</span>
+              </div>
               <h1
                   aria-label={`${titleCopy.start} ${titleCopy.middle[titleIndex]} ${titleCopy.end}`}
                   className="text-[clamp(3rem,8vw,5.5rem)] leading-[0.92] text-heading"

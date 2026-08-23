@@ -37,7 +37,7 @@ export function HomeSideNav() {
 
   return (
     <>
-      <div className="mx-auto flex max-w-4xl items-center justify-between border-b border-line px-6 pb-5 pt-6 md:hidden">
+      <div className="retro-mobile-panel mx-auto flex max-w-4xl items-center justify-between border-b border-line px-6 pb-5 pt-6 md:hidden">
         <Link
           href="/"
           className="font-display text-lg font-semibold text-heading"
@@ -65,7 +65,7 @@ export function HomeSideNav() {
         location={copy.home.location}
       />
 
-      <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:z-20 md:flex md:w-72 md:flex-col md:justify-between md:overflow-y-auto md:border-r md:border-line md:px-8 md:py-10 lg:w-80">
+      <aside className="retro-control-panel hidden md:fixed md:inset-y-0 md:left-0 md:z-20 md:flex md:w-72 md:flex-col md:justify-between md:overflow-y-auto md:border-r md:border-line md:px-8 md:py-10 lg:w-80">
         <div>
           <Link
             href="/"
@@ -176,8 +176,8 @@ function NavList({
   const reduced = useReducedMotion() ?? false;
 
   return (
-    <nav aria-label={label} className="mt-12">
-      <p className="mb-4 text-xs lowercase tracking-[0.25em] text-muted">
+    <nav aria-label={label} className="retro-nav mt-12">
+      <p className="retro-nav-heading mb-4 text-xs lowercase tracking-[0.25em] text-muted">
         {label}
       </p>
 
@@ -198,7 +198,7 @@ function NavList({
               href={page.href}
               aria-current={pathname === page.href || pathname === `${page.href}/` ? "page" : undefined}
               onClick={onNavigate}
-              className={`group relative flex items-baseline gap-3 py-3 pl-4 ${pathname === page.href || pathname === `${page.href}/` ? "text-accent" : ""}`}
+              className={`retro-nav-item group relative flex items-baseline gap-3 py-3 pl-4 ${pathname === page.href || pathname === `${page.href}/` ? "text-accent" : ""}`}
             >
               <span
                 aria-hidden="true"

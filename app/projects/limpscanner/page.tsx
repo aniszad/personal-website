@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { getPage } from "@/lib/constants";
-import { HomeSideNav } from "@/components/layout/HomeSideNav";
 import { ThemeStyle } from "@/components/layout/ThemeStyle";
 import { LimpScannerCaseStudy } from "@/components/sections/LimpScannerCaseStudy";
 
@@ -21,7 +20,6 @@ export default function LimpscannerPage() {
   return (
     <>
       <ThemeStyle theme={page.theme} />
-      <HomeSideNav />
       <div className="md:pl-72 lg:pl-80">
         <main id="content">
           <LimpScannerCaseStudy />

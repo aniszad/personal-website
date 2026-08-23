@@ -6,7 +6,6 @@ import { getNeighbours, type PageMeta } from "@/lib/constants";
 import { getPageCopy, t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 import { PageHeading } from "@/components/layout/PageHeading";
-import { HomeSideNav } from "@/components/layout/HomeSideNav";
 import { ThemeStyle } from "@/components/layout/ThemeStyle";
 
 /**
@@ -28,6 +27,25 @@ export function PageShell({
   const copy = t(language);
   const localizedPage = getPageCopy(language, page.href);
   const { previous, next } = getNeighbours(page.href);
+  const moduleNames = {
+    en: {
+      "/about": "SYSTEM PROFILE",
+      "/experience": "WORK LOG",
+      "/projects": "PROJECT DATABASE",
+      "/education": "ACADEMIC RECORDS",
+      "/skills": "CAPABILITY INDEX",
+      "/contact": "COMMUNICATION TERMINAL",
+    },
+    fr: {
+      "/about": "PROFIL SYSTÈME",
+      "/experience": "JOURNAL DE TRAVAIL",
+      "/projects": "BASE DE PROJETS",
+      "/education": "DOSSIERS ACADÉMIQUES",
+      "/skills": "INDEX DES COMPÉTENCES",
+      "/contact": "TERMINAL DE COMMUNICATION",
+    },
+  } as const;
+  const moduleName = moduleNames[language][page.href as keyof (typeof moduleNames)[typeof language]];
 
   return (
     <>
@@ -37,12 +55,14 @@ export function PageShell({
         accent up lives in the root layout, outside the route template.
       */}
       <ThemeStyle theme={page.theme} />
-      <HomeSideNav />
-
       <div className="md:pl-72 lg:pl-80">
         <div className="mx-auto max-w-5xl px-6 pb-24 pt-8 md:px-10 md:pt-10">
 
-        <PageHeading title={localizedPage.title} blurb={localizedPage.blurb} />
+        <PageHeading
+          title={localizedPage.title}
+          blurb={localizedPage.blurb}
+          moduleName={moduleName}
+        />
 
         <main id="content">{children}</main>
 

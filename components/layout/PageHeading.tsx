@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { useLanguage } from "@/components/layout/LanguageProvider";
 
 /**
  * The heading block at the top of every section page.
@@ -14,14 +15,22 @@ import { motion, useReducedMotion } from "motion/react";
 export function PageHeading({
   title,
   blurb,
+  moduleName,
 }: {
   title: string;
   blurb: string;
+  moduleName?: string;
 }) {
   const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
+  const isFrench = language === "fr";
 
   return (
-    <header className="relative mb-20 pb-10 md:mb-28">
+    <header className="retro-module-header relative mb-20 pb-10 md:mb-28">
+      <div className="retro-module-bar" aria-hidden="true">
+        <span>MODULE // {moduleName ?? title}</span>
+        <span className="hidden sm:inline">{isFrench ? "LECTURE_SEULE · SYS.PRTF" : "READ_ONLY · SYS.PRTF"}</span>
+      </div>
       <h1 className="text-5xl text-heading md:text-7xl">
         <span className="block overflow-hidden pb-[0.06em]">
           <motion.span
@@ -51,22 +60,10 @@ export function PageHeading({
         {blurb}
       </motion.p>
 
-      {/* The full width hairline, with the accent drawing over it. */}
-      <span
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-px bg-line"
-      >
-        <motion.span
-          className="block h-px origin-left bg-accent transition-colors duration-700"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{
-            duration: reduced ? 0.3 : 1.1,
-            ease: [0.16, 1, 0.3, 1],
-            delay: reduced ? 0 : 0.3,
-          }}
-        />
-      </span>
+      <div className="retro-module-footer" aria-hidden="true">
+        <span>{isFrench ? "PRÊT" : "READY"}</span>
+        <span>{isFrench ? "DÉFILER POUR INSPECTER" : "SCROLL TO INSPECT"}</span>
+      </div>
     </header>
   );
 }

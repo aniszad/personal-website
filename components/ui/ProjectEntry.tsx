@@ -34,7 +34,7 @@ export function ProjectEntry({ project }: { project: ResolvedProject }) {
   const hasMedia = Boolean(demoVideo) || screenshots.length > 0;
 
   return (
-    <article className="group relative py-12 md:py-16">
+    <article className="retro-record group relative py-12 md:py-16">
       <span
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
@@ -42,6 +42,9 @@ export function ProjectEntry({ project }: { project: ResolvedProject }) {
 
       <div className="flex items-start justify-between gap-6">
         <div className="min-w-0">
+          <p className="retro-record-id mb-4">
+            PROJECT // {project.slug.toUpperCase()}
+          </p>
           {project.featured ? (
             <p className="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
               {copy.featured}

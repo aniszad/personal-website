@@ -2,10 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { HOME_THEME, SITE, SOCIALS } from "@/lib/constants";
-import { Ambient } from "@/components/layout/Ambient";
-import { CursorGlow } from "@/components/layout/CursorGlow";
-import { PrecisionCursor } from "@/components/ui/PrecisionCursor";
 import { LanguageProvider } from "@/components/layout/LanguageProvider";
+import { HomeSideNav } from "@/components/layout/HomeSideNav";
+import { RetroComputerShell } from "@/components/layout/RetroComputerShell";
 import { ChatWidget } from "@/components/ui/ChatWidget";
 import { CommandPalette } from "@/components/ui/CommandPalette";
 import "@/styles/globals.css";
@@ -122,11 +121,10 @@ export default function RootLayout({
           navigation rather than restarting from the top each time.
         */}
         <LanguageProvider>
-          <Ambient />
-          <CursorGlow />
-          <PrecisionCursor />
-
-          {children}
+          <RetroComputerShell>
+            <HomeSideNav />
+            {children}
+          </RetroComputerShell>
           <ChatWidget />
           <CommandPalette />
         </LanguageProvider>
