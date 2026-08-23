@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState, FormEvent } from "react";
-import { motion, useMotionTemplate, useMotionValue } from "motion/react";
+import { useState, FormEvent } from "react";
 import { CV_PATH, SOCIALS } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
@@ -11,18 +10,13 @@ import { ArrowUpRightIcon } from "@/components/ui/Icons";
 /**
  * Contact page body.
  *
- * Visual identity: an amber glow that follows the pointer across the panel,
- * built from motion values piped straight into a CSS gradient so it updates
- * without triggering a React render on every pointer move.
- *
- * The glow is decorative and carries no information, so there is nothing to
- * replace on touch devices or under reduced motion, where it simply rests at
- * the centre.
+ * Visual identity: a quiet full-bleed accent wash that belongs to the page,
+ * rather than a pointer glow trapped inside a panel. The global ambient layer
+ * and this local tonal field now blend without creating a visible card edge.
  */
 type FormStatus = "idle" | "sending" | "success" | "error";
 
 export function Contact() {
-  const panelRef = useRef<HTMLDivElement>(null);
   const { language } = useLanguage();
   const copy = t(language).generic;
   const formCopy = copy.contactForm;
@@ -57,31 +51,21 @@ export function Contact() {
     }
   }
 
-  const glowX = useMotionValue(50);
-  const glowY = useMotionValue(50);
-
-  const background = useMotionTemplate`radial-gradient(600px circle at ${glowX}% ${glowY}%, var(--color-accent), transparent 50%)`;
-
-  function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
-    const element = panelRef.current;
-    if (!element) return;
-
-    const bounds = element.getBoundingClientRect();
-    glowX.set(((event.clientX - bounds.left) / bounds.width) * 100);
-    glowY.set(((event.clientY - bounds.top) / bounds.height) * 100);
-  }
-
   return (
     <div
-      ref={panelRef}
-      onPointerMove={handlePointerMove}
-      className="relative overflow-hidden border-y border-line py-24 md:py-32"
+      className="relative isolate py-20 md:py-28"
     >
-      <motion.div
+      <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.08]"
-        style={{ background }}
+        className="pointer-events-none absolute -inset-x-12 -inset-y-16 -z-10 opacity-70"
+        style={{
+          background:
+            "radial-gradient(ellipse at 82% 48%, color-mix(in srgb, var(--color-accent) 7%, transparent), transparent 56%)",
+        }}
       />
+
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-line" />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-line" />
 
       <div className="relative max-w-3xl">
         <p className="font-display text-2xl font-semibold leading-snug tracking-tight text-heading md:text-4xl">

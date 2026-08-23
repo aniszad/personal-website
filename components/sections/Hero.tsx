@@ -10,10 +10,6 @@ import {
   AnimatePresence,
   motion,
   useReducedMotion,
-  useMotionValue,
-  useSpring,
-  useMotionTemplate,
-  useTransform,
   type Variants,
 } from "motion/react";
 import { t } from "@/lib/i18n";
@@ -26,55 +22,6 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
   const copy = t(language);
   const titleCopy = copy.home.rotatingTitle;
   const [titleIndex, setTitleIndex] = useState(0);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springConfig = { damping: 25, stiffness: 150 };
-  const smoothMouseX = useSpring(mouseX, springConfig);
-  const smoothMouseY = useSpring(mouseY, springConfig);
-
-  // FIX 1: Use raw mouseX and mouseY for 100% laser-accurate tracking without spring lag
-  const spotlightBackground = useMotionTemplate`
-    radial-gradient(
-      600px circle at ${mouseX}px ${mouseY}px,
-      rgba(183, 243, 74, 0.04),
-      transparent 80%
-    )
-  `;
-
-  // Keep the spring for the portrait so it still floats smoothly
-  const portraitX = useTransform(smoothMouseX, [0, 2000], [15, -15]);
-  const portraitY = useTransform(smoothMouseY, [0, 1000], [15, -15]);
-
-  useEffect(() => {
-    if (reduced) return;
-
-    let frame = 0;
-    let nextX = 0;
-    let nextY = 0;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      nextX = e.clientX;
-      nextY = e.clientY;
-
-      // Pointer events can arrive much faster than the screen can paint.
-      // Coalescing them keeps the spotlight visually identical while avoiding
-      // needless gradient updates between animation frames.
-      if (frame) return;
-      frame = window.requestAnimationFrame(() => {
-        mouseX.set(nextX);
-        mouseY.set(nextY);
-        frame = 0;
-      });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, [mouseX, mouseY, reduced]);
 
   const container: Variants = {
     hidden: {},
@@ -124,14 +71,6 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
           variants={container}
           className="relative flex min-h-svh flex-col overflow-hidden"
       >
-        {/* FIX 2: Changed to 'fixed' so it spans the whole page and maps to clientX/clientY perfectly */}
-        {!reduced && (
-            <motion.div
-                className="pointer-events-none fixed inset-0 z-0"
-                style={{ background: spotlightBackground }}
-            />
-        )}
-
         <div className="relative z-10 flex flex-1 items-center py-14 md:py-16">
           <div
               className={
