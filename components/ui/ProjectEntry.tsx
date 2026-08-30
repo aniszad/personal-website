@@ -26,7 +26,7 @@ export function ProjectEntry({
 
   if (variant === "proprietary") {
     return (
-      <div className="grid grid-cols-1 gap-10 border-b border-line-soft py-10 md:grid-cols-[minmax(0,1fr)_262px] md:items-start md:gap-11">
+      <div className="grid grid-cols-1 gap-10 border-b border-line-soft py-10 md:grid-cols-[minmax(0,1fr)_400px] md:items-start md:gap-11">
         <div>
           <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">
             {copy.featuredProprietary}
@@ -53,7 +53,7 @@ export function ProjectEntry({
           ) : null}
         </div>
 
-        <div className="grid gap-3">
+        <div className={`grid gap-3 ${project.demoVideo && screenshot ? "grid-cols-2" : "grid-cols-1"}`}>
           {screenshot ? (
             <Image
               src={screenshot}
@@ -69,7 +69,7 @@ export function ProjectEntry({
               src={project.demoVideo}
               poster={screenshot ?? undefined}
               controls
-              className="block w-full border border-line"
+              className="aspect-[9/16] w-full border border-line bg-surface object-contain"
             />
           ) : null}
         </div>

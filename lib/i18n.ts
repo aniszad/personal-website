@@ -81,7 +81,11 @@ const HOME_COPY = {
     location: "Lille, France",
     tagline:
       "An engineering cycle in AI and Data Science at ESTIN, a stage spent shipping production code at Limpidius, and a Master's in Artificial Intelligence at Université de Lille from this September.",
-    headline: { line1: "I build websites and web apps", line2: "that ship" },
+    headline: {
+      start: "I build",
+      middle: ["websites and web apps", "mobile apps", "AI and data systems"],
+      end: "that ship",
+    },
     status: {
       currentlyLabel: "Currently",
       currentlyValue: ["AI Engineer Intern, Limpidius", "EuraTechnologies, Lille"],
@@ -115,7 +119,11 @@ const HOME_COPY = {
     location: "Lille, France",
     tagline:
       "Formation en IA et Data Science à ESTIN, stage en production chez Limpidius, et Master en Intelligence Artificielle à l'Université de Lille à partir de septembre.",
-    headline: { line1: "Je construis des sites et apps web", line2: "qui livrent" },
+    headline: {
+      start: "Je construis",
+      middle: ["des sites et apps web", "des applications mobiles", "des systèmes IA et data"],
+      end: "qui livrent",
+    },
     status: {
       currentlyLabel: "Actuellement",
       currentlyValue: ["Stagiaire ingénieur IA, Limpidius", "EuraTechnologies, Lille"],
@@ -222,13 +230,12 @@ const GENERIC_COPY = {
       "I recently finished a five month development internship at Limpidius, based at EuraTechnologies in Lille. I shipped a browser based barcode scanning library that runs in production at Castorama and other retail clients, handling roughly 3,000 scans a day. Getting GPU image processing and a WASM decoder to cooperate inside a browser tab taught me more about performance than any course did.",
       "I move across the stack comfortably: frontend in Angular and React, backend in NestJS and Spring Boot, mobile in Kotlin, and ML pipelines in Python. I am currently looking for an alternance starting September 2026 in AI, Data Science, or software engineering around Lille.",
     ],
-    // Languages value is a placeholder pending confirmation from Anis (not in lib/data.ts).
     aboutMeta: {
       downloadCv: "Download CV (PDF)",
       basedInLabel: "Based in",
       basedInValue: "Lille, France",
       languagesLabel: "Languages",
-      languagesValue: "FR · EN · AR",
+      languagesValue: "FR · EN",
       lookingForLabel: "Looking for",
       lookingForValue: "Alternance, Sept 2026",
     },
@@ -345,7 +352,7 @@ const GENERIC_COPY = {
       basedInLabel: "Basé à",
       basedInValue: "Lille, France",
       languagesLabel: "Langues",
-      languagesValue: "FR · EN · AR",
+      languagesValue: "FR · EN",
       lookingForLabel: "Recherche",
       lookingForValue: "Alternance, sept. 2026",
     },

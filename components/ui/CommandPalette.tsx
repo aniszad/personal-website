@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { PAGES, SOCIALS, CV_PATH } from "@/lib/constants";
+import { PAGES, SITE, SOCIALS, CV_PATH } from "@/lib/constants";
 import { getLocalizedPages, t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 import { GitHubIcon, LinkedInIcon, MailIcon, ArrowUpRightIcon } from "@/components/ui/Icons";
@@ -46,6 +46,11 @@ export function CommandPalette() {
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [eggFound, setEggFound] = useState(false);
+
+  // A quiet hidden command for whoever is curious enough to type it. Never
+  // hinted at anywhere in the UI, and it never appears in the normal list.
+  const isSecret = query.trim().toLowerCase() === "whoami";
 
   const inputRef = useRef<HTMLInputElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null);
@@ -54,8 +59,14 @@ export function CommandPalette() {
     setOpen(false);
     setQuery("");
     setActiveIndex(0);
+    setEggFound(false);
     lastFocused.current?.focus();
   }, []);
+
+  const revealEgg = useCallback(() => {
+    setEggFound(true);
+    window.setTimeout(close, 1000);
+  }, [close]);
 
   const openPalette = useCallback(() => {
     lastFocused.current = document.activeElement as HTMLElement | null;
@@ -195,6 +206,12 @@ export function CommandPalette() {
   }
 
   function handleKeyDown(event: ReactKeyboardEvent<HTMLInputElement>) {
+    if (isSecret && event.key === "Enter") {
+      event.preventDefault();
+      revealEgg();
+      return;
+    }
+
     if (event.key === "ArrowDown") {
       event.preventDefault();
       setActiveIndex((current) => Math.min(current + 1, filtered.length - 1));
@@ -238,6 +255,17 @@ export function CommandPalette() {
             exit={{ opacity: 0, y: reduced ? 0 : -12, scale: reduced ? 1 : 0.98 }}
             transition={{ duration: reduced ? 0.15 : 0.22, ease: [0.16, 1, 0.3, 1] }}
           >
+            {eggFound ? (
+              <motion.div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 z-10"
+                style={{ background: "radial-gradient(circle at 50% 40%, var(--color-heading), transparent 65%)" }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.16, 0] }}
+                transition={{ duration: reduced ? 0.3 : 0.9, ease: "easeOut" }}
+              />
+            ) : null}
+
             <div className="flex items-center gap-3 border-b border-line px-4 py-3">
               <span aria-hidden="true" className="text-muted">
                 ⌘
@@ -256,7 +284,17 @@ export function CommandPalette() {
             </div>
 
             <div className="max-h-[55vh] overflow-y-auto px-2 py-2">
-              {filtered.length === 0 ? (
+              {isSecret ? (
+                <button
+                  type="button"
+                  onClick={revealEgg}
+                  className="flex w-full flex-col gap-1.5 px-3 py-4 text-left"
+                >
+                  <span className="font-serif text-lg text-heading">{SITE.name}</span>
+                  <span className="text-sm font-light text-muted">{SITE.discipline}</span>
+                  <span className="mt-1 text-xs font-light text-muted">↵ to say hi</span>
+                </button>
+              ) : filtered.length === 0 ? (
                 <p className="px-3 py-6 text-center text-sm text-muted">{cc.empty}</p>
               ) : (
                 <>

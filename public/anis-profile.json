@@ -82,6 +82,27 @@
       ]
     },
     {
+      "id": "exp-etus",
+      "title": "Software Engineering Intern",
+      "company": "ETUS",
+      "location": "Béjaïa, Algeria",
+      "period": "Summer 2024 to summer 2025",
+      "category": "experience",
+      "content": "Built a bus fleet management system pairing a Spring Boot REST API with a native Android client written in Kotlin, implementing real time vehicle tracking, route management, and driver assignment.",
+      "stack": [
+        "Spring Boot",
+        "Kotlin",
+        "Android",
+        "REST API",
+        "PostgreSQL"
+      ],
+      "tags": [
+        "backend",
+        "mobile",
+        "fleet-management"
+      ]
+    },
+    {
       "id": "exp-freelance",
       "title": "Freelance Web & Mobile Developer",
       "company": "Independent",

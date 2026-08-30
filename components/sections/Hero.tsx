@@ -2,11 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useReducedMotion, type Variants } from "motion/react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
 import type { ResolvedProject } from "@/lib/data";
 import { t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 import { ArrowUpRightIcon } from "@/components/ui/Icons";
+
+const ROTATE_MS = 2300;
 
 /**
  * Home page body: hero, CTAs, metrics, and the featured Limpscanner artifact.
@@ -36,6 +39,16 @@ export function Hero({ limpscanner }: { limpscanner: ResolvedProject }) {
   };
 
   const screenshot = limpscanner.screenshots[0];
+  const middle = home.headline.middle;
+  const [middleIndex, setMiddleIndex] = useState(0);
+
+  useEffect(() => {
+    if (reduced) return;
+    const id = window.setInterval(() => {
+      setMiddleIndex((current) => (current + 1) % middle.length);
+    }, ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [reduced, middle.length]);
 
   return (
     <>
@@ -48,11 +61,34 @@ export function Hero({ limpscanner }: { limpscanner: ResolvedProject }) {
         <div>
           <motion.h1
             variants={item}
+            aria-label={`${home.headline.start} ${middle[middleIndex]} ${home.headline.end}`}
             className="text-[clamp(2.75rem,11vw,3.5rem)] leading-[0.98] tracking-[-0.015em] text-heading text-pretty lg:text-[78px]"
           >
-            {home.headline.line1}
-            <br />
-            <em className="font-serif italic text-body">{home.headline.line2}</em>
+            <span aria-hidden="true" className="shimmer-once block">
+              {home.headline.start}
+            </span>
+
+            <span
+              aria-hidden="true"
+              className="relative block h-[1.15em] overflow-hidden text-[clamp(1.5rem,5.5vw,2.15rem)] leading-[1.15] lg:h-[1.1em] lg:text-[44px]"
+            >
+              <AnimatePresence initial={false} mode="wait">
+                <motion.span
+                  key={middle[middleIndex]}
+                  initial={{ opacity: 0, y: reduced ? 0 : 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: reduced ? 0 : -8 }}
+                  transition={{ duration: reduced ? 0.15 : 0.4, ease: "easeOut" }}
+                  className="absolute left-0 top-0 block whitespace-nowrap text-heading"
+                >
+                  {middle[middleIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+
+            <em aria-hidden="true" className="block font-serif italic text-body">
+              {home.headline.end}
+            </em>
           </motion.h1>
 
           <motion.p
