@@ -195,7 +195,7 @@ export const PROJECTS: readonly Project[] = [
     description:
       "Social and community app for ESTIN students: a feed for campus news, events, and discussion, with a shared digital library for course files.",
     tags: ["Android", "Kotlin", "Firebase"],
-    featured: false,
+    featured: true,
     repo: "https://github.com/aniszad/EstinLib",
   },
   {
@@ -204,7 +204,7 @@ export const PROJECTS: readonly Project[] = [
     description:
       "Mobile app for Algerian baccalaureate exam preparation, giving students structured access to past papers and revision material.",
     tags: ["Android", "Kotlin"],
-    featured: false,
+    featured: true,
     repo: "https://github.com/aniszad/BacPrep",
   },
   {

@@ -77,14 +77,31 @@ export function ProjectEntry({
     );
   }
 
-  return (
-    <div>
+  const textBlock = (
+    <div className="min-w-0">
       <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">{copy.featured}</p>
       <h2 className="mt-3 font-serif text-[28px] leading-[1.1] text-heading">{project.name}</h2>
       <p className="mt-3.5 text-[14.5px] font-light leading-[1.65] text-body">{description}</p>
       <TagList
         labels={project.tags}
         ariaLabel={`${copy.technologiesUsedIn} ${project.name}`}
+      />
+    </div>
+  );
+
+  if (!screenshot) {
+    return textBlock;
+  }
+
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)_96px] items-start gap-4">
+      {textBlock}
+      <Image
+        src={screenshot}
+        alt=""
+        width={96}
+        height={171}
+        className="block aspect-[9/16] w-full border border-line object-cover"
       />
     </div>
   );
