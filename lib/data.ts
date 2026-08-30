@@ -117,7 +117,7 @@ export const EXPERIENCES: readonly Experience[] = [
     role: "Software Engineering Intern",
     company: "ETUS",
     location: "Béjaïa, Algeria",
-    dates: "2023",
+    dates: "Summer 2024 to summer 2025",
     logo: "/images/companies/etus",
     highlights: [
       "Built a bus fleet management system pairing a Spring Boot REST API with a native Android client written in Kotlin.",
