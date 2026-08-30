@@ -6,12 +6,11 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { HOME_THEME, PAGES, SOCIALS, CV_PATH } from "@/lib/constants";
+import { PAGES, SOCIALS, CV_PATH } from "@/lib/constants";
 import { getLocalizedPages, t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 import { GitHubIcon, LinkedInIcon, MailIcon, ArrowUpRightIcon } from "@/components/ui/Icons";
@@ -21,7 +20,6 @@ type Command = {
   group: "go" | "actions";
   label: string;
   hint?: string;
-  accent: string;
   keywords?: string;
   keepOpen?: boolean;
   run: () => void;
@@ -109,7 +107,6 @@ export function CommandPalette() {
         id: "home",
         group: "go",
         label: cc.home,
-        accent: HOME_THEME.accent,
         run: () => router.push("/"),
       },
       ...pages.map((page) => ({
@@ -117,7 +114,6 @@ export function CommandPalette() {
         group: "go" as const,
         label: page.label,
         hint: page.blurb,
-        accent: page.theme.accent,
         run: () => router.push(page.href),
       })),
     ];
@@ -128,7 +124,6 @@ export function CommandPalette() {
         group: "actions",
         label: cc.askAssistant,
         hint: cc.askAssistantHint,
-        accent: HOME_THEME.accent,
         keywords: "chat assistant ai question",
         run: () => window.dispatchEvent(new CustomEvent("portfolio:open-chat")),
       },
@@ -137,7 +132,6 @@ export function CommandPalette() {
         group: "actions",
         label: copied ? cc.copyEmailDone : cc.copyEmail,
         hint: cc.copyEmailHint,
-        accent: HOME_THEME.accent,
         keywords: "email contact mail",
         keepOpen: true,
         run: () => {
@@ -152,7 +146,6 @@ export function CommandPalette() {
         group: "actions",
         label: cc.downloadCv,
         hint: cc.downloadCvHint,
-        accent: HOME_THEME.accent,
         keywords: "resume pdf download",
         run: () => window.open(CV_PATH, "_blank", "noopener,noreferrer"),
       },
@@ -160,7 +153,6 @@ export function CommandPalette() {
         id: "github",
         group: "actions",
         label: cc.openGithub,
-        accent: HOME_THEME.accent,
         keywords: "code repo",
         run: () => window.open(SOCIALS.github, "_blank", "noopener,noreferrer"),
       },
@@ -168,7 +160,6 @@ export function CommandPalette() {
         id: "linkedin",
         group: "actions",
         label: cc.openLinkedin,
-        accent: HOME_THEME.accent,
         keywords: "profile network",
         run: () => window.open(SOCIALS.linkedin, "_blank", "noopener,noreferrer"),
       },
@@ -176,7 +167,6 @@ export function CommandPalette() {
         id: "language",
         group: "actions",
         label: language === "en" ? cc.switchToFrench : cc.switchToEnglish,
-        accent: HOME_THEME.accent,
         keywords: "language locale fr en francais english",
         run: () => setLanguage(language === "en" ? "fr" : "en"),
       },
@@ -242,7 +232,7 @@ export function CommandPalette() {
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="fixed inset-x-0 top-[12vh] z-[71] mx-auto flex w-[min(92vw,34rem)] flex-col overflow-hidden rounded-xl border border-line bg-surface-raised shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
+            className="fixed inset-x-0 top-[12vh] z-[71] mx-auto flex w-[min(92vw,34rem)] flex-col overflow-hidden border border-line bg-raised"
             initial={{ opacity: 0, y: reduced ? 0 : -12, scale: reduced ? 1 : 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: reduced ? 0 : -12, scale: reduced ? 1 : 0.98 }}
@@ -337,24 +327,23 @@ function CommandGroup({
             <li key={command.id}>
               <button
                 type="button"
-                style={{ "--row": command.accent } as CSSProperties}
                 onMouseEnter={() => onHover(index)}
                 onClick={() => onSelect(command)}
-                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-100 ${
-                  isActive ? "bg-[var(--row)]/10" : ""
+                className={`flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-100 ${
+                  isActive ? "bg-heading/10" : ""
                 }`}
               >
                 {icon ? (
                   <span
                     aria-hidden="true"
-                    className={isActive ? "text-[var(--row)]" : "text-muted"}
+                    className={isActive ? "text-heading" : "text-muted"}
                   >
                     {icon}
                   </span>
                 ) : (
                   <span
                     aria-hidden="true"
-                    className={`size-1.5 rounded-full ${isActive ? "bg-[var(--row)]" : "bg-line"}`}
+                    className={`size-1.5 rounded-full ${isActive ? "bg-heading" : "bg-line"}`}
                   />
                 )}
 
@@ -375,7 +364,7 @@ function CommandGroup({
                   <ArrowUpRightIcon
                     width={14}
                     height={14}
-                    className={isActive ? "text-[var(--row)]" : "text-muted"}
+                    className={isActive ? "text-heading" : "text-muted"}
                   />
                 ) : null}
               </button>

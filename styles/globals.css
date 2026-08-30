@@ -5,18 +5,16 @@
  * single file edit; nothing downstream hardcodes a hex value.
  */
 @theme {
-  /* Surfaces, darkest to lightest */
-  --color-surface: #0b0b0a;
-  --color-surface-raised: #141412;
-  --color-line: #2b2a26;
+  --color-surface: #0b0b0a; /* page background, all routes */
+  --color-raised: #111110; /* placeholder fields, image mattes */
+  --color-line: #26251f; /* primary hairline: section rules, borders */
+  --color-line-soft: #1c1b18; /* secondary hairline: list-row separators */
+  --color-line-strong: #33322b; /* inactive underline on secondary buttons */
 
-  /* Text, muted to strongest. All clear 7:1 against the surface. */
-  --color-muted: #8f8b82;
-  --color-body: #c9c5bb;
-  --color-heading: #f0ede5;
-
-  /* The single accent. Links, rules under active items, timeline fill. */
-  --color-accent: #b7f34a;
+  --color-muted: #8f8b82; /* labels, captions, metadata, inactive nav */
+  --color-body: #a9a49a; /* body prose */
+  --color-body-strong: #c9c5bb; /* lead paragraph, org names, skill lists */
+  --color-heading: #f0ede5; /* headings, active nav, emphasis */
 
   /*
    * Paper. Backs artwork that was drawn on white, so the illustration reads as
@@ -25,13 +23,13 @@
   --color-paper: #f7f4ee;
 
   /*
-   * Geist keeps the interface and display hierarchy in one precise system.
-   * Geist Mono is reserved for technical metadata so the code-oriented detail
-   * feels intentional without turning the whole site into a terminal.
+   * There is no accent color. --color-heading at full strength is the accent:
+   * the active nav item, "Current"/"Starting" labels, CTA underlines, the
+   * outcome rule, and the focus ring. Never introduce a hue.
    */
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -43,15 +41,9 @@
     background-color: var(--color-surface);
     color: var(--color-body);
     font-family: var(--font-sans);
+    font-weight: 300;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    /*
-     * Each route swaps --color-surface, and a custom property change
-     * recomputes background-color like any other declaration, so this single
-     * transition is what turns a section change into a crossfade. The ambient
-     * wash and the theme colour meta run on the same 700ms.
-     */
-    transition: background-color 700ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   h1,
@@ -59,20 +51,18 @@
   h3,
   h4 {
     color: var(--color-heading);
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
+    font-family: var(--font-serif);
+    font-weight: 400;
   }
 
   /* Focus must stay visible for keyboard users, so never remove the ring. */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-heading);
     outline-offset: 4px;
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    background-color: color-mix(in srgb, var(--color-heading) 20%, transparent);
     color: var(--color-heading);
   }
 }
@@ -96,28 +86,3 @@
   }
 }
 
-/* Replace the native pointer only where a custom pointer can be used well. */
-@media (hover: hover) and (pointer: fine) {
-  body.has-precision-cursor,
-  body.has-precision-cursor * {
-    cursor: none !important;
-  }
-}
-
-/* Timeline pages become a sequence of deliberate, full-height milestones. */
-html.timeline-snap-page {
-  scroll-snap-type: y mandatory;
-}
-
-html.timeline-snap-page main > div > ol > li,
-html.timeline-snap-page main > div > ol > div,
-html.timeline-snap-page .snap-item {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-
-/* Give the page-sequence controls a final landing point after the last item. */
-html.timeline-snap-page .timeline-sequence-nav {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}

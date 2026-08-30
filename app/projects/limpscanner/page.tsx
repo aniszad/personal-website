@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { getPage } from "@/lib/constants";
-import { HomeSideNav } from "@/components/layout/HomeSideNav";
-import { ThemeStyle } from "@/components/layout/ThemeStyle";
+import { HOME_THEME } from "@/lib/constants";
+import { resolveProjects } from "@/lib/resolve";
+import { Masthead } from "@/components/layout/Masthead";
 import { LimpScannerCaseStudy } from "@/components/sections/LimpScannerCaseStudy";
-
-const page = getPage("/projects");
 
 export const metadata: Metadata = {
   title: "Limpscanner",
@@ -13,20 +11,22 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: page.theme.surface,
+  themeColor: HOME_THEME.surface,
   colorScheme: "dark",
 };
 
 export default function LimpscannerPage() {
+  const project = resolveProjects().find((candidate) => candidate.slug === "limpscanner");
+  if (!project) {
+    throw new Error("Limpscanner project is missing from lib/data.ts");
+  }
+
   return (
     <>
-      <ThemeStyle theme={page.theme} />
-      <HomeSideNav />
-      <div className="md:pl-72 lg:pl-80">
-        <main id="content">
-          <LimpScannerCaseStudy />
-        </main>
-      </div>
+      <Masthead />
+      <main id="content">
+        <LimpScannerCaseStudy project={project} />
+      </main>
     </>
   );
 }

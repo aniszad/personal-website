@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SITE } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
-import { CloseIcon } from "@/components/ui/Icons";
+import { ChatBubbleIcon, CloseIcon, SendIcon } from "@/components/ui/Icons";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -14,6 +14,14 @@ type ChatMessage = {
   role: "user" | "assistant";
   text: string;
 };
+
+function Avatar() {
+  return (
+    <span className="grid size-6 shrink-0 place-items-center rounded-full bg-heading text-surface">
+      <ChatBubbleIcon width={12} height={12} />
+    </span>
+  );
+}
 
 export function ChatWidget() {
   const reduced = useReducedMotion() ?? false;
@@ -132,28 +140,38 @@ export function ChatWidget() {
           {open ? (
               <motion.section
                   key="chat-panel"
-                  initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.96 }}
                   animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-                  exit={reduced ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.98 }}
-                  transition={{ duration: reduced ? 0.2 : 0.28, ease: "easeOut" }}
-                  className="mb-3 flex h-[min(75svh,38rem)] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-2xl border border-line bg-surface-raised/95 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] backdrop-blur-xl"
+                  exit={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.97 }}
+                  transition={{ duration: reduced ? 0.2 : 0.32, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative mb-3 flex h-[min(75svh,38rem)] w-[min(92vw,24rem)] flex-col overflow-hidden rounded-2xl border border-line bg-raised shadow-[0_24px_70px_-15px_rgba(0,0,0,0.75)]"
                   aria-label="Portfolio chatbot"
               >
-                {/* Header with animated gradient text hint */}
-                <header className="flex items-center justify-between border-b border-line px-4 py-3 bg-surface-raised">
-                  <div>
-                    <p className="font-display text-sm font-semibold text-heading bg-gradient-to-r from-heading to-heading/70 bg-clip-text text-transparent">
-                      {chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
-                    </p>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className={`size-1.5 rounded-full ${isTyping ? 'bg-accent animate-pulse' : 'bg-green-500'}`} />
-                      <p className="text-xs text-muted">{status}</p>
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 top-0 h-40 opacity-[0.06]"
+                    style={{ background: "radial-gradient(60% 100% at 50% 0%, var(--color-heading), transparent)" }}
+                />
+
+                <header className="relative flex items-center justify-between border-b border-line bg-heading px-4 py-3.5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-full bg-surface text-heading">
+                      <ChatBubbleIcon width={16} height={16} />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-surface">
+                        {chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
+                      </p>
+                      <div className="mt-0.5 flex items-center gap-1.5">
+                        <span className={`size-1.5 rounded-full bg-surface ${isTyping ? "animate-pulse" : "opacity-50"}`} />
+                        <p className="text-xs font-light text-surface/80">{status}</p>
+                      </div>
                     </div>
                   </div>
                   <button
                       type="button"
                       onClick={() => setOpen(false)}
-                      className="grid size-8 place-items-center rounded-full text-muted transition-colors hover:bg-line/50 hover:text-heading"
+                      className="grid size-8 shrink-0 place-items-center text-surface/70 transition-colors duration-200 hover:text-surface"
                       aria-label={chatCopy.close}
                   >
                     <CloseIcon width={16} height={16} />
@@ -171,24 +189,30 @@ export function ChatWidget() {
                         <motion.div
                             key={message.id}
                             layout
-                            initial={{ opacity: 0, y: 10, scale: 0.95, originX: message.role === "user" ? 1 : 0 }}
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             transition={{ duration: 0.3, ease: "easeOut" }}
-                            className={`max-w-[88%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
-                                message.role === "assistant"
-                                    ? "bg-surface text-body ring-1 ring-line rounded-tl-sm"
-                                    : "ml-auto bg-accent text-surface rounded-tr-sm"
-                            }`}
+                            className={`flex items-end gap-2 ${message.role === "user" ? "justify-end" : ""}`}
                         >
-                          {message.role === "assistant" ? (
-                              <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-ul:my-1.5 prose-ul:pl-5 prose-li:my-0.5 prose-strong:text-heading dark:prose-invert">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                  {message.text}
-                                </ReactMarkdown>
-                              </div>
-                          ) : (
-                              <p>{message.text}</p>
-                          )}
+                          {message.role === "assistant" ? <Avatar /> : null}
+
+                          <div
+                              className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm font-light leading-relaxed ${
+                                  message.role === "assistant"
+                                      ? "rounded-bl-sm border border-line text-body"
+                                      : "rounded-br-sm bg-heading text-surface shadow-[0_4px_16px_-4px_rgba(0,0,0,0.4)]"
+                              }`}
+                          >
+                            {message.role === "assistant" ? (
+                                <div className="prose prose-sm max-w-none prose-p:my-1.5 prose-ul:my-1.5 prose-ul:pl-5 prose-li:my-0.5 prose-strong:text-heading dark:prose-invert">
+                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {message.text}
+                                  </ReactMarkdown>
+                                </div>
+                            ) : (
+                                <p>{message.text}</p>
+                            )}
+                          </div>
                         </motion.div>
                     ))}
 
@@ -198,18 +222,20 @@ export function ChatWidget() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
-                            className="inline-flex rounded-2xl bg-surface px-4 py-3 ring-1 ring-line rounded-tl-sm shadow-sm"
+                            className="flex items-end gap-2"
                         >
-                          {/* 4. Organic bouncing dots */}
-                          <div className="flex gap-1 items-center">
-                            {[0, 1, 2].map((i) => (
-                                <motion.span
-                                    key={i}
-                                    animate={{ y: [0, -4, 0] }}
-                                    transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.15 }}
-                                    className="size-1.5 rounded-full bg-muted/60"
-                                />
-                            ))}
+                          <Avatar />
+                          <div className="inline-flex rounded-2xl rounded-bl-sm border border-line px-4 py-3">
+                            <div className="flex gap-1 items-center">
+                              {[0, 1, 2].map((i) => (
+                                  <motion.span
+                                      key={i}
+                                      animate={{ y: [0, -4, 0] }}
+                                      transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.15 }}
+                                      className="size-1.5 rounded-full bg-muted/60"
+                                  />
+                              ))}
+                            </div>
                           </div>
                         </motion.div>
                     )}
@@ -219,12 +245,12 @@ export function ChatWidget() {
                   <div ref={messagesEndRef} className="h-px w-full" />
                 </div>
 
-                <div className="border-t border-line px-4 pb-4 pt-3 bg-surface-raised/50">
+                <div className="border-t border-line px-4 pb-4 pt-3">
                   <div className="mb-2">
                     <button
                         type="button"
                         onClick={() => setShowSuggestions(!showSuggestions)}
-                        className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-muted transition-colors hover:text-heading group"
+                        className="flex items-center gap-1 text-[11px] uppercase tracking-wider text-muted transition-colors duration-200 hover:text-heading group"
                     >
                         <span>{showSuggestions ? chatCopy.hideSuggestions : chatCopy.showSuggestions}</span>
                       <svg
@@ -255,7 +281,7 @@ export function ChatWidget() {
                                     key={prompt}
                                     type="button"
                                     onClick={() => void sendMessage(prompt)}
-                                    className="rounded-full border border-line px-3 py-1.5 text-xs text-muted transition-all duration-200 hover:border-accent/60 hover:text-heading hover:bg-surface"
+                                    className="rounded-full border border-line px-3 py-1.5 text-xs font-light text-muted transition-colors duration-200 hover:border-line-strong hover:text-heading"
                                 >
                                   {prompt}
                                 </button>
@@ -267,7 +293,7 @@ export function ChatWidget() {
 
                   <form
                       onSubmit={(e) => { e.preventDefault(); void sendMessage(draft); }}
-                      className="flex items-end gap-2"
+                      className="flex items-end gap-2 rounded-[22px] border border-line bg-surface py-1.5 pl-4 pr-1.5 transition-colors duration-200 focus-within:border-heading"
                   >
                 <textarea
                     ref={textareaRef}
@@ -275,34 +301,51 @@ export function ChatWidget() {
                     onChange={handleTextareaChange}
                     onKeyDown={handleKeyDown}
                     rows={1}
-                    className="min-h-[40px] max-h-[120px] flex-1 resize-none overflow-y-auto rounded-xl border border-line bg-surface py-2.5 px-3 text-sm text-body placeholder:text-muted focus:border-accent/60 focus:ring-1 focus:ring-accent/30 focus:outline-none transition-shadow scrollbar-thin scrollbar-thumb-line"
+                    className="min-h-[28px] max-h-[120px] flex-1 resize-none overflow-y-auto bg-transparent py-1.5 text-sm font-light text-body placeholder:text-muted focus:outline-none scrollbar-thin scrollbar-thumb-line"
                     placeholder={chatCopy.placeholder}
                 />
-                    <button
+                    <motion.button
                         type="submit"
                         disabled={!canSend}
-                        className="mb-[1px] flex h-[38px] items-center justify-center rounded-xl bg-accent px-4 text-sm font-semibold text-surface transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-45 hover:shadow-md active:scale-95"
+                        whileHover={canSend && !reduced ? { scale: 1.08 } : undefined}
+                        whileTap={canSend ? { scale: 0.92 } : undefined}
+                        aria-label={chatCopy.send}
+                        className={`grid size-9 shrink-0 place-items-center rounded-full transition-colors duration-200 ${
+                            canSend
+                                ? "bg-heading text-surface"
+                                : "cursor-not-allowed bg-line/60 text-muted"
+                        }`}
                     >
-                      {chatCopy.send}
-                    </button>
+                      <SendIcon width={16} height={16} />
+                    </motion.button>
                   </form>
                 </div>
               </motion.section>
           ) : null}
         </AnimatePresence>
 
-        <button
-            type="button"
-            onClick={() => setOpen((current) => !current)}
-            className="group flex items-center gap-2.5 rounded-full border border-line bg-surface-raised/95 px-5 py-3 text-sm font-medium text-heading shadow-[0_8px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur-md transition-all duration-300 hover:border-accent/60 hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.8)] hover:-translate-y-0.5 active:translate-y-0"
-            aria-label={open ? chatCopy.close : chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
-        >
-        <span className="relative flex size-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-50"></span>
-          <span className="relative inline-flex size-2.5 rounded-full bg-accent transition-opacity group-hover:opacity-90"></span>
-        </span>
-          {chatCopy.ask.replace("{name}", `${SITE.name.split(" ")[0]}'s AI`)}
-        </button>
+        {!open ? (
+          <motion.button
+              type="button"
+              onClick={() => setOpen(true)}
+              initial={false}
+              animate={{ scale: 1 }}
+              whileHover={reduced ? undefined : { scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="flex items-center gap-2.5 rounded-full bg-heading py-3.5 pl-4 pr-5 text-sm font-medium text-surface shadow-[0_10px_30px_-8px_rgba(0,0,0,0.6)]"
+              aria-label={chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
+          >
+            <span className="relative grid size-6 shrink-0 place-items-center">
+              <span
+                  aria-hidden="true"
+                  className={`absolute inset-0 rounded-full bg-surface/25 ${reduced ? "" : "animate-ping"}`}
+              />
+              <ChatBubbleIcon width={16} height={16} className="relative" />
+            </span>
+            {chatCopy.ask.replace("{name}", `${SITE.name.split(" ")[0]}'s AI`)}
+          </motion.button>
+        ) : null}
       </div>
   );
 }

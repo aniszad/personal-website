@@ -1,13 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/**
- * Technology tags, set as a plain inline run separated by hairline slashes
- * rather than as pills.
- *
- * Pills read as component library chrome and pull far more attention than a
- * list of tool names deserves. This keeps the same information at the weight of
- * a caption.
- */
+/** Technology tags, set as bordered chips: hairline border, 2px radius. */
 export function TagList({
   labels,
   className,
@@ -19,17 +12,15 @@ export function TagList({
 }) {
   return (
     <ul
-      className={cn("flex flex-wrap items-center gap-x-3 gap-y-1", className)}
+      className={cn("mt-4 flex flex-wrap items-center gap-[7px]", className)}
       aria-label={ariaLabel}
     >
-      {labels.map((label, position) => (
-        <li key={label} className="flex items-center gap-3 font-mono text-xs text-muted">
+      {labels.map((label) => (
+        <li
+          key={label}
+          className="rounded-sm border border-line px-[9px] py-1.5 text-[11.5px] font-light text-muted"
+        >
           {label}
-          {position < labels.length - 1 ? (
-            <span aria-hidden="true" className="text-line">
-              /
-            </span>
-          ) : null}
         </li>
       ))}
     </ul>

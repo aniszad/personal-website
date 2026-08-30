@@ -1,122 +1,91 @@
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
 import type { ResolvedProject } from "@/lib/data";
 import { TagList } from "@/components/ui/TagList";
-import { ScreenshotGallery } from "@/components/ui/ScreenshotGallery";
-import { ExternalLinkIcon, GitHubIcon } from "@/components/ui/Icons";
 import { localizeContent, t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 
 /**
- * One project, set as a hairline separated row rather than a card.
- *
- * Every title is the same size. Importance is carried by order and by a small
- * accent eyebrow over the featured few, not by a jump in type scale, because
- * three different heading sizes down one column read as an accident rather than
- * a hierarchy.
- *
- * When a writeup exists the title links to it and a spanning pseudo element
- * makes the whole row clickable. The repository and demo icons, and the media,
- * sit above that overlay so they stay independently reachable.
+ * A featured project. The proprietary variant (Limpscanner) carries a
+ * screenshot, an optional demo video slot, and a case-study link; the plain
+ * featured variant is text only and sits inside a caller-owned 50/50 grid.
  */
-export function ProjectEntry({ project }: { project: ResolvedProject }) {
+export function ProjectEntry({
+  project,
+  variant,
+}: {
+  project: ResolvedProject;
+  variant: "proprietary" | "featured";
+}) {
   const { language } = useLanguage();
   const copy = t(language).generic;
-  const hasWriteup = Boolean(project.writeup);
-  const { screenshots, demoVideo } = project;
+  const description = localizeContent(language, project.description);
+  const screenshot = project.screenshots[0];
 
-  /*
-    The still and the clip sit side by side rather than one replacing the other:
-    the screenshot shows the product at rest, the video tile beside it plays the
-    demonstration on click. The first screenshot doubles as the clip's poster so
-    the two read as a matched pair.
-  */
-  const poster = demoVideo ? (screenshots[0] ?? null) : null;
-  const hasMedia = Boolean(demoVideo) || screenshots.length > 0;
+  if (variant === "proprietary") {
+    return (
+      <div className="grid grid-cols-1 gap-10 border-b border-line-soft py-10 md:grid-cols-[minmax(0,1fr)_262px] md:items-start md:gap-11">
+        <div>
+          <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">
+            {copy.featuredProprietary}
+          </p>
+          <h2 className="mt-[14px] font-serif text-[38px] leading-[1.05] text-heading">
+            {project.name}
+          </h2>
+          <p className="mt-4 max-w-[560px] text-[15px] font-light leading-[1.65] text-body">
+            {description}
+          </p>
 
-  return (
-    <article className="group relative py-12 md:py-16">
-      <span
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
-      />
+          <TagList
+            labels={project.tags}
+            ariaLabel={`${copy.technologiesUsedIn} ${project.name}`}
+          />
 
-      <div className="flex items-start justify-between gap-6">
-        <div className="min-w-0">
-          {project.featured ? (
-            <p className="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
-              {copy.featured}
-            </p>
+          {project.writeup ? (
+            <Link
+              href={`/projects/${project.slug}`}
+              className="mt-[22px] inline-block border-b border-heading pb-[5px] text-sm font-medium text-heading"
+            >
+              {copy.caseStudy}
+            </Link>
           ) : null}
-
-          <h3 className="text-3xl text-heading transition-colors duration-300 group-hover:text-accent md:text-4xl">
-            {hasWriteup ? (
-              <Link
-                href={`/projects/${project.slug}`}
-                className="before:absolute before:inset-0"
-              >
-                {project.name}
-              </Link>
-            ) : (
-              project.name
-            )}
-          </h3>
         </div>
 
-        <div className="relative z-10 flex shrink-0 items-center gap-5 pt-1">
-          {project.proprietary ? (
-            <span className="hidden text-sm text-muted sm:inline">
-              {copy.proprietarySource}
-            </span>
+        <div className="grid gap-3">
+          {screenshot ? (
+            <Image
+              src={screenshot}
+              alt=""
+              width={262}
+              height={466}
+              className="block aspect-[9/16] w-full border border-line object-cover"
+            />
           ) : null}
 
-          {project.repo ? (
-            <a
-              href={project.repo}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="text-muted transition-colors duration-200 hover:text-accent"
-            >
-              <GitHubIcon width={20} height={20} />
-              <span className="sr-only">
-                {project.name} {copy.sourceOnGithub}
-              </span>
-            </a>
-          ) : null}
-
-          {project.demo ? (
-            <a
-              href={project.demo}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="text-muted transition-colors duration-200 hover:text-accent"
-            >
-              <ExternalLinkIcon width={20} height={20} />
-              <span className="sr-only">
-                {project.name} {copy.liveDemo}
-              </span>
-            </a>
+          {project.demoVideo ? (
+            <video
+              src={project.demoVideo}
+              poster={screenshot ?? undefined}
+              controls
+              className="block w-full border border-line"
+            />
           ) : null}
         </div>
       </div>
+    );
+  }
 
-      <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
-        {localizeContent(language, project.description)}
-      </p>
-
+  return (
+    <div>
+      <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">{copy.featured}</p>
+      <h2 className="mt-3 font-serif text-[28px] leading-[1.1] text-heading">{project.name}</h2>
+      <p className="mt-3.5 text-[14.5px] font-light leading-[1.65] text-body">{description}</p>
       <TagList
         labels={project.tags}
-        className="mt-6"
         ariaLabel={`${copy.technologiesUsedIn} ${project.name}`}
       />
-
-      {hasMedia ? (
-        <ScreenshotGallery
-          projectName={project.name}
-          screenshots={screenshots}
-          demoVideo={demoVideo}
-          demoPoster={poster}
-        />
-      ) : null}
-    </article>
+    </div>
   );
 }

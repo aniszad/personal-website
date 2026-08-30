@@ -55,7 +55,7 @@ export async function POST(request: Request) {
         "",
         message,
         "",
-        `— Sent via ${SITE.url}`,
+        `Sent via ${SITE.url}`,
       ].join("\n"),
     });
 

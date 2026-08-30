@@ -4,23 +4,20 @@ import { motion, useReducedMotion, type Variants } from "motion/react";
 import type { ReactNode } from "react";
 
 /**
- * Baseline scroll entrance: fade in and slide up by 20px, once, when the
- * element first enters the viewport.
+ * Baseline scroll entrance: fade in and rise 14px, once, when the element
+ * first enters the viewport. Reserved for a page's first content block only;
+ * nothing further down a list repeats this.
  *
- * Pages with their own visual identity drive motion directly instead of using
- * this. It exists for the plain cases, where a section wants the house default
- * rather than a treatment of its own.
- *
- * Under reduced motion the slide is dropped and only a short fade remains, so
+ * Under reduced motion the rise is dropped and only a short fade remains, so
  * nothing travels across the screen.
  */
 function buildVariants(reduced: boolean): Variants {
   return {
-    hidden: { opacity: 0, y: reduced ? 0 : 20 },
+    hidden: { opacity: 0, y: reduced ? 0 : 14 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduced ? 0.2 : 0.5, ease: "easeOut" },
+      transition: { duration: reduced ? 0.2 : 0.6, ease: "easeOut" },
     },
   };
 }

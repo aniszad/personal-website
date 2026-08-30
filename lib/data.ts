@@ -69,10 +69,8 @@ export type EducationEntry = {
    * image.
    */
   logo?: string;
-  /** Institution homepage. When set, the logo becomes a link. */
+  /** Institution homepage, shown as a plain right-aligned link. */
   website?: string;
-  /** Alternates down the timeline on desktop. Ignored on mobile. */
-  side: "left" | "right";
 };
 
 /** An education entry with its logo narrowed to a real file, or null. */
@@ -87,7 +85,7 @@ export type SkillGroup = {
 
 export const ABOUT_PARAGRAPHS: readonly string[] = [
   "I am a Master's student in Artificial Intelligence at Université de Lille, with an engineering background in AI and Data Science from ESTIN in Algeria. Most of what I enjoy sits where machine learning meets software that real people actually use.",
-  "I recently finished a four month development internship at Limpidius, based at EuraTechnologies in Lille. I shipped a browser based barcode scanning library that runs in production at Castorama and other retail clients, handling roughly 3,000 scans a day. Getting GPU image processing and a WASM decoder to cooperate inside a browser tab taught me more about performance than any course did.",
+  "I recently finished a five month development internship at Limpidius, based at EuraTechnologies in Lille. I shipped a browser based barcode scanning library that runs in production at Castorama and other retail clients, handling roughly 3,000 scans a day. Getting GPU image processing and a WASM decoder to cooperate inside a browser tab taught me more about performance than any course did.",
   "I move across the stack comfortably: frontend in Angular and React, backend in NestJS and Spring Boot, mobile in Kotlin, and ML pipelines in Python. I am currently looking for an alternance starting September 2026 in AI, Data Science, or software engineering around Lille.",
 ];
 
@@ -230,7 +228,6 @@ export const EDUCATION: readonly EducationEntry[] = [
       "Four year engineering programme with a specialization in Artificial Intelligence and Data Science.",
     logo: "/images/schools/estin",
     website: "https://www.estin.dz",
-    side: "left",
   },
   {
     dates: "2023 to 2024",
@@ -241,7 +238,6 @@ export const EDUCATION: readonly EducationEntry[] = [
       "Graduate coursework in machine learning, deep learning, and large scale data processing.",
     logo: "/images/schools/estin",
     website: "https://www.estin.dz",
-    side: "right",
   },
   {
     dates: "2024 to 2025",
@@ -252,7 +248,6 @@ export const EDUCATION: readonly EducationEntry[] = [
       "French diploma validation pathway, completed alongside adapting to a new academic system and language.",
     logo: "/images/schools/univ-lille",
     website: "https://www.univ-lille.fr",
-    side: "left",
   },
   {
     dates: "2026 to 2027",
@@ -263,7 +258,6 @@ export const EDUCATION: readonly EducationEntry[] = [
       "Starting this September. I am looking for an alternance to run alongside it.",
     logo: "/images/schools/univ-lille",
     website: "https://www.univ-lille.fr",
-    side: "right",
   },
 ];
 

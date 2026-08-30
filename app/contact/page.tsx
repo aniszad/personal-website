@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { getPage } from "@/lib/constants";
+import { HOME_THEME, getPage } from "@/lib/constants";
 import { PageShell } from "@/components/layout/PageShell";
 import { Contact } from "@/components/sections/Contact";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: page.theme.surface,
+  themeColor: HOME_THEME.surface,
   colorScheme: "dark",
 };
 

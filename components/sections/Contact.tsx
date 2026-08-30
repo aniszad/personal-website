@@ -1,25 +1,18 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { CV_PATH, SOCIALS } from "@/lib/constants";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { SOCIALS } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
-import { SocialLinks } from "@/components/ui/SocialLinks";
-import { ArrowUpRightIcon } from "@/components/ui/Icons";
+import { FadeInOnScroll } from "@/components/animations/FadeInOnScroll";
 
-/**
- * Contact page body.
- *
- * Visual identity: a quiet full-bleed accent wash that belongs to the page,
- * rather than a pointer glow trapped inside a panel. The global ambient layer
- * and this local tonal field now blend without creating a visible card edge.
- */
 type FormStatus = "idle" | "sending" | "success" | "error";
 
 export function Contact() {
   const { language } = useLanguage();
   const copy = t(language).generic;
   const formCopy = copy.contactForm;
+  const meta = copy.contactMeta;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -52,136 +45,137 @@ export function Contact() {
   }
 
   return (
-    <div
-      className="relative isolate py-20 md:py-28"
-    >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-x-12 -inset-y-16 -z-10 opacity-70"
-        style={{
-          background:
-            "radial-gradient(ellipse at 82% 48%, color-mix(in srgb, var(--color-accent) 7%, transparent), transparent 56%)",
-        }}
-      />
-
-      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-line" />
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-line" />
-
-      <div className="relative max-w-3xl">
-        <p className="font-display text-2xl font-semibold leading-snug tracking-tight text-heading md:text-4xl">
-          {copy.contactLead}
-        </p>
-
-        <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
-          {copy.contactBody}
-        </p>
-
-        <a
-          href={`mailto:${SOCIALS.email}`}
-          className="group mt-14 inline-block"
-        >
-          <span className="block break-all font-display text-3xl font-semibold tracking-tight text-accent transition-opacity duration-300 group-hover:opacity-70 md:text-5xl">
-            {SOCIALS.email}
-          </span>
-          {/*
-            The rule is always drawn on touch, where there is no hover to
-            reveal it. Both the resting and hover states are scoped to the same
-            breakpoint, otherwise the responsive variant would be emitted after
-            the hover variant and win even while hovered.
-          */}
-          <span
-            aria-hidden="true"
-            className="mt-3 block h-px w-full origin-left bg-accent transition-transform duration-500 ease-out motion-reduce:transition-none md:scale-x-0 md:group-hover:scale-x-100"
-          />
-        </a>
-
-        <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-6">
-          <SocialLinks size={22} />
-
-          {/*
-            download hints the filename to the browser; target and rel are the
-            safety pair for opening it in a new tab. The file is served straight
-            from /public by the static export.
-          */}
-          <a
-            href={CV_PATH}
-            download
-            target="_blank"
-            rel="noreferrer noopener"
-            className="group inline-flex items-center gap-2 text-sm font-semibold text-body transition-colors duration-200 hover:text-accent"
+    <FadeInOnScroll className="grid grid-cols-1 items-start gap-11 md:grid-cols-[minmax(0,1fr)_320px] md:gap-16">
+      <div className="flex max-w-[620px] flex-col gap-[22px]">
+        {formStatus === "success" || formStatus === "error" ? (
+          <p
+            role="status"
+            className={`text-[15px] ${formStatus === "success" ? "text-heading" : "text-body-strong"}`}
           >
-            {copy.downloadCv}
-            <ArrowUpRightIcon
-              width={15}
-              height={15}
-              className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
+            {formStatus === "success" ? formCopy.successBody : errorMsg || formCopy.errorFallback}
+          </p>
+        ) : (
+          <form
+            onSubmit={(e) => { void handleSubmit(e); }}
+            noValidate
+            className="flex flex-col gap-[22px]"
+          >
+            <Field
+              eyebrow={formCopy.nameLabel}
+              type="text"
+              value={name}
+              onChange={setName}
+              placeholder={formCopy.namePlaceholder}
             />
-          </a>
-        </div>
+            <Field
+              eyebrow={formCopy.emailLabel}
+              type="email"
+              value={email}
+              onChange={setEmail}
+              placeholder={formCopy.emailPlaceholder}
+            />
 
-        {/* Contact form */}
-        <div className="mt-20 max-w-xl">
-          {formStatus === "success" ? (
-            <div
-              role="status"
-              className="rounded-2xl border border-accent/30 bg-accent/5 px-8 py-10 text-center"
-            >
-              <p className="font-display text-xl font-semibold text-accent">
-                {formCopy.successHeading}
+            <div>
+              <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">
+                {formCopy.messageLabel}
               </p>
-              <p className="mt-2 text-muted">{formCopy.successBody}</p>
-            </div>
-          ) : (
-            <form
-              onSubmit={(e) => { void handleSubmit(e); }}
-              noValidate
-              className="flex flex-col gap-4"
-            >
-              <div className="flex flex-col gap-4 sm:flex-row">
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={formCopy.namePlaceholder}
-                  className="flex-1 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
-                />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={formCopy.emailPlaceholder}
-                  className="flex-1 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
-                />
-              </div>
-
               <textarea
                 required
-                rows={5}
+                rows={1}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={formCopy.messagePlaceholder}
-                className="resize-none rounded-xl border border-line bg-surface px-4 py-3 text-sm text-body placeholder:text-muted/60 focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-shadow"
+                className="mt-2.5 w-full resize-none border-b border-line bg-transparent pb-[66px] text-[15px] font-light text-body placeholder:text-muted focus:border-heading focus:outline-none"
               />
+            </div>
 
-              {formStatus === "error" && (
-                <p role="alert" className="text-sm text-red-400">
-                  {errorMsg}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={formStatus === "sending"}
-                className="self-start rounded-xl border border-accent px-6 py-3 text-sm font-semibold text-accent transition-all duration-200 hover:bg-accent hover:text-surface disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {formStatus === "sending" ? formCopy.sending : formCopy.send}
-              </button>
-            </form>
-          )}
-        </div>
+            <button
+              type="submit"
+              disabled={formStatus === "sending"}
+              className="mt-1.5 self-start border-b border-heading pb-1.5 text-[15px] font-medium text-heading disabled:opacity-50"
+            >
+              {formStatus === "sending" ? formCopy.sending : formCopy.send}
+            </button>
+          </form>
+        )}
       </div>
+
+      <div className="flex flex-col gap-[22px] border-line pt-8 md:border-l md:pl-7 md:pt-0">
+        <MetaBlock label={meta.directLabel}>
+          <a
+            href={`mailto:${SOCIALS.email}`}
+            className="block text-[15px] leading-[1.4] text-heading transition-colors duration-200 hover:text-body-strong"
+          >
+            {SOCIALS.email}
+          </a>
+        </MetaBlock>
+
+        <MetaBlock label={meta.elsewhereLabel}>
+          <div className="flex flex-col gap-2">
+            <a
+              href={SOCIALS.github}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="text-[14.5px] leading-[1.4] text-body-strong transition-colors duration-200 hover:text-heading"
+            >
+              GitHub ↗
+            </a>
+            <a
+              href={SOCIALS.linkedin}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="text-[14.5px] leading-[1.4] text-body-strong transition-colors duration-200 hover:text-heading"
+            >
+              LinkedIn ↗
+            </a>
+          </div>
+        </MetaBlock>
+
+        <MetaBlock label={meta.basedInLabel}>
+          <p className="text-[14.5px] leading-[1.4] text-body-strong">{meta.basedInValue}</p>
+        </MetaBlock>
+
+        <MetaBlock label={meta.responseLabel}>
+          <p className="text-[14.5px] leading-[1.4] text-body-strong">{meta.responseValue}</p>
+        </MetaBlock>
+      </div>
+    </FadeInOnScroll>
+  );
+}
+
+function Field({
+  eyebrow,
+  type,
+  value,
+  onChange,
+  placeholder,
+}: {
+  eyebrow: string;
+  type: "text" | "email";
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div>
+      <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">{eyebrow}</p>
+      <input
+        type={type}
+        required
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="mt-2.5 w-full border-b border-line bg-transparent pb-[11px] text-[15px] font-light text-body placeholder:text-muted focus:border-heading focus:outline-none"
+      />
+    </div>
+  );
+}
+
+function MetaBlock({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div>
+      <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">{label}</p>
+      <div className="mt-2.5">{children}</div>
     </div>
   );
 }

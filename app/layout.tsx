@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Newsreader, Public_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { HOME_THEME, SITE, SOCIALS } from "@/lib/constants";
-import { Ambient } from "@/components/layout/Ambient";
-import { CursorGlow } from "@/components/layout/CursorGlow";
-import { PrecisionCursor } from "@/components/ui/PrecisionCursor";
 import { LanguageProvider } from "@/components/layout/LanguageProvider";
 import { ChatWidget } from "@/components/ui/ChatWidget";
 import { CommandPalette } from "@/components/ui/CommandPalette";
@@ -25,18 +22,21 @@ const jsonLd = {
   sameAs: [SOCIALS.github, SOCIALS.linkedin],
 };
 
-/** Primary interface and display face. */
-const geist = Geist({
+/** Display face: the home headline, page titles, and single large numerals. */
+const newsreader = Newsreader({
   subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
-  variable: "--font-geist",
+  variable: "--font-newsreader",
 });
 
-/** Technical metadata, tags, and command-line details. */
-const geistMono = Geist_Mono({
+/** Interface face: everything else. */
+const publicSans = Public_Sans({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
-  variable: "--font-geist-mono",
+  variable: "--font-public-sans",
 });
 
 export const metadata: Metadata = {
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
         url: `${SITE.url}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: `${SITE.name} — ${SITE.title}`,
+        alt: `${SITE.name}, ${SITE.title}`,
       },
     ],
   },
@@ -94,7 +94,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${geistMono.variable}`}
+      className={`${newsreader.variable} ${publicSans.variable}`}
       suppressHydrationWarning
     >
       <body className="bg-surface text-body antialiased">
@@ -109,7 +109,7 @@ export default function RootLayout({
         */}
         <a
           href="#content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-surface"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-heading focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-surface"
         >
           Skip to content
         </a>
@@ -122,10 +122,6 @@ export default function RootLayout({
           navigation rather than restarting from the top each time.
         */}
         <LanguageProvider>
-          <Ambient />
-          <CursorGlow />
-          <PrecisionCursor />
-
           {children}
           <ChatWidget />
           <CommandPalette />

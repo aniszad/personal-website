@@ -82,13 +82,7 @@ export async function POST(request: Request) {
 
   const knowledge = knowledgeBase as KnowledgeBase;
   const context = retrieveContext(knowledge, message, 5);
-  const systemPrompt = [
-    buildSystemPrompt(knowledge),
-    "Answer only using the supplied profile context.",
-    "Do not claim to be Anis or speak in the first person as if you were him.",
-    "If the context is insufficient, say so plainly.",
-    "Keep answers concise: one short paragraph or at most 3 bullets.",
-  ].join("\n");
+  const systemPrompt = buildSystemPrompt(knowledge);
 
   const historyMessages = history.map((entry) => ({
     role: entry.role,
@@ -104,8 +98,8 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model: MODEL,
-        temperature: 0.15,
-        max_tokens: 280,
+        temperature: 0.45,
+        max_tokens: 320,
         reasoning_effort: "none",
         messages: [
           { role: "system", content: systemPrompt },
@@ -113,12 +107,10 @@ export async function POST(request: Request) {
           {
             role: "user",
             content: [
-              "Use only the profile context below to answer the visitor's question.",
-              "Do not invent or infer anything not present in the context.",
-              "Format the answer as either one short paragraph or 3 bullet points max.",
+              "The profile context below grounds your factual claims about Anis. Answer the visitor naturally, drawing on and connecting this context; if it's genuinely thin for this question, say so honestly rather than guessing at specifics.",
               "",
               "PROFILE CONTEXT:",
-              context || "No matching profile information was found.",
+              context || "No closely matching profile information was found for this question.",
               "",
               `VISITOR QUESTION: ${message}`,
             ].join("\n"),

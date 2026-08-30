@@ -19,23 +19,23 @@ export default function Error({
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-      <p className="font-display text-6xl font-bold text-accent">500</p>
-      <h1 className="mt-4 font-display text-2xl font-semibold text-heading">
+      <p className="font-serif text-6xl text-heading">500</p>
+      <h1 className="mt-4 font-serif text-2xl text-heading">
         {copy.heading}
       </h1>
-      <p className="mt-4 max-w-md text-muted">
+      <p className="mt-4 max-w-md font-light text-muted">
         {copy.body}
       </p>
-      <div className="mt-8 flex gap-4">
+      <div className="mt-8 flex gap-8">
         <button
           onClick={reset}
-          className="rounded-lg border border-accent px-5 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-surface"
+          className="border-b border-heading pb-1 text-sm font-medium text-heading"
         >
           {copy.retry}
         </button>
         <a
           href="/"
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-body transition-colors hover:border-accent/50 hover:text-heading"
+          className="border-b border-line-strong pb-1 text-sm text-muted transition-colors duration-200 hover:text-heading"
         >
           {copy.home}
         </a>

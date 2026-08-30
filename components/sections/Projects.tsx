@@ -1,55 +1,56 @@
 "use client";
 
-import { useEffect } from "react";
-import { motion, useReducedMotion } from "motion/react";
 import type { ResolvedProject } from "@/lib/data";
 import { ProjectEntry } from "@/components/ui/ProjectEntry";
+import { ProjectIndexRow } from "@/components/ui/ProjectIndexRow";
+import { t } from "@/lib/i18n";
+import { useLanguage } from "@/components/layout/LanguageProvider";
+import { FadeInOnScroll } from "@/components/animations/FadeInOnScroll";
 
 /**
- * Projects page body.
- *
- * Visual identity: a single column of hairline separated rows that arrive in
- * sequence, with an accent rule drawing across each row on hover and any
- * screenshots easing in under the cursor. Featured work sorts first and is set
- * larger.
+ * Projects page body: the proprietary flagship on its own, the other two
+ * featured projects side by side, and the rest as a plain index.
  */
 export function Projects({
   projects,
 }: {
   projects: readonly ResolvedProject[];
 }) {
-  const reduced = useReducedMotion() ?? false;
+  const { language } = useLanguage();
+  const copy = t(language).generic;
 
-  useEffect(() => {
-    if (reduced) return;
-
-    document.documentElement.classList.add("timeline-snap-page");
-    return () => document.documentElement.classList.remove("timeline-snap-page");
-  }, [reduced]);
-
-  const ordered = [
-    ...projects.filter((project) => project.featured),
-    ...projects.filter((project) => !project.featured),
-  ];
+  const featured = projects.filter((project) => project.featured);
+  const rest = projects.filter((project) => !project.featured);
+  const [proprietary, ...otherFeatured] = featured;
 
   return (
-    <div className="border-b border-line">
-      {ordered.map((project, position) => (
-        <motion.div
-          key={project.slug}
-          className="snap-item flex min-h-[calc(100svh-2rem)] items-center border-t border-line py-12 md:min-h-svh md:py-16"
-          initial={{ opacity: 0, y: reduced ? 0 : 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{
-            duration: reduced ? 0.2 : 0.5,
-            ease: "easeOut",
-            delay: reduced ? 0 : position * 0.07,
-          }}
-        >
-          <ProjectEntry project={project} />
-        </motion.div>
-      ))}
-    </div>
+    <FadeInOnScroll>
+      {proprietary ? <ProjectEntry project={proprietary} variant="proprietary" /> : null}
+
+      {otherFeatured.length > 0 ? (
+        <div className="grid grid-cols-1 gap-10 border-b border-line-soft py-9 md:grid-cols-2 md:gap-12">
+          {otherFeatured.map((project) => (
+            <ProjectEntry key={project.slug} project={project} variant="featured" />
+          ))}
+        </div>
+      ) : null}
+
+      {rest.length > 0 ? (
+        <>
+          <p className="pt-8 text-[10.5px] uppercase tracking-[0.16em] text-muted">
+            {copy.projectIndex}
+          </p>
+          <div>
+            {rest.map((project, index) => (
+              <ProjectIndexRow
+                key={project.slug}
+                project={project}
+                ordinal={featured.length + index + 1}
+              />
+            ))}
+          </div>
+        </>
+      ) : null}
+    </FadeInOnScroll>
   );
 }

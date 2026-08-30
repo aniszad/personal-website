@@ -75,41 +75,72 @@ const PAGE_COPY: Record<Language, Record<string, PageCopy>> = {
 
 const HOME_COPY = {
   en: {
-    indexLabel: "Sections",
     footerBuiltWith: "Built with Next.js and Tailwind CSS.",
     startWithWork: "Start with the work",
     getInTouch: "Get in touch",
-    availability: "Open for alternance, September 2026",
     location: "Lille, France",
     tagline:
-      "An engineering cycle in AI and Data Science at ESTIN, a stage spent shipping production code at Limpidius, and a Master's in Artificial Intelligence at Universite de Lille from this September.",
-    rotatingTitle: {
-      start: "I build",
-      end: "that ship",
-      middle: [
-        "websites and web apps",
-        "mobile apps",
-        "AI and data systems",
-      ],
+      "An engineering cycle in AI and Data Science at ESTIN, a stage spent shipping production code at Limpidius, and a Master's in Artificial Intelligence at Université de Lille from this September.",
+    headline: { line1: "I build websites and web apps", line2: "that ship" },
+    status: {
+      currentlyLabel: "Currently",
+      currentlyValue: ["AI Engineer Intern, Limpidius", "EuraTechnologies, Lille"],
+      fromLabel: "From September",
+      fromValue: ["MSc Artificial Intelligence", "Université de Lille"],
+      availableLabel: "Available",
+      availableValue: "Alternance, September 2026",
+    },
+    metrics: [
+      {
+        value: "3,000",
+        caption: "scans a day through the barcode library, in French retail",
+      },
+      {
+        value: "Three",
+        caption:
+          "roles, from a bus fleet system in Béjaïa to production retail software",
+      },
+      { value: "Open source", caption: "Android library published on JitPack" },
+    ],
+    featured: {
+      eyebrow: "Selected work",
+      cta: "Read the case study",
+      caption: "Scanning a product label in store",
     },
   },
   fr: {
-    indexLabel: "Sections",
     footerBuiltWith: "Créé avec Next.js et Tailwind CSS.",
     startWithWork: "Voir les projets",
     getInTouch: "Me contacter",
-    availability: "Disponible pour une alternance, septembre 2026",
     location: "Lille, France",
     tagline:
       "Formation en IA et Data Science à ESTIN, stage en production chez Limpidius, et Master en Intelligence Artificielle à l'Université de Lille à partir de septembre.",
-    rotatingTitle: {
-      start: "Je construis",
-      end: "qui livrent",
-      middle: [
-        "des sites et apps web",
-        "des applications mobiles",
-        "des systèmes IA et data",
-      ],
+    headline: { line1: "Je construis des sites et apps web", line2: "qui livrent" },
+    status: {
+      currentlyLabel: "Actuellement",
+      currentlyValue: ["Stagiaire ingénieur IA, Limpidius", "EuraTechnologies, Lille"],
+      fromLabel: "Dès septembre",
+      fromValue: ["Master en Intelligence Artificielle", "Université de Lille"],
+      availableLabel: "Disponible",
+      availableValue: "Alternance, septembre 2026",
+    },
+    metrics: [
+      {
+        value: "3 000",
+        caption:
+          "scans par jour via la bibliothèque de codes-barres, dans le retail français",
+      },
+      {
+        value: "Trois",
+        caption:
+          "rôles, d'un système de flotte de bus à Béjaïa à un logiciel retail en production",
+      },
+      { value: "Open source", caption: "Bibliothèque Android publiée sur JitPack" },
+    ],
+    featured: {
+      eyebrow: "Travail sélectionné",
+      cta: "Lire l'étude de cas",
+      caption: "Scan d'une étiquette produit en magasin",
     },
   },
 } as const;
@@ -131,6 +162,11 @@ const GENERIC_COPY = {
     liveDemo: "live demo (opens in a new tab)",
     featured: "Featured",
     proprietarySource: "Proprietary source",
+    featuredProprietary: "Featured, proprietary source",
+    caseStudy: "Case study",
+    projectIndex: "Index",
+    currentRole: "Current",
+    startingSoon: "Starting",
     error: { heading: "Something went wrong", body: "An unexpected error occurred. Try refreshing the page or going back.", retry: "Try again", home: "Go home" },
     commandPalette: {
       trigger: "Search",
@@ -182,10 +218,20 @@ const GENERIC_COPY = {
     contactBody:
       "If you would like to work together, or you just want to ask about something I built, write to me.",
     aboutParagraphs: [
-      "I am a Master's student in Artificial Intelligence at Universite de Lille, with an engineering background in AI and Data Science from ESTIN in Algeria. Most of what I enjoy sits where machine learning meets software that real people actually use.",
-      "I recently finished a four month development internship at Limpidius, based at EuraTechnologies in Lille. I shipped a browser based barcode scanning library that runs in production at Castorama and other retail clients, handling roughly 3,000 scans a day. Getting GPU image processing and a WASM decoder to cooperate inside a browser tab taught me more about performance than any course did.",
+      "I am a Master's student in Artificial Intelligence at Université de Lille, with an engineering background in AI and Data Science from ESTIN in Algeria. Most of what I enjoy sits where machine learning meets software that real people actually use.",
+      "I recently finished a five month development internship at Limpidius, based at EuraTechnologies in Lille. I shipped a browser based barcode scanning library that runs in production at Castorama and other retail clients, handling roughly 3,000 scans a day. Getting GPU image processing and a WASM decoder to cooperate inside a browser tab taught me more about performance than any course did.",
       "I move across the stack comfortably: frontend in Angular and React, backend in NestJS and Spring Boot, mobile in Kotlin, and ML pipelines in Python. I am currently looking for an alternance starting September 2026 in AI, Data Science, or software engineering around Lille.",
     ],
+    // Languages value is a placeholder pending confirmation from Anis (not in lib/data.ts).
+    aboutMeta: {
+      downloadCv: "Download CV (PDF)",
+      basedInLabel: "Based in",
+      basedInValue: "Lille, France",
+      languagesLabel: "Languages",
+      languagesValue: "FR · EN · AR",
+      lookingForLabel: "Looking for",
+      lookingForValue: "Alternance, Sept 2026",
+    },
     skillsCategory: {
       Languages: "Languages",
       Frontend: "Frontend",
@@ -196,14 +242,26 @@ const GENERIC_COPY = {
       Tools: "Tools",
     } as Record<string, string>,
     contactForm: {
+      nameLabel: "Name",
       namePlaceholder: "Your name",
-      emailPlaceholder: "your@email.com",
-      messagePlaceholder: "What would you like to talk about?",
+      emailLabel: "Email",
+      emailPlaceholder: "you@company.com",
+      messageLabel: "Message",
+      messagePlaceholder: "What you are working on",
       send: "Send message",
       sending: "Sending…",
       successHeading: "Message sent",
-      successBody: "Thanks — I will get back to you soon.",
+      successBody: "Thanks, I will get back to you soon.",
       errorFallback: "Something went wrong. Please try again or email directly.",
+    },
+    // Response time is a placeholder pending confirmation from Anis (not in the repo).
+    contactMeta: {
+      directLabel: "Direct",
+      elsewhereLabel: "Elsewhere",
+      basedInLabel: "Based in",
+      basedInValue: "Lille, France",
+      responseLabel: "Response",
+      responseValue: "Usually within a day",
     },
   },
   fr: {
@@ -222,6 +280,11 @@ const GENERIC_COPY = {
     liveDemo: "démo en ligne (ouvre un nouvel onglet)",
     featured: "À la une",
     proprietarySource: "Code propriétaire",
+    featuredProprietary: "À la une, code propriétaire",
+    caseStudy: "Étude de cas",
+    projectIndex: "Index",
+    currentRole: "En cours",
+    startingSoon: "Bientôt",
     error: { heading: "Une erreur est survenue", body: "Une erreur inattendue s'est produite. Actualisez la page ou revenez en arrière.", retry: "Réessayer", home: "Accueil" },
     commandPalette: {
       trigger: "Rechercher",
@@ -274,9 +337,18 @@ const GENERIC_COPY = {
       "Si vous souhaitez collaborer avec moi, ou simplement échanger sur ce que j'ai construit, écrivez-moi.",
     aboutParagraphs: [
       "Je suis étudiant en Master d'Intelligence Artificielle à l'Université de Lille, avec une formation d'ingénieur en IA et Data Science à ESTIN en Algérie. Ce qui me passionne, c'est l'endroit où le machine learning rencontre des logiciels utilisés en vrai.",
-      "J'ai récemment terminé un stage de quatre mois chez Limpidius à EuraTechnologies (Lille). J'y ai livré une bibliothèque de scan de codes-barres dans le navigateur, en production chez Castorama et d'autres clients retail, avec environ 3 000 scans par jour. Faire coopérer traitement GPU d'image et décodeur WASM dans un onglet navigateur m'a appris plus sur la performance que beaucoup de cours.",
+      "J'ai récemment terminé un stage de cinq mois chez Limpidius à EuraTechnologies (Lille). J'y ai livré une bibliothèque de scan de codes-barres dans le navigateur, en production chez Castorama et d'autres clients retail, avec environ 3 000 scans par jour. Faire coopérer traitement GPU d'image et décodeur WASM dans un onglet navigateur m'a appris plus sur la performance que beaucoup de cours.",
       "Je suis à l'aise sur toute la stack : frontend en Angular et React, backend en NestJS et Spring Boot, mobile en Kotlin, et pipelines ML en Python. Je cherche actuellement une alternance à partir de septembre 2026 en IA, Data Science ou software engineering autour de Lille.",
     ],
+    aboutMeta: {
+      downloadCv: "Télécharger le CV (PDF)",
+      basedInLabel: "Basé à",
+      basedInValue: "Lille, France",
+      languagesLabel: "Langues",
+      languagesValue: "FR · EN · AR",
+      lookingForLabel: "Recherche",
+      lookingForValue: "Alternance, sept. 2026",
+    },
     skillsCategory: {
       Languages: "Langages",
       Frontend: "Frontend",
@@ -287,14 +359,25 @@ const GENERIC_COPY = {
       Tools: "Outils",
     } as Record<string, string>,
     contactForm: {
+      nameLabel: "Nom",
       namePlaceholder: "Votre nom",
-      emailPlaceholder: "votre@email.com",
-      messagePlaceholder: "De quoi souhaitez-vous parler ?",
+      emailLabel: "Email",
+      emailPlaceholder: "vous@entreprise.com",
+      messageLabel: "Message",
+      messagePlaceholder: "Ce sur quoi vous travaillez",
       send: "Envoyer",
       sending: "Envoi…",
       successHeading: "Message envoyé",
-      successBody: "Merci — je vous répondrai bientôt.",
+      successBody: "Merci, je vous répondrai bientôt.",
       errorFallback: "Une erreur est survenue. Réessayez ou écrivez-moi directement.",
+    },
+    contactMeta: {
+      directLabel: "Contact direct",
+      elsewhereLabel: "Ailleurs",
+      basedInLabel: "Basé à",
+      basedInValue: "Lille, France",
+      responseLabel: "Réponse",
+      responseValue: "Généralement sous 24h",
     },
   },
 } as const;

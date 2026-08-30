@@ -1,32 +1,28 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import {
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "motion/react";
+import { motion, useReducedMotion, type Variants } from "motion/react";
+import type { ResolvedProject } from "@/lib/data";
 import { t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
 import { ArrowUpRightIcon } from "@/components/ui/Icons";
 
-export function Hero({ portrait }: { portrait?: ReactNode }) {
+/**
+ * Home page body: hero, CTAs, metrics, and the featured Limpscanner artifact.
+ * Five bands total; the sixth (footer note) lives in app/page.tsx alongside
+ * this since it sits outside the last rule.
+ */
+export function Hero({ limpscanner }: { limpscanner: ResolvedProject }) {
   const reduced = useReducedMotion() ?? false;
   const { language } = useLanguage();
   const copy = t(language);
-  const titleCopy = copy.home.rotatingTitle;
-  const [titleIndex, setTitleIndex] = useState(0);
+  const home = copy.home;
 
   const container: Variants = {
     hidden: {},
     visible: {
-      transition: { staggerChildren: reduced ? 0 : 0.1, delayChildren: 0.15 },
+      transition: { staggerChildren: reduced ? 0 : 0.06, delayChildren: 0.1 },
     },
   };
 
@@ -39,162 +35,157 @@ export function Hero({ portrait }: { portrait?: ReactNode }) {
     },
   };
 
-  const line: Variants = {
-    hidden: { y: reduced ? 0 : "120%", opacity: reduced ? 0 : 1 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: reduced ? 0.3 : 0.9,
-        ease: [0.16, 1, 0.3, 1],
-      },
-    },
-  };
-
-  useEffect(() => {
-    if (reduced) {
-      setTitleIndex(0);
-      return;
-    }
-
-    const intervalId = window.setInterval(() => {
-      setTitleIndex((current) => (current + 1) % titleCopy.middle.length);
-    }, 2300);
-
-    return () => window.clearInterval(intervalId);
-  }, [reduced, titleCopy.middle.length]);
+  const screenshot = limpscanner.screenshots[0];
 
   return (
+    <>
       <motion.section
-          initial="hidden"
-          animate="visible"
-          variants={container}
-          className="relative flex min-h-svh flex-col overflow-hidden"
+        initial="hidden"
+        animate="visible"
+        variants={container}
+        className="grid grid-cols-1 items-end gap-10 pt-16 lg:grid-cols-[minmax(0,1fr)_310px] lg:gap-16 lg:pt-[78px]"
       >
-        <div className="relative z-10 flex flex-1 items-center py-14 md:py-16">
-          <div
-              className={
-                portrait
-                    ? "grid w-full items-center gap-12 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:gap-14"
-                    : "w-full"
-              }
+        <div>
+          <motion.h1
+            variants={item}
+            className="text-[clamp(2.75rem,11vw,3.5rem)] leading-[0.98] tracking-[-0.015em] text-heading text-pretty lg:text-[78px]"
           >
-            <div className="min-w-0">
-              <h1
-                  aria-label={`${titleCopy.start} ${titleCopy.middle[titleIndex]} ${titleCopy.end}`}
-                  className="text-[clamp(3rem,8vw,5.5rem)] leading-[0.92] text-heading"
-              >
-              <span aria-hidden="true" className="block overflow-hidden pb-[0.08em]">
-                <motion.span variants={line} className="block">
-                  {titleCopy.start}
-                </motion.span>
-              </span>
+            {home.headline.line1}
+            <br />
+            <em className="font-serif italic text-body">{home.headline.line2}</em>
+          </motion.h1>
 
-                <span
-                    aria-hidden="true"
-                    className="relative block h-[1.25em] w-full overflow-hidden text-[clamp(1.5rem,3vw,2.5rem)] leading-[1.1]"
-                >
-                <AnimatePresence initial={false} mode="wait">
-                  <motion.span
-                      key={titleCopy.middle[titleIndex]}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        duration: reduced ? 0.2 : 0.35,
-                        ease: "easeOut",
-                      }}
-                      className="absolute left-0 top-0 block whitespace-nowrap"
-                  >
-                    {titleCopy.middle[titleIndex]}
-                  </motion.span>
-                </AnimatePresence>
-              </span>
-
-                <span aria-hidden="true" className="block overflow-hidden pb-[0.08em]">
-                <motion.span
-                    variants={line}
-                    className="block text-accent transition-colors duration-700"
-                >
-                  {titleCopy.end}
-                </motion.span>
-              </span>
-              </h1>
-
-              <motion.p
-                  variants={item}
-                  className="mt-8 max-w-md leading-relaxed text-body"
-              >
-                {copy.home.tagline}
-              </motion.p>
-
-              <motion.p
-                  variants={item}
-                  className="mt-6 flex items-center gap-3 text-sm text-muted"
-              >
-                <motion.span
-                    aria-hidden="true"
-                    className="size-2 shrink-0 bg-accent transition-colors duration-700"
-                    animate={reduced ? undefined : { opacity: [1, 0.25, 1] }}
-                    transition={{
-                      duration: 2.6,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                />
-                {copy.home.availability}
-              </motion.p>
-
-              <motion.div
-                  variants={item}
-                  className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
-              >
-                <HeroLink href="/projects" label={copy.home.startWithWork} primary />
-                <HeroLink href="/contact" label={copy.home.getInTouch} />
-              </motion.div>
-            </div>
-
-            {portrait ? (
-                <div className="md:pl-2">
-                  {portrait}
-                </div>
-            ) : null}
-          </div>
+          <motion.p
+            variants={item}
+            className="mt-[34px] max-w-[560px] text-[16.5px] font-light leading-[1.6] text-body text-pretty"
+          >
+            {home.tagline}
+          </motion.p>
         </div>
+
+        <motion.div
+          variants={item}
+          className="grid grid-cols-1 gap-5 border-line pt-8 sm:grid-cols-3 lg:flex lg:flex-col lg:border-l lg:pl-[26px] lg:pt-0"
+        >
+          <StatusBlock label={home.status.currentlyLabel} lines={home.status.currentlyValue} />
+          <StatusBlock label={home.status.fromLabel} lines={home.status.fromValue} />
+          <StatusBlock
+            label={home.status.availableLabel}
+            lines={[home.status.availableValue]}
+            emphasized
+          />
+        </motion.div>
       </motion.section>
+
+      <div className="mt-[66px] flex items-center gap-[34px] border-t border-line pt-[26px]">
+        <HeroLink href="/projects" label={home.startWithWork} primary />
+        <HeroLink href="/contact" label={home.getInTouch} />
+      </div>
+
+      <div className="mt-[58px] grid grid-cols-1 divide-y divide-line-soft border-t border-line md:grid-cols-3 md:divide-y-0">
+        {home.metrics.map((metric, index) => (
+          <div
+            key={metric.value}
+            className={`py-7 md:px-10 ${index === 0 ? "md:pl-0" : ""} ${
+              index < home.metrics.length - 1 ? "md:border-r md:border-line" : ""
+            }`}
+          >
+            <p className="font-serif text-[34px] leading-none text-heading">{metric.value}</p>
+            <p className="mt-[9px] text-[12.5px] font-light leading-[1.5] text-muted">
+              {metric.caption}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 items-start gap-11 border-t border-line py-11 md:grid-cols-[minmax(0,1fr)_300px]">
+        <div>
+          <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">
+            {home.featured.eyebrow}
+          </p>
+          <h2 className="mt-[14px] font-serif text-[34px] leading-[1.05] text-heading">
+            {limpscanner.name}
+          </h2>
+          <p className="mt-4 text-[14.5px] font-light leading-[1.6] text-body">
+            {limpscanner.description}
+          </p>
+          <Link
+            href="/projects/limpscanner"
+            className="mt-[22px] inline-block border-b border-heading pb-[5px] text-sm font-medium text-heading"
+          >
+            {home.featured.cta}
+          </Link>
+        </div>
+
+        {screenshot ? (
+          <div>
+            <Image
+              src={screenshot}
+              alt=""
+              width={300}
+              height={400}
+              className="block aspect-[3/4] w-full border border-line object-cover"
+            />
+            <p className="mt-2.5 text-[11.5px] font-light leading-[1.4] text-muted">
+              {home.featured.caption}
+            </p>
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+}
+
+function StatusBlock({
+  label,
+  lines,
+  emphasized = false,
+}: {
+  label: string;
+  lines: readonly string[];
+  emphasized?: boolean;
+}) {
+  return (
+    <div>
+      <p className="text-[10.5px] uppercase tracking-[0.16em] text-muted">{label}</p>
+      <p
+        className={`mt-2 text-sm leading-[1.45] ${emphasized ? "text-heading" : "text-body-strong"}`}
+      >
+        {lines.map((line, index) => (
+          <span key={line}>
+            {line}
+            {index < lines.length - 1 ? <br /> : null}
+          </span>
+        ))}
+      </p>
+    </div>
   );
 }
 
 function HeroLink({
-                    href,
-                    label,
-                    primary = false,
-                  }: {
+  href,
+  label,
+  primary = false,
+}: {
   href: string;
   label: string;
   primary?: boolean;
 }) {
   return (
-      <Link
-          href={href}
-          className={`group relative inline-flex items-center gap-2 pb-1 font-display text-base font-semibold transition-colors duration-300 ${
-              primary
-                  ? "text-accent"
-                  : "text-muted hover:text-heading"
-          }`}
-      >
-        {label}
-        <ArrowUpRightIcon
-            width={15}
-            height={15}
-            className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
-        />
-        <span
-            aria-hidden="true"
-            className={`absolute inset-x-0 bottom-0 h-px origin-left bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100 motion-reduce:transition-none ${
-                primary ? "scale-x-100" : "scale-x-0"
-            }`}
-        />
-      </Link>
+    <Link
+      href={href}
+      className={`group relative inline-flex items-center gap-2 pb-[5px] text-[15px] transition-colors duration-300 ${
+        primary
+          ? "border-b border-heading font-medium text-heading"
+          : "border-b border-line-strong text-muted hover:text-heading"
+      }`}
+    >
+      {label}
+      <ArrowUpRightIcon
+        width={14}
+        height={14}
+        className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
+      />
+    </Link>
   );
 }

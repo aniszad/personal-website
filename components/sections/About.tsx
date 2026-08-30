@@ -1,59 +1,81 @@
 "use client";
 
+import Image from "next/image";
+import { CV_PATH } from "@/lib/constants";
 import { t } from "@/lib/i18n";
 import { useLanguage } from "@/components/layout/LanguageProvider";
-import { RevealText } from "@/components/animations/RevealText";
 import { FadeInOnScroll } from "@/components/animations/FadeInOnScroll";
 
 /**
- * About page body.
- *
- * Visual identity: a static dot grid behind the opening paragraph, and text
- * that assembles word by word as it enters view. The reveal is the whole
- * treatment here, so nothing else on the page competes with it.
+ * About page body: prose column with a CV link, and a portrait plate with a
+ * short set of definition rows beside it.
  */
 export function About() {
   const { language } = useLanguage();
-  const aboutParagraphs = t(language).generic.aboutParagraphs;
-  const [lead, ...rest] = aboutParagraphs;
+  const copy = t(language).generic;
+  const [lead, ...rest] = copy.aboutParagraphs;
+  const meta = copy.aboutMeta;
 
   return (
-    <div className="relative">
-      {/*
-        Dot grid, masked so it fades out before it reaches the text. Purely
-        decorative and kept out of the accessibility tree.
-      */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-16 -top-24 hidden size-72 opacity-40 md:block"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, var(--color-line) 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-          maskImage:
-            "radial-gradient(circle at 30% 30%, black, transparent 70%)",
-          WebkitMaskImage:
-            "radial-gradient(circle at 30% 30%, black, transparent 70%)",
-        }}
-      />
+    <FadeInOnScroll className="grid grid-cols-1 items-start gap-10 md:grid-cols-[minmax(0,1fr)_300px] md:gap-14">
+      <div className="flex max-w-[620px] flex-col gap-[22px]">
+        <p className="text-[17px] font-light leading-[1.72] text-body-strong text-pretty">
+          {lead}
+        </p>
 
-      <div className="relative max-w-3xl space-y-8">
-        <RevealText
-          text={lead}
-          className="text-xl leading-relaxed text-body md:text-2xl"
+        {rest.map((paragraph) => (
+          <p key={paragraph.slice(0, 40)} className="text-[17px] font-light leading-[1.72] text-body text-pretty">
+            {paragraph}
+          </p>
+        ))}
+
+        <a
+          href={CV_PATH}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="mt-2 self-start border-b border-heading pb-[5px] text-[14.5px] font-medium text-heading"
+        >
+          {meta.downloadCv}
+        </a>
+      </div>
+
+      <div>
+        <Image
+          src="/images/anis.webp"
+          alt="Anis Zadri"
+          width={300}
+          height={375}
+          className="block aspect-[4/5] w-full border border-line object-cover"
+          priority
         />
 
-        {rest.map((paragraph, position) => (
-          <FadeInOnScroll
-            key={paragraph.slice(0, 40)}
-            delay={position * 0.05}
-          >
-            <p className="text-base leading-relaxed text-muted md:text-lg">
-              {paragraph}
-            </p>
-          </FadeInOnScroll>
-        ))}
+        <dl className="mt-[14px] grid gap-2.5">
+          <DefinitionRow label={meta.basedInLabel} value={meta.basedInValue} border />
+          <DefinitionRow label={meta.languagesLabel} value={meta.languagesValue} border />
+          <DefinitionRow label={meta.lookingForLabel} value={meta.lookingForValue} />
+        </dl>
       </div>
+    </FadeInOnScroll>
+  );
+}
+
+function DefinitionRow({
+  label,
+  value,
+  border = false,
+}: {
+  label: string;
+  value: string;
+  border?: boolean;
+}) {
+  return (
+    <div
+      className={`flex justify-between text-[12.5px] font-light text-muted ${
+        border ? "border-b border-line-soft pb-2" : ""
+      }`}
+    >
+      <dt>{label}</dt>
+      <dd className="text-body-strong">{value}</dd>
     </div>
   );
 }
