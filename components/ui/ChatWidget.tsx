@@ -160,7 +160,7 @@ export function ChatWidget() {
                     </span>
                     <div>
                       <p className="text-sm font-medium text-surface">
-                        {chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
+                        {chatCopy.ask}
                       </p>
                       <div className="mt-0.5 flex items-center gap-1.5">
                         <span className={`size-1.5 rounded-full bg-surface ${isTyping ? "animate-pulse" : "opacity-50"}`} />
@@ -334,7 +334,7 @@ export function ChatWidget() {
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="flex items-center gap-2.5 rounded-full bg-heading py-3.5 pl-4 pr-5 text-sm font-medium text-surface shadow-[0_10px_30px_-8px_rgba(0,0,0,0.6)]"
-              aria-label={chatCopy.ask.replace("{name}", SITE.name.split(" ")[0])}
+              aria-label={chatCopy.ask}
           >
             <span className="relative grid size-6 shrink-0 place-items-center">
               <span
@@ -343,7 +343,7 @@ export function ChatWidget() {
               />
               <ChatBubbleIcon width={16} height={16} className="relative" />
             </span>
-            {chatCopy.ask.replace("{name}", `${SITE.name.split(" ")[0]}'s AI`)}
+            {chatCopy.ask}
           </motion.button>
         ) : null}
       </div>
