@@ -10,18 +10,11 @@ const nextConfig: NextConfig = {
   },
   // Emits /about/index.html style paths, which static hosts resolve cleanly.
   trailingSlash: true,
-  async redirects() {
+  async rewrites() {
     return [
-      {
-        source: "/demo/les-cousines-de-leon",
-        destination: "/demos/les-cousines-de-leon.html",
-        permanent: false,
-      },
-      {
-        source: "/demo/rien-a-voir",
-        destination: "/demos/rien-a-voir.html",
-        permanent: false,
-      },
+      { source: "/demo/les-cousines-de-leon", destination: "/demos/les-cousines-de-leon.html" },
+      { source: "/demo/rien-a-voir",          destination: "/demos/rien-a-voir.html" },
+      { source: "/demo/alchemie-fleuriste",   destination: "/demos/alchemie-fleuriste.html" },
     ];
   },
 };
