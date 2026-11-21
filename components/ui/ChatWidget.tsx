@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState, useRef, useEffect, KeyboardEvent } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SITE } from "@/lib/constants";
 import { t } from "@/lib/i18n";
@@ -24,7 +25,10 @@ function Avatar() {
 }
 
 export function ChatWidget() {
+  const pathname = usePathname();
   const reduced = useReducedMotion() ?? false;
+
+  if (pathname.startsWith("/demo")) return null;
   const { language } = useLanguage();
   const chatCopy = t(language).generic.chat;
   const quickPrompts = chatCopy.quickPrompts;
