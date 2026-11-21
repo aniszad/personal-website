@@ -1,0 +1,2833 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Rien A Voir 25 — Opticien Indépendant de Créateurs · Vieux-Lille</title>
+  <meta name="description" content="Opticien indépendant au 25 Rue de la Clef, Vieux-Lille. Montures de créateurs Matsuda, Michel Henau, Oscar Magnuson, Sabine be, Vincent Kaes, Garrett Leight et verres Hoya.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Strictly 2 fonts: Cormorant Garamond (editorial serif) + Barlow (architectural sans) -->
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --obsidian: #141414;
+      --obsidian-soft: #1C1C1B;
+      --obsidian-line: rgba(255, 255, 255, 0.11);
+      --plaster: #F5F2EC;
+      --plaster-deep: #EAE4D9;
+      --stone: #C5BCB0;
+      --bronze: #A88E72;
+      --bronze-bright: #C2A88B;
+      --bronze-dark: #876E54;
+      --birch: #D6B78D;
+      --ink: #161615;
+      --ink-muted: #5A554E;
+      --white: #FFFFFF;
+      --white-muted: rgba(255, 255, 255, 0.72);
+      --white-faint: rgba(255, 255, 255, 0.44);
+
+      /* Strict 2-font system */
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      --container: 1280px;
+      --radius: 2px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--obsidian);
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-variant-numeric: lining-nums;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+
+    /* =========================================
+       HEADER & NAVIGATION
+    ========================================= */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(20, 20, 20, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--obsidian-line);
+      transition: background 0.3s ease;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      height: 82px;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .brand-text-col {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .brand-wordmark {
+      font-family: var(--font-sans);
+      font-size: 21px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      color: var(--bronze);
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+    }
+
+    .brand-wordmark .lambda {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .brand-wordmark .num {
+      color: var(--stone);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      margin-left: 5px;
+    }
+
+    .brand-sub {
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      color: var(--white-muted);
+      margin-top: 5px;
+      text-transform: uppercase;
+    }
+
+    .brand-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--obsidian-line);
+    }
+
+    .brand-eye {
+      width: 38px;
+      height: 30px;
+      flex-shrink: 0;
+      transition: transform 0.5s var(--ease);
+    }
+
+    .brand-lockup:hover .brand-eye {
+      transform: rotate(-8deg) scale(1.05);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .main-nav a {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--white-muted);
+      position: relative;
+      padding: 4px 0;
+      transition: color 0.25s ease;
+    }
+
+    .main-nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--bronze);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s var(--ease);
+    }
+
+    .main-nav a:hover,
+    .main-nav a.active {
+      color: var(--white);
+    }
+
+    .main-nav a:hover::after,
+    .main-nav a.active::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .header-coords {
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-coords a:hover {
+      color: var(--bronze-bright);
+    }
+
+    .hours-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--bronze);
+      color: var(--obsidian);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 12px;
+      border-radius: 999px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1B4D2E;
+      flex-shrink: 0;
+    }
+
+    .status-dot.closed {
+      background: #4A392B;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--obsidian-line);
+      border-radius: var(--radius);
+    }
+
+    .mobile-drawer {
+      display: none;
+      position: fixed;
+      inset: 82px 0 0 0;
+      background: var(--obsidian);
+      z-index: 99;
+      padding: 32px 24px;
+      flex-direction: column;
+      justify-content: space-between;
+      border-top: 1px solid var(--obsidian-line);
+    }
+
+    .mobile-drawer.open {
+      display: flex;
+    }
+
+    .mobile-drawer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .mobile-drawer-links a {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--white);
+      border-bottom: 1px solid var(--obsidian-line);
+      padding-bottom: 12px;
+    }
+
+    .mobile-drawer-footer {
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      color: var(--white-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* =========================================
+       HERO SECTION — GALERIE OPTIQUE
+    ========================================= */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      padding-top: 82px;
+      background: var(--obsidian);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* Ceiling circular discs motif from physical shop */
+    .ceiling-discs {
+      position: absolute;
+      top: 72px;
+      right: -20px;
+      width: 480px;
+      height: 540px;
+      pointer-events: none;
+      opacity: 0.16;
+      z-index: 1;
+    }
+
+    /* Giant ghosted 25 behind hero copy */
+    .hero-ghost-25 {
+      position: absolute;
+      left: clamp(-20px, 3vw, 56px);
+      top: 52%;
+      transform: translateY(-52%);
+      font-family: var(--font-sans);
+      font-size: clamp(240px, 34vw, 460px);
+      font-weight: 700;
+      line-height: 0.82;
+      color: rgba(255, 255, 255, 0.04);
+      letter-spacing: -0.05em;
+      user-select: none;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-main {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      align-items: center;
+      gap: clamp(32px, 5vw, 72px);
+      padding-top: clamp(44px, 6vh, 80px);
+      padding-bottom: clamp(44px, 6vh, 72px);
+    }
+
+    .hero-copy {
+      position: relative;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--bronze);
+      margin-bottom: 18px;
+    }
+
+    .hero-kicker::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--bronze);
+    }
+
+    .hero-title {
+      margin-bottom: 24px;
+    }
+
+    .hero-title-top {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: clamp(34px, 4.4vw, 56px);
+      font-weight: 600;
+      line-height: 1.04;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--bronze);
+    }
+
+    .hero-title-bottom {
+      display: block;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(54px, 7vw, 90px);
+      line-height: 0.96;
+      color: var(--white);
+      margin-top: 4px;
+    }
+
+    .hero-desc {
+      max-width: 500px;
+      font-size: 16.5px;
+      font-weight: 300;
+      line-height: 1.68;
+      color: var(--white-muted);
+      margin-bottom: 36px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bronze);
+      color: var(--obsidian);
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 16px 26px;
+      border-radius: var(--radius);
+      transition: background 0.25s ease, transform 0.25s var(--ease);
+    }
+
+    .btn-primary:hover {
+      background: var(--bronze-bright);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      color: var(--white);
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 15px 24px;
+      border-radius: var(--radius);
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--bronze);
+      background: rgba(168, 142, 114, 0.1);
+    }
+
+    /* Hero Right: Birch Vitrine Spotlight Composition */
+    .vitrine-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 4.2;
+      max-width: 520px;
+      margin-left: auto;
+      background:
+        radial-gradient(circle at 72% 18%, rgba(255, 232, 194, 0.34), transparent 52%),
+        linear-gradient(155deg, #27201A 0%, #191512 52%, #110F0D 100%);
+      border: 1px solid rgba(168, 142, 114, 0.28);
+      
+      box-shadow: 0 32px 70px rgba(0, 0, 0, 0.55);
+    }
+
+    .vitrine-birch-wall {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(20, 17, 14, 0.85) 0%, rgba(20, 17, 14, 0.2) 48%, rgba(214, 183, 141, 0.24) 100%),
+        repeating-linear-gradient(
+          92deg,
+          rgba(214, 183, 141, 0.03) 0px,
+          rgba(214, 183, 141, 0.03) 2px,
+          transparent 2px,
+          transparent 9px
+        );
+    }
+
+    .vitrine-spotlight {
+      position: absolute;
+      top: -15%;
+      right: 6%;
+      width: 75%;
+      height: 80%;
+      background: radial-gradient(ellipse at top, rgba(255, 240, 212, 0.32) 0%, rgba(255, 226, 178, 0.08) 45%, transparent 72%);
+      pointer-events: none;
+    }
+
+    .vitrine-plinth {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 46%;
+      background:
+        linear-gradient(12deg, #9F815E 0%, #CBB08A 44%, #E2CBA8 74%, #B99870 100%);
+      clip-path: polygon(0 28%, 62% 8%, 100% 20%, 100% 100%, 0 100%);
+      box-shadow: inset 0 24px 40px rgba(255, 255, 255, 0.14);
+    }
+
+    .vitrine-plinth::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0) 48%, rgba(20, 14, 10, 0.42) 100%),
+        repeating-linear-gradient(
+          -8deg,
+          rgba(80, 56, 32, 0.06) 0px,
+          rgba(80, 56, 32, 0.06) 1px,
+          transparent 1px,
+          transparent 6px
+        );
+    }
+
+    .vitrine-frame-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 28px 64px;
+      z-index: 3;
+    }
+
+    .vitrine-frame-svg {
+      width: 88%;
+      max-width: 380px;
+      height: auto;
+      filter: drop-shadow(0 24px 18px rgba(18, 12, 6, 0.62));
+      transition: opacity 0.35s ease, transform 0.45s var(--ease);
+    }
+
+    .vitrine-frame-svg.switching {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
+
+    .vitrine-plaque {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      z-index: 4;
+      background: rgba(16, 16, 15, 0.94);
+      border: 1px solid rgba(168, 142, 114, 0.35);
+      padding: 13px 16px;
+      min-width: 245px;
+    }
+
+    .vitrine-plaque-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .vitrine-plaque-specs {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1.55;
+      color: var(--bronze-bright);
+    }
+
+    .vitrine-switcher {
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      z-index: 4;
+      display: flex;
+      gap: 6px;
+    }
+
+    .vitrine-dot-btn {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(20, 20, 20, 0.72);
+      color: var(--white-muted);
+      transition: all 0.2s ease;
+    }
+
+    .vitrine-dot-btn.active,
+    .vitrine-dot-btn:hover {
+      border-color: var(--bronze);
+      color: var(--white);
+      background: rgba(168, 142, 114, 0.24);
+    }
+
+    /* Bottom Hero Brand Strip */
+    .hero-brand-strip {
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid var(--obsidian-line);
+      background: rgba(14, 14, 14, 0.6);
+    }
+
+    .hero-brand-list {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px 20px;
+      padding: 18px 0;
+    }
+
+    .hero-brand-item {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--stone);
+      transition: color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .hero-brand-item:hover {
+      color: var(--white);
+    }
+
+    .hero-brand-sep {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--bronze);
+      opacity: 0.65;
+    }
+
+    /* =========================================
+       LIGHT & DARK SECTIONS
+    ========================================= */
+    .section-light {
+      background: var(--plaster);
+      color: var(--ink);
+      padding: clamp(72px, 9vw, 120px) 0;
+    }
+
+    .section-dark {
+      background: var(--obsidian);
+      color: var(--white);
+      padding: clamp(72px, 9vw, 120px) 0;
+    }
+
+    .section-eyebrow {
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--bronze-dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .section-dark .section-eyebrow {
+      color: var(--bronze);
+    }
+
+    .section-eyebrow::before {
+      content: '';
+      width: 22px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    .section-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 4.5vw, 56px);
+      font-weight: 500;
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+    }
+
+    .section-heading em {
+      font-style: italic;
+      color: var(--bronze-dark);
+    }
+
+    .section-dark .section-heading em {
+      color: var(--bronze-bright);
+    }
+
+    /* =========================================
+       SECTION 1: LA GALERIE (STORE ETHOS)
+    ========================================= */
+    .galerie-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: clamp(32px, 5vw, 72px);
+      align-items: start;
+    }
+
+    .galerie-lead {
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--ink-muted);
+      line-height: 1.75;
+      margin-top: 22px;
+    }
+
+    .galerie-lead strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .galerie-pillars {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: rgba(22, 22, 21, 0.12);
+      border: 1px solid rgba(22, 22, 21, 0.12);
+    }
+
+    .pillar-card {
+      background: var(--plaster);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pillar-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--bronze-dark);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .pillar-title {
+      font-family: var(--font-serif);
+      font-size: 25px;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--ink);
+    }
+
+    .pillar-text {
+      font-size: 14.5px;
+      color: var(--ink-muted);
+      line-height: 1.62;
+    }
+
+    /* =========================================
+       SECTION 2: L'INDEX DES MAISONS
+    ========================================= */
+    .index-section {
+      background: var(--plaster-deep);
+      color: var(--ink);
+      padding: clamp(72px, 9vw, 120px) 0;
+      border-top: 1px solid rgba(22, 22, 21, 0.09);
+      border-bottom: 1px solid rgba(22, 22, 21, 0.09);
+    }
+
+    .index-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      padding: 9px 16px;
+      border: 1px solid rgba(22, 22, 21, 0.22);
+      color: var(--ink-muted);
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+
+    .filter-btn.active {
+      background: var(--obsidian);
+      border-color: var(--obsidian);
+      color: var(--white);
+    }
+
+    .index-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .maison-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid rgba(22, 22, 21, 0.18);
+    }
+
+    .maison-row {
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 14px;
+      border-bottom: 1px solid rgba(22, 22, 21, 0.14);
+      text-align: left;
+      transition: background 0.25s ease, padding-left 0.25s var(--ease);
+    }
+
+    .maison-row:hover {
+      background: rgba(168, 142, 114, 0.12);
+      padding-left: 20px;
+    }
+
+    .maison-row.active {
+      background: var(--obsidian);
+      color: var(--white);
+      padding-left: 20px;
+    }
+
+    .maison-row.hidden {
+      display: none;
+    }
+
+    .maison-idx {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--bronze-dark);
+    }
+
+    .maison-row.active .maison-idx {
+      color: var(--bronze-bright);
+    }
+
+    .maison-name {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 500;
+      line-height: 1.05;
+    }
+
+    .maison-origin {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    .maison-row.active .maison-origin {
+      color: var(--stone);
+    }
+
+    /* Dossier Detail Card */
+    .dossier-card {
+      background: var(--plaster);
+      border: 1px solid rgba(22, 22, 21, 0.15);
+      padding: clamp(24px, 3vw, 36px);
+      position: sticky;
+      top: 106px;
+    }
+
+    .dossier-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(22, 22, 21, 0.12);
+      margin-bottom: 22px;
+    }
+
+    .dossier-tag {
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bronze-dark);
+    }
+
+    .dossier-specs-code {
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--ink-muted);
+    }
+
+    .dossier-visual {
+      background: linear-gradient(145deg, #1E1D1B 0%, #141414 100%);
+      padding: 34px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dossier-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 75% 20%, rgba(194, 168, 139, 0.16), transparent 60%);
+      pointer-events: none;
+    }
+
+    .dossier-visual svg {
+      width: 82%;
+      max-width: 310px;
+      height: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dossier-title {
+      font-family: var(--font-serif);
+      font-size: 38px;
+      font-weight: 500;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .dossier-sub {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 21px;
+      color: var(--bronze-dark);
+      margin-bottom: 16px;
+    }
+
+    .dossier-desc {
+      font-size: 15px;
+      color: var(--ink-muted);
+      line-height: 1.68;
+      margin-bottom: 20px;
+    }
+
+    .dossier-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid rgba(22, 22, 21, 0.12);
+      border-bottom: 1px solid rgba(22, 22, 21, 0.12);
+      margin-bottom: 20px;
+    }
+
+    .dossier-meta-item span {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-muted);
+      margin-bottom: 3px;
+    }
+
+    .dossier-meta-item strong {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .boutique-eye-note {
+      background: rgba(168, 142, 114, 0.14);
+      border-left: 2px solid var(--bronze-dark);
+      padding: 14px 16px;
+      margin-bottom: 22px;
+    }
+
+    .boutique-eye-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bronze-dark);
+      margin-bottom: 4px;
+    }
+
+    .boutique-eye-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 18px;
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    .dossier-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--obsidian);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 14px 20px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-dark:hover {
+      background: var(--bronze-dark);
+    }
+
+    .btn-dark.added {
+      background: #234733;
+    }
+
+    /* =========================================
+       SECTION 3: L'EXIGENCE HOYA (LENS LAB)
+    ========================================= */
+    .hoya-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px, 5vw, 68px);
+      align-items: center;
+    }
+
+    .hoya-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 28px 0 24px;
+    }
+
+    .hoya-tab {
+      text-align: left;
+      padding: 14px 16px;
+      border: 1px solid var(--obsidian-line);
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.25s ease;
+    }
+
+    .hoya-tab:hover {
+      border-color: rgba(168, 142, 114, 0.5);
+    }
+
+    .hoya-tab.active {
+      border-color: var(--bronze);
+      background: rgba(168, 142, 114, 0.12);
+    }
+
+    .hoya-tab-code {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: var(--bronze);
+      margin-bottom: 4px;
+    }
+
+    .hoya-tab-name {
+      font-size: 14.5px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .hoya-detail-box {
+      border-top: 1px solid var(--obsidian-line);
+      padding-top: 22px;
+    }
+
+    .hoya-detail-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+
+    .hoya-detail-text {
+      font-size: 15.5px;
+      font-weight: 300;
+      color: var(--white-muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .hoya-specs-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hoya-chip {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--bronze-bright);
+      border: 1px solid rgba(168, 142, 114, 0.35);
+      padding: 6px 11px;
+    }
+
+    /* Interactive Optical Aperture Demo */
+    .lens-stage {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      max-width: 470px;
+      margin: 0 auto;
+      width: 100%;
+      border: 1px solid var(--obsidian-line);
+      background: #1A1918;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lens-backdrop {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 28% 30%, rgba(236, 206, 160, 0.25), transparent 44%),
+        radial-gradient(circle at 74% 68%, rgba(168, 142, 114, 0.22), transparent 50%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 28px),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 28px);
+      transition: filter 0.45s ease;
+    }
+
+    .lens-backdrop.glare {
+      filter: blur(1.2px) brightness(1.18);
+    }
+
+    .lens-disc {
+      position: relative;
+      width: 68%;
+      height: 68%;
+      border-radius: 50%;
+      border: 1.5px solid rgba(194, 168, 139, 0.65);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 28px;
+      transition: all 0.5s var(--ease);
+      box-shadow:
+        inset 0 0 40px rgba(255, 255, 255, 0.07),
+        0 24px 60px rgba(0, 0, 0, 0.55);
+    }
+
+    .lens-disc[data-mode="clair"] {
+      background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.14), rgba(140, 195, 210, 0.05) 55%, rgba(20, 20, 20, 0.28) 100%);
+    }
+
+    .lens-disc[data-mode="sensity"] {
+      background: radial-gradient(circle at 32% 28%, rgba(168, 142, 114, 0.42), rgba(52, 42, 32, 0.72) 65%, rgba(20, 17, 14, 0.88) 100%);
+    }
+
+    .lens-disc[data-mode="solaire"] {
+      background: radial-gradient(circle at 32% 28%, rgba(92, 112, 98, 0.45), rgba(22, 34, 28, 0.86) 65%, rgba(12, 18, 15, 0.94) 100%);
+    }
+
+    .lens-disc[data-mode="progressif"] {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.11) 0%, rgba(168, 142, 114, 0.15) 50%, rgba(255, 255, 255, 0.07) 100%);
+    }
+
+    .lens-crosshair {
+      position: absolute;
+      inset: 14px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+    }
+
+    .lens-readout-tag {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--bronze-bright);
+      margin-bottom: 8px;
+    }
+
+    .lens-readout-val {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 30px;
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .lens-readout-sub {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--white-muted);
+    }
+
+    .lens-stage-footer {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--white-faint);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* =========================================
+       SECTION 4: FICHE D'ESSAYAGE PRIVÉ
+    ========================================= */
+    .essayage-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: clamp(28px, 4.5vw, 56px);
+      align-items: start;
+      margin-top: 40px;
+    }
+
+    .essayage-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .step-block {
+      border-top: 1px solid rgba(22, 22, 21, 0.15);
+      padding-top: 20px;
+    }
+
+    .step-label {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .step-num {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--bronze-dark);
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .choice-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .choice-pill {
+      padding: 11px 16px;
+      border: 1px solid rgba(22, 22, 21, 0.22);
+      background: transparent;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 400;
+      transition: all 0.2s ease;
+    }
+
+    .choice-pill:hover {
+      border-color: var(--ink);
+      background: rgba(22, 22, 21, 0.04);
+    }
+
+    .choice-pill.selected {
+      background: var(--obsidian);
+      border-color: var(--obsidian);
+      color: var(--white);
+    }
+
+    .essayage-input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid rgba(22, 22, 21, 0.22);
+      background: var(--white);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 14.5px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .field-input:focus {
+      border-color: var(--bronze-dark);
+    }
+
+    /* Live Summary Fiche Card */
+    .fiche-card {
+      background: var(--obsidian);
+      color: var(--white);
+      padding: clamp(24px, 3vw, 34px);
+      border: 1px solid rgba(168, 142, 114, 0.35);
+      position: sticky;
+      top: 106px;
+    }
+
+    .fiche-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--obsidian-line);
+      margin-bottom: 20px;
+    }
+
+    .fiche-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 500;
+      line-height: 1.05;
+    }
+
+    .fiche-ref {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bronze);
+      margin-top: 4px;
+    }
+
+    .fiche-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .fiche-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+
+    .fiche-row span {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--white-faint);
+      flex-shrink: 0;
+    }
+
+    .fiche-row strong {
+      text-align: right;
+      font-weight: 400;
+      color: var(--white);
+    }
+
+    .fiche-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .fiche-btn-full {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .fiche-confirm {
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      background: rgba(35, 71, 51, 0.35);
+      border: 1px solid rgba(114, 194, 146, 0.45);
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: #D9F2E3;
+    }
+
+    .fiche-confirm.visible {
+      display: block;
+    }
+
+    /* =========================================
+       SECTION 5: AVIS CLIENTS & QUESTIONS FRANCHES
+    ========================================= */
+    .proof-faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px, 5vw, 68px);
+      align-items: start;
+    }
+
+    .rating-banner {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin: 22px 0 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(22, 22, 21, 0.14);
+    }
+
+    .rating-score {
+      font-family: var(--font-serif);
+      font-size: 56px;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .rating-meta {
+      font-size: 14.5px;
+      color: var(--ink-muted);
+    }
+
+    .rating-stars {
+      color: var(--bronze-dark);
+      letter-spacing: 0.14em;
+      font-size: 15px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .review-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .review-card {
+      background: var(--plaster-deep);
+      border-left: 2px solid var(--bronze-dark);
+      padding: 18px 20px;
+    }
+
+    .review-quote {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 20px;
+      line-height: 1.42;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .review-author {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    /* Accordion FAQ */
+    .faq-list {
+      margin-top: 24px;
+      border-top: 1px solid rgba(22, 22, 21, 0.16);
+    }
+
+    .faq-item {
+      border-bottom: 1px solid rgba(22, 22, 21, 0.16);
+    }
+
+    .faq-trigger {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 0;
+      text-align: left;
+      font-family: var(--font-serif);
+      font-size: 23px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .faq-plus {
+      font-family: var(--font-sans);
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--bronze-dark);
+      transition: transform 0.25s ease;
+    }
+
+    .faq-item.open .faq-plus {
+      transform: rotate(45deg);
+    }
+
+    .faq-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s var(--ease);
+    }
+
+    .faq-panel-inner {
+      padding-bottom: 20px;
+      font-size: 15px;
+      color: var(--ink-muted);
+      line-height: 1.7;
+    }
+
+    /* =========================================
+       FOOTER
+    ========================================= */
+    .site-footer {
+      background: #0E0E0E;
+      color: var(--white);
+      border-top: 1px solid var(--obsidian-line);
+      padding: 64px 0 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 44px;
+      border-bottom: 1px solid var(--obsidian-line);
+    }
+
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--bronze);
+      margin-bottom: 14px;
+    }
+
+    .footer-text {
+      font-size: 14.5px;
+      font-weight: 300;
+      color: var(--white-muted);
+      line-height: 1.75;
+    }
+
+    .footer-text a:hover {
+      color: var(--bronze-bright);
+    }
+
+    .footer-bottom {
+      padding-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--white-faint);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 200;
+      background: var(--obsidian);
+      color: var(--white);
+      border: 1px solid var(--bronze);
+      padding: 13px 18px;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: all 0.3s var(--ease);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+    @media (max-width: 1024px) {
+      .main-nav,
+      .header-meta {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: inline-flex;
+      }
+
+      .hero-main,
+      .galerie-grid,
+      .index-layout,
+      .hoya-grid,
+      .essayage-grid,
+      .proof-faq-grid,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .vitrine-stage {
+        margin: 0 auto;
+        max-width: 460px;
+      }
+
+      .dossier-card,
+      .fiche-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        height: 70px;
+      }
+
+      .mobile-drawer {
+        inset: 70px 0 0 0;
+      }
+
+      .brand-wordmark {
+        font-size: 18px;
+      }
+
+      .brand-sub {
+        font-size: 9.5px;
+      }
+
+      .brand-eye {
+        width: 30px;
+        height: 24px;
+      }
+
+      .galerie-pillars,
+      .hoya-tabs,
+      .essayage-input-row,
+      .dossier-meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-brand-list {
+        justify-content: flex-start;
+        gap: 10px 14px;
+      }
+
+      .hero-brand-sep {
+        display: none;
+      }
+
+      .vitrine-plaque {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        min-width: 0;
+      }
+    }
+  </style>
+  <!-- model-viewer web component for GLB rendering -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body>
+
+  <!-- =========================================
+       HEADER
+  ========================================= -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand-lockup" aria-label="Rien A Voir 25 — Accueil">
+        <div class="brand-text-col">
+          <div class="brand-wordmark">
+            RIEN<span class="lambda">Λ</span>VOIR<span class="num">25</span>
+          </div>
+          <span class="brand-sub">Opticien Indépendant • Vieux-Lille</span>
+        </div>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <!-- Storefront white swirl-eye emblem -->
+        <svg class="brand-eye" viewBox="0 0 84 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M10 42C5 27 17 11 38 7C58 3 76 11 77 25C78 40 60 55 37 57C19 59 12 50 10 42Z" stroke="#FFFFFF" stroke-width="2.6"/>
+          <path d="M18 39C16 28 26 17 43 14C59 11 71 17 70 28C69 39 54 49 38 50C25 51 19 45 18 39Z" stroke="#FFFFFF" stroke-width="1.8" opacity="0.85"/>
+          <path d="M27 36C27 28 34 22 44 22C53 22 59 27 58 34C57 41 49 46 39 46C31 46 27 41 27 36Z" fill="#FFFFFF"/>
+          <circle cx="38" cy="36" r="7.5" fill="#141414"/>
+          <circle cx="34.5" cy="39" r="2.6" fill="#FFFFFF"/>
+        </svg>
+      </a>
+
+      <nav class="main-nav" aria-label="Navigation principale">
+        <a href="#galerie">La Galerie</a>
+        <a href="#createurs">Nos Créateurs</a>
+        <a href="#hoya">L'Exigence Hoya</a>
+        <a href="#essayage">L'Essayage</a>
+      </nav>
+
+      <div class="header-meta">
+        <div class="header-coords">
+          <span>25 RUE DE LA CLEF</span>
+          <span>•</span>
+          <a href="tel:+33320401986">03 20 40 19 86</a>
+        </div>
+        <div class="hours-pill" id="liveHoursPill">
+          <span class="status-dot" id="liveStatusDot"></span>
+          <span id="liveStatusText">MARDI – SAMEDI • 10H30 – 19H00</span>
+        </div>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Ouvrir le menu" aria-expanded="false">
+        <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+          <path d="M0 1H20M0 7H20M0 13H20" stroke="#FFFFFF" stroke-width="1.5"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+    <nav class="mobile-drawer-links">
+      <a href="#galerie" class="drawer-link">La Galerie</a>
+      <a href="#createurs" class="drawer-link">Nos Créateurs</a>
+      <a href="#hoya" class="drawer-link">L'Exigence Hoya</a>
+      <a href="#essayage" class="drawer-link">L'Essayage Privé</a>
+      <a href="#avis" class="drawer-link">Avis & Infos</a>
+    </nav>
+    <div class="mobile-drawer-footer">
+      <span>25 Rue de la Clef, 59800 Lille</span>
+      <a href="tel:+33320401986" style="color: var(--bronze-bright);">03 20 40 19 86</a>
+      <span>Mar–Ven 10h30–13h / 14h30–19h · Sam 10h–19h</span>
+    </div>
+  </div>
+
+  <!-- =========================================
+       HERO SECTION
+  ========================================= -->
+  <section class="hero" id="top">
+    <svg class="ceiling-discs" viewBox="0 0 420 480" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="#FFFFFF">
+        <circle cx="95" cy="40" r="42" opacity="0.28"/>
+        <circle cx="190" cy="40" r="42" opacity="0.18"/>
+        <circle cx="285" cy="40" r="42" opacity="0.32"/>
+        <circle cx="380" cy="40" r="42" opacity="0.22"/>
+        <circle cx="142" cy="120" r="42" opacity="0.2"/>
+        <circle cx="238" cy="120" r="42" opacity="0.35"/>
+        <circle cx="332" cy="120" r="42" opacity="0.16"/>
+        <circle cx="95" cy="200" r="42" opacity="0.12"/>
+        <circle cx="190" cy="200" r="42" opacity="0.26"/>
+        <circle cx="285" cy="200" r="42" opacity="0.22"/>
+        <circle cx="380" cy="200" r="42" opacity="0.34"/>
+        <circle cx="142" cy="280" r="42" opacity="0.14"/>
+        <circle cx="238" cy="280" r="42" opacity="0.18"/>
+        <circle cx="332" cy="280" r="42" opacity="0.28"/>
+        <circle cx="190" cy="360" r="42" opacity="0.15"/>
+        <circle cx="285" cy="360" r="42" opacity="0.24"/>
+        <circle cx="380" cy="360" r="42" opacity="0.18"/>
+        <circle cx="238" cy="435" r="42" opacity="0.12"/>
+        <circle cx="332" cy="435" r="42" opacity="0.2"/>
+      </g>
+    </svg>
+
+    <div class="hero-ghost-25" aria-hidden="true">25</div>
+
+    <div class="container hero-main">
+      <div class="hero-copy">
+        <div class="hero-kicker">Opticiens Par Conviction · Vieux-Lille</div>
+        <h1 class="hero-title">
+          <span class="hero-title-top">L'optique de créateurs,</span>
+          <span class="hero-title-bottom">loin des chaînes.</span>
+        </h1>
+        <p class="hero-desc">
+          Au 25 Rue de la Clef, Vieux-Lille. Une sélection de montures indépendantes japonaises, belges et françaises, façonnées à la main et ajustées au millimètre pour votre visage.
+        </p>
+        <div class="hero-actions">
+          <a href="#createurs" class="btn-primary">
+            Explorer l'index des maisons <span aria-hidden="true">→</span>
+          </a>
+          <a href="#essayage" class="btn-outline">
+            Préparer une visite <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+
+            <!-- 3D Vitrine Spotlight -->
+      <div class="vitrine-stage" aria-label="Vitrine du moment">
+        <div class="vitrine-birch-wall"></div>
+        <div class="vitrine-spotlight"></div>
+
+        <model-viewer
+          src="/demos/glasses-final.glb"
+          alt="Monture de createur Rien A Voir 25"
+          auto-rotate
+          auto-rotate-delay="500"
+          rotation-per-second="20deg"
+          camera-controls
+          touch-action="pan-y"
+          environment-image="neutral"
+          shadow-intensity="1.5"
+          shadow-softness="1"
+          exposure="1.2"
+          style="width:100%;height:100%;position:absolute;inset:0;z-index:3;background:transparent;"
+        ></model-viewer>
+
+        <div class="vitrine-plaque">
+          <div class="vitrine-plaque-title">MONTURE &middot; COLLECTION EXCLUSIVE</div>
+          <div class="vitrine-plaque-specs">VIEUX-LILLE &middot; AJUSTEMENT SUR MESURE<br>VERRE HOYA &middot; ESSAYAGE SUR RENDEZ-VOUS</div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="hero-brand-strip">
+      <div class="container hero-brand-list">
+        <a href="#createurs" class="hero-brand-item" data-jump-brand="matsuda">Matsuda</a>
+        <span class="hero-brand-sep" aria-hidden="true"></span>
+        <a href="#createurs" class="hero-brand-item" data-jump-brand="henau">Michel Henau</a>
+        <span class="hero-brand-sep" aria-hidden="true"></span>
+        <a href="#createurs" class="hero-brand-item" data-jump-brand="magnuson">Oscar Magnuson</a>
+        <span class="hero-brand-sep" aria-hidden="true"></span>
+        <a href="#createurs" class="hero-brand-item" data-jump-brand="sabine">Sabine be</a>
+        <span class="hero-brand-sep" aria-hidden="true"></span>
+        <a href="#createurs" class="hero-brand-item" data-jump-brand="kaes">Vincent Kaes</a>
+        <span class="hero-brand-sep" aria-hidden="true"></span>
+        <a href="#createurs" class="hero-brand-item" data-jump-brand="garrett">Garrett Leight</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 1: LA GALERIE
+  ========================================= -->
+  <section class="section-light" id="galerie">
+    <div class="container galerie-grid">
+      <div>
+        <div class="section-eyebrow">25 Rue de la Clef</div>
+        <h2 class="section-heading">
+          Un lieu pensé comme une galerie, <em>jamais comme un comptoir.</em>
+        </h2>
+        <p class="galerie-lead">
+          Entre pierre brute du Vieux-Lille, bouleau clair et plafond d'optiques circulaires, <strong>Rien A Voir 25</strong> prend le contre-pied des enseignes standardisées. Ici, pas de murs saturés de logos commerciaux : chaque monture est choisie pour sa ligne, son équilibre et la main de son créateur.
+        </p>
+        <p class="galerie-lead">
+          Nous prenons le temps d'observer votre morphologie, votre posture et votre correction pour trouver la paire qui s'efface ou qui affirme votre regard — sans jamais forcer la main.
+        </p>
+      </div>
+
+      <div class="galerie-pillars">
+        <article class="pillar-card">
+          <span class="pillar-num">01 / Sélection</span>
+          <h3 class="pillar-title">Zéro chaîne, 100% créateurs</h3>
+          <p class="pillar-text">Des maisons indépendantes produites en petites séries au Japon, en Belgique, en Italie ou en France.</p>
+        </article>
+        <article class="pillar-card">
+          <span class="pillar-num">02 / Morphologie</span>
+          <h3 class="pillar-title">Conseil visagiste franc</h3>
+          <p class="pillar-text">Un œil exercé sur les proportions du pont, l'alignement des sourcils et la justesse des volumes.</p>
+        </article>
+        <article class="pillar-card">
+          <span class="pillar-num">03 / Sur-mesure</span>
+          <h3 class="pillar-title">Montage & ajustements</h3>
+          <p class="pillar-text">Prises de mesures précises, lunettes sur mesure, lentilles de contact et suivi atelier après livraison.</p>
+        </article>
+        <article class="pillar-card">
+          <span class="pillar-num">04 / Réputation</span>
+          <h3 class="pillar-title">5,0 / 5 sur 92 avis Google</h3>
+          <p class="pillar-text">La fidélité de nos clients du Vieux-Lille repose sur l'accueil, la rapidité et la qualité réelle du conseil.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 2: L'INDEX DES MAISONS
+  ========================================= -->
+  <section class="index-section" id="createurs">
+    <div class="container">
+      <div class="index-header">
+        <div>
+          <div class="section-eyebrow">L'Index des Maisons</div>
+          <h2 class="section-heading">Six signatures <em>indépendantes.</em></h2>
+        </div>
+
+        <div class="filter-bar" role="group" aria-label="Filtrer les maisons par matière">
+          <button class="filter-btn active" data-filter="all">Toutes (6)</button>
+          <button class="filter-btn" data-filter="titane">Titane & Métal</button>
+          <button class="filter-btn" data-filter="acetate">Acétate Sculpté</button>
+          <button class="filter-btn" data-filter="avantgarde">Avant-Garde</button>
+        </div>
+      </div>
+
+      <div class="index-layout">
+        <div class="maison-list" id="maisonList" role="listbox" aria-label="Liste des créateurs"></div>
+
+        <article class="dossier-card" id="dossierCard" aria-live="polite">
+          <div class="dossier-top">
+            <span class="dossier-tag" id="dossierOriginTag">SABAE · JAPON</span>
+            <span class="dossier-specs-code" id="dossierCaliber">CAL. 46□22-145</span>
+          </div>
+
+          <div class="dossier-visual" id="dossierSvgWrap"></div>
+
+          <h3 class="dossier-title" id="dossierTitle">Matsuda</h3>
+          <div class="dossier-sub" id="dossierSub">L'orfèvrerie du titane japonais</div>
+          <p class="dossier-desc" id="dossierDesc"></p>
+
+          <div class="dossier-meta-grid">
+            <div class="dossier-meta-item">
+              <span>Matière signature</span>
+              <strong id="dossierMaterial"></strong>
+            </div>
+            <div class="dossier-meta-item">
+              <span>Esprit & Volume</span>
+              <strong id="dossierVibe"></strong>
+            </div>
+          </div>
+
+          <div class="boutique-eye-note">
+            <div class="boutique-eye-label">L'œil de la boutique</div>
+            <p class="boutique-eye-text" id="dossierNote"></p>
+          </div>
+
+          <div class="dossier-actions">
+            <button class="btn-dark" id="addBrandToFicheBtn">
+              + Ajouter à ma fiche d'essayage
+            </button>
+            <a href="#essayage" class="btn-outline" style="color: var(--ink); border-color: rgba(22,22,21,0.28);">
+              Voir ma fiche ↗
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 3: L'EXIGENCE HOYA
+  ========================================= -->
+  <section class="section-dark" id="hoya">
+    <div class="container hoya-grid">
+      <div>
+        <div class="section-eyebrow">Partenaire Verrier Japonais</div>
+        <h2 class="section-heading">Une belle monture exige <em>un verre irréprochable.</em></h2>
+        <p style="color: var(--white-muted); margin-top: 16px; font-size: 16px; font-weight: 300; line-height: 1.7;">
+          Nous travaillons avec les verres <strong style="color: var(--white); font-weight: 500;">Hoya</strong> pour leur finesse optique, la résistance de leurs traitements antireflets et la précision de leurs géométries progressives. Testez les comportements lumineux ci-contre :
+        </p>
+
+        <div class="hoya-tabs" role="tablist" aria-label="Types de verres Hoya">
+          <button class="hoya-tab active" data-lens="clair" role="tab" aria-selected="true">
+            <span class="hoya-tab-code">01 · OPTIQUE</span>
+            <span class="hoya-tab-name">Verre Clair Hi-Vision</span>
+          </button>
+          <button class="hoya-tab" data-lens="sensity" role="tab" aria-selected="false">
+            <span class="hoya-tab-code">02 · ADAPTATIF</span>
+            <span class="hoya-tab-name">Photochromique Sensity</span>
+          </button>
+          <button class="hoya-tab" data-lens="solaire" role="tab" aria-selected="false">
+            <span class="hoya-tab-code">03 · SOLAIRE</span>
+            <span class="hoya-tab-name">Solaire Polarisant</span>
+          </button>
+          <button class="hoya-tab" data-lens="progressif" role="tab" aria-selected="false">
+            <span class="hoya-tab-code">04 · SUR-MESURE</span>
+            <span class="hoya-tab-name">Progressif Individualisé</span>
+          </button>
+        </div>
+
+        <div class="hoya-detail-box">
+          <h3 class="hoya-detail-title" id="hoyaTitle">Transparence absolue & antireflet haute résistance</h3>
+          <p class="hoya-detail-text" id="hoyaDesc">
+            Conçu pour laisser passer le regard sans reflet parasite ni halo nocturne. Traitement durci contre les micro-rayures, antistatique et hydrophobe pour un nettoyage sans trace.
+          </p>
+          <div class="hoya-specs-row" id="hoyaChips">
+            <span class="hoya-chip">Transmission 99,2%</span>
+            <span class="hoya-chip">Anti-rayures Long-Life</span>
+            <span class="hoya-chip">Amincissement sur mesure</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lens-stage" aria-live="polite">
+        <div class="lens-backdrop" id="lensBackdrop"></div>
+        <div class="lens-disc" id="lensDisc" data-mode="clair">
+          <div class="lens-crosshair"></div>
+          <span class="lens-readout-tag" id="lensTag">HOYA · HI-VISION</span>
+          <div class="lens-readout-val" id="lensVal">Clarté neutre</div>
+          <span class="lens-readout-sub" id="lensSub">0% teinte · Filtre UV intégral</span>
+        </div>
+        <div class="lens-stage-footer">
+          <span>Précision centrage 0,1 mm</span>
+          <span>25 Rue de la Clef · Lille</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 4: FICHE D'ESSAYAGE PRIVÉ
+  ========================================= -->
+  <section class="section-light" id="essayage">
+    <div class="container">
+      <div class="section-eyebrow">Préparer votre venue</div>
+      <h2 class="section-heading">Votre <em>Fiche d'Essayage</em> en trois gestes.</h2>
+      <p style="color: var(--ink-muted); max-width: 620px; margin-top: 14px; font-size: 16px;">
+        Vous pouvez passer librement en boutique, ou préparer ici vos préférences en 30 secondes pour que nous ayons déjà quelques pépites prêtes sur la table à votre arrivée.
+      </p>
+
+      <div class="essayage-grid">
+        <div class="essayage-steps">
+          <div class="step-block">
+            <div class="step-label">
+              <span class="step-num">01</span>
+              <h3 class="step-title">L'allure recherchée</h3>
+            </div>
+            <div class="choice-grid" data-step="style">
+              <button class="choice-pill selected" data-value="Discret & architectural">Discret & architectural</button>
+              <button class="choice-pill" data-value="Caractère affirmé">Caractère affirmé</button>
+              <button class="choice-pill" data-value="Touche de couleur">Touche de couleur</button>
+              <button class="choice-pill" data-value="Je vous fais confiance">Je vous fais confiance</button>
+            </div>
+          </div>
+
+          <div class="step-block">
+            <div class="step-label">
+              <span class="step-num">02</span>
+              <h3 class="step-title">Matière de prédilection</h3>
+            </div>
+            <div class="choice-grid" data-step="material">
+              <button class="choice-pill selected" data-value="Titane léger">Titane léger</button>
+              <button class="choice-pill" data-value="Acétate épais">Acétate épais</button>
+              <button class="choice-pill" data-value="Mixte métal & acétate">Mixte métal & acétate</button>
+              <button class="choice-pill" data-value="À découvrir sur place">À découvrir sur place</button>
+            </div>
+          </div>
+
+          <div class="step-block">
+            <div class="step-label">
+              <span class="step-num">03</span>
+              <h3 class="step-title">Besoin optique & créneau souhaité</h3>
+            </div>
+            <div class="choice-grid" data-step="need">
+              <button class="choice-pill selected" data-value="Optique unifocal">Optique unifocal</button>
+              <button class="choice-pill" data-value="Verres progressifs Hoya">Verres progressifs Hoya</button>
+              <button class="choice-pill" data-value="Solaire (à la vue ou non)">Solaire (à la vue ou non)</button>
+              <button class="choice-pill" data-value="Lentilles / Bilan">Lentilles / Bilan</button>
+            </div>
+
+            <div class="essayage-input-row">
+              <input type="text" class="field-input" id="visitorName" placeholder="Votre prénom (optionnel)">
+              <select class="field-input" id="visitorSlot" aria-label="Créneau souhaité">
+                <option value="Passage libre en semaine">Passage libre en semaine</option>
+                <option value="Matinée (10h30 – 13h00)">Matinée (10h30 – 13h00)</option>
+                <option value="Après-midi (14h30 – 19h00)">Après-midi (14h30 – 19h00)</option>
+                <option value="Samedi (10h00 – 19h00)">Samedi (10h00 – 19h00)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <aside class="fiche-card" aria-live="polite">
+          <div class="fiche-header">
+            <div>
+              <div class="fiche-title">Fiche d'Essayage</div>
+              <div class="fiche-ref">Rien Λ Voir 25 · Vieux-Lille</div>
+            </div>
+            <span class="fiche-ref" id="ficheCode">N° 25-LIL</span>
+          </div>
+
+          <div class="fiche-rows">
+            <div class="fiche-row">
+              <span>Allure</span>
+              <strong id="sumStyle">Discret & architectural</strong>
+            </div>
+            <div class="fiche-row">
+              <span>Matière</span>
+              <strong id="sumMaterial">Titane léger</strong>
+            </div>
+            <div class="fiche-row">
+              <span>Besoin</span>
+              <strong id="sumNeed">Optique unifocal</strong>
+            </div>
+            <div class="fiche-row">
+              <span>Maisons repérées</span>
+              <strong id="sumBrands">Sélection libre en boutique</strong>
+            </div>
+            <div class="fiche-row">
+              <span>Créneau</span>
+              <strong id="sumSlot">Passage libre en semaine</strong>
+            </div>
+          </div>
+
+          <div class="fiche-actions">
+            <button class="btn-primary fiche-btn-full" id="confirmFicheBtn">
+              Valider ma fiche d'essayage →
+            </button>
+            <button class="btn-outline fiche-btn-full" id="copyFicheBtn">
+              Copier le récapitulatif
+            </button>
+            <a href="tel:+33320401986" class="btn-outline fiche-btn-full" style="border-color: rgba(168,142,114,0.45); color: var(--bronze-bright);">
+              Appeler la boutique · 03 20 40 19 86
+            </a>
+          </div>
+
+          <div class="fiche-confirm" id="ficheConfirmBox">
+            <strong>Fiche prête pour votre visite au 25 Rue de la Clef.</strong><br>
+            Présentez ce récapitulatif en boutique ou appelez-nous au 03 20 40 19 86 pour bloquer un créneau au calme avec l'équipe.
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SECTION 5: AVIS CLIENTS & QUESTIONS FRANCHES
+  ========================================= -->
+  <section class="section-light" id="avis" style="padding-top: 0;">
+    <div class="container proof-faq-grid">
+      <div>
+        <div class="section-eyebrow">Ce qu'en disent nos clients</div>
+        <h2 class="section-heading">La confiance <em>du quartier.</em></h2>
+
+        <div class="rating-banner">
+          <div class="rating-score">5,0</div>
+          <div class="rating-meta">
+            <span class="rating-stars" aria-label="5 étoiles sur 5">★★★★★</span>
+            <span>Moyenne vérifiée sur <strong>92 avis Google</strong></span>
+          </div>
+        </div>
+
+        <div class="review-stack">
+          <blockquote class="review-card">
+            <p class="review-quote">« Rien à voir avec les grandes chaînes. Des montures originales qu'on ne croise pas partout, et deux opticiennes qui ont énormément de goût. »</p>
+            <footer class="review-author">Client vérifié · Avis Google</footer>
+          </blockquote>
+          <blockquote class="review-card">
+            <p class="review-quote">« Un accueil chaleureux et de vrais conseils morphologiques. Merci à Louane pour sa patience, sa justesse et la rapidité de réception des lunettes. »</p>
+            <footer class="review-author">Client vérifié · Avis Google</footer>
+          </blockquote>
+          <blockquote class="review-card">
+            <p class="review-quote">« On prend le temps d'essayer sans pression, la gestion mutuelle est fluide et le réglage sur mesure fait toute la différence au quotidien. »</p>
+            <footer class="review-author">Client vérifié · Avis Google</footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-eyebrow">Questions franches</div>
+        <h2 class="section-heading">Avant de pousser <em>la porte noire.</em></h2>
+
+        <div class="faq-list">
+          <div class="faq-item open">
+            <button class="faq-trigger" aria-expanded="true">
+              <span>Est-ce réservé aux très gros budgets ?</span>
+              <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-panel" style="max-height: 220px;">
+              <div class="faq-panel-inner">
+                Non. Être opticien de créateurs ne signifie pas être inaccessible. Nos collections indépendantes démarrent sur des tarifs cohérents avec la qualité de fabrication, et nous établissons toujours un devis clair avant tout engagement.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Faites-vous le tiers payant et les mutuelles ?</span>
+              <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-panel">
+              <div class="faq-panel-inner">
+                Oui. Nous nous occupons des démarches Sécurité sociale et mutuelles (tiers payant selon votre organisme) avec transparence sur votre reste à charge, afin que le suivi administratif reste simple et rapide.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Faut-il prendre rendez-vous pour essayer ?</span>
+              <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-panel">
+              <div class="faq-panel-inner">
+                Non, vous êtes libre de passer du mardi au samedi. Préparer votre fiche d'essayage ou nous appeler avant est simplement utile si vous souhaitez un créneau dédié pour des verres progressifs ou un projet sur mesure.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Et après la livraison de mes lunettes ?</span>
+              <span class="faq-plus">+</span>
+            </button>
+            <div class="faq-panel">
+              <div class="faq-panel-inner">
+                Une monture vit avec vous : passez quand vous le souhaitez au 25 Rue de la Clef pour un réajustement des branches, un nettoyage aux ultrasons ou un contrôle de visserie.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       FOOTER
+  ========================================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-wordmark" style="margin-bottom: 12px;">
+            RIEN<span class="lambda">Λ</span>VOIR<span class="num">25</span>
+          </div>
+          <p class="footer-text">
+            Opticien indépendant de créateurs au cœur du Vieux-Lille.<br>
+            Membre du réseau <strong style="color: var(--white); font-weight: 500;">Opticiens Par Conviction</strong> · Partenaire verres <strong style="color: var(--white); font-weight: 500;">Hoya</strong>.<br>
+            Entrée accessible PMR.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Boutique & Contact</div>
+          <p class="footer-text">
+            25 Rue de la Clef, 59800 Lille<br>
+            À deux pas de l'Opéra et de la Grand Place<br>
+            Tél. : <a href="tel:+33320401986"><strong style="color: var(--white); font-weight: 500;">03 20 40 19 86</strong></a>
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Horaires d'ouverture</div>
+          <p class="footer-text">
+            Mardi – Vendredi : 10h30 – 13h00 · 14h30 – 19h00<br>
+            Samedi : 10h00 – 19h00<br>
+            Dimanche & Lundi : Fermé
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© Rien A Voir 25 — Optique Ternaux · Vieux-Lille</span>
+        <span>Proposition interactive de démonstration · aniszadri.dev</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- =========================================
+       VANILLA JS — INTERACTIVITY
+  ========================================= -->
+  <script>
+    (function () {
+      const frameSVGs = {
+        matsuda: `
+          <svg viewBox="0 0 360 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Monture Matsuda en titane gravé">
+            <defs>
+              <linearGradient id="tiGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#D8C2A2"/>
+                <stop offset="50%" stop-color="#8A7258"/>
+                <stop offset="100%" stop-color="#4B3D30"/>
+              </linearGradient>
+              <linearGradient id="lensGlass" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>
+                <stop offset="55%" stop-color="rgba(255,255,255,0.03)"/>
+                <stop offset="100%" stop-color="rgba(168,142,114,0.12)"/>
+              </linearGradient>
+            </defs>
+            <path d="M26 56 L68 42 L115 48" stroke="#4D4238" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M334 56 L292 42 L245 48" stroke="#4D4238" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M158 64 Q180 50 202 64" stroke="url(#tiGold)" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M164 69 Q180 61 196 69" stroke="#C5A986" stroke-width="1.4" stroke-dasharray="2 2"/>
+            <ellipse cx="163" cy="84" rx="4.5" ry="8" fill="#C9B294" opacity="0.85"/>
+            <ellipse cx="197" cy="84" rx="4.5" ry="8" fill="#C9B294" opacity="0.85"/>
+            <path d="M56 64 C56 42 78 34 108 35 C139 36 158 48 158 72 C158 102 135 120 105 120 C74 120 56 98 56 64 Z" fill="url(#lensGlass)" stroke="#2C2723" stroke-width="6.5"/>
+            <path d="M56 64 C56 42 78 34 108 35 C139 36 158 48 158 72 C158 102 135 120 105 120 C74 120 56 98 56 64 Z" stroke="url(#tiGold)" stroke-width="2"/>
+            <path d="M304 64 C304 42 282 34 252 35 C221 36 202 48 202 72 C202 102 225 120 255 120 C286 120 304 98 304 64 Z" fill="url(#lensGlass)" stroke="#2C2723" stroke-width="6.5"/>
+            <path d="M304 64 C304 42 282 34 252 35 C221 36 202 48 202 72 C202 102 225 120 255 120 C286 120 304 98 304 64 Z" stroke="url(#tiGold)" stroke-width="2"/>
+            <rect x="44" y="54" width="13" height="6" rx="1.5" fill="url(#tiGold)"/>
+            <rect x="303" y="54" width="13" height="6" rx="1.5" fill="url(#tiGold)"/>
+            <path d="M74 52 L98 44" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+            <path d="M222 52 L246 44" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+          </svg>
+        `,
+        henau: `
+          <svg viewBox="0 0 360 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Monture Michel Henau architecturale">
+            <defs>
+              <linearGradient id="henauAcetate" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#3A3531"/>
+                <stop offset="50%" stop-color="#1D1B1A"/>
+                <stop offset="100%" stop-color="#53463B"/>
+              </linearGradient>
+            </defs>
+            <path d="M154 62 L206 62 L198 74 L162 74 Z" fill="url(#henauAcetate)"/>
+            <path d="M46 46 L156 42 L154 114 L74 122 L46 92 Z" fill="rgba(255,255,255,0.06)" stroke="url(#henauAcetate)" stroke-width="11" stroke-linejoin="round"/>
+            <path d="M52 50 L150 47" stroke="#A88E72" stroke-width="1.4" opacity="0.65"/>
+            <path d="M314 46 L204 42 L206 114 L286 122 L314 92 Z" fill="rgba(255,255,255,0.06)" stroke="url(#henauAcetate)" stroke-width="11" stroke-linejoin="round"/>
+            <path d="M210 47 L308 50" stroke="#A88E72" stroke-width="1.4" opacity="0.65"/>
+            <circle cx="57" cy="56" r="2.2" fill="#D5BC9B"/>
+            <circle cx="303" cy="56" r="2.2" fill="#D5BC9B"/>
+          </svg>
+        `,
+        magnuson: `
+          <svg viewBox="0 0 360 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Monture Oscar Magnuson minimaliste">
+            <path d="M158 64 Q180 54 202 64" stroke="#8C745A" stroke-width="6.5" stroke-linecap="round"/>
+            <rect x="52" y="38" width="106" height="82" rx="34" fill="rgba(214,183,141,0.08)" stroke="#7D674E" stroke-width="8.5"/>
+            <rect x="202" y="38" width="106" height="82" rx="34" fill="rgba(214,183,141,0.08)" stroke="#7D674E" stroke-width="8.5"/>
+            <path d="M68 52 C82 44 102 44 118 46" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" opacity="0.45"/>
+            <path d="M218 52 C232 44 252 44 268 46" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" opacity="0.45"/>
+          </svg>
+        `,
+        sabine: `
+          <svg viewBox="0 0 360 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Monture Sabine be sculptée">
+            <path d="M156 64 Q180 52 204 64" stroke="#B66A4A" stroke-width="7" stroke-linecap="round"/>
+            <circle cx="106" cy="78" r="44" fill="rgba(182,106,74,0.1)" stroke="#B66A4A" stroke-width="9"/>
+            <circle cx="106" cy="78" r="44" stroke="#E7C8A0" stroke-width="1.5" stroke-dasharray="14 8"/>
+            <circle cx="254" cy="78" r="44" fill="rgba(182,106,74,0.1)" stroke="#B66A4A" stroke-width="9"/>
+            <circle cx="254" cy="78" r="44" stroke="#E7C8A0" stroke-width="1.5" stroke-dasharray="14 8"/>
+            <circle cx="52" cy="64" r="6" fill="#E7C8A0"/>
+            <rect x="302" y="58" width="12" height="12" fill="#E7C8A0"/>
+          </svg>
+        `,
+        kaes: `
+          <svg viewBox="0 0 360 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Monture Vincent Kaes avant-garde">
+            <path d="M46 56 L314 56" stroke="#C5BCB0" stroke-width="2.5"/>
+            <path d="M158 68 Q180 60 202 68" stroke="#A88E72" stroke-width="4"/>
+            <polygon points="54,56 154,56 144,116 74,116" fill="rgba(255,255,255,0.06)" stroke="#E4DDD2" stroke-width="4.5" stroke-linejoin="miter"/>
+            <polygon points="206,56 306,56 286,116 216,116" fill="rgba(255,255,255,0.06)" stroke="#E4DDD2" stroke-width="4.5" stroke-linejoin="miter"/>
+          </svg>
+        `,
+        garrett: `
+          <svg viewBox="0 0 360 150" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Monture Garrett Leight Californie">
+            <path d="M155 60 Q180 48 205 60" stroke="#A88E72" stroke-width="6" stroke-linecap="round"/>
+            <path d="M52 54 C52 38 78 36 108 38 C142 40 158 48 156 76 C154 106 132 118 102 118 C72 118 52 96 52 54 Z" fill="rgba(168,142,114,0.14)" stroke="#C2A88B" stroke-width="7.5"/>
+            <path d="M308 54 C308 38 282 36 252 38 C218 40 202 48 204 76 C206 106 228 118 258 118 C288 118 308 96 308 54 Z" fill="rgba(168,142,114,0.14)" stroke="#C2A88B" stroke-width="7.5"/>
+            <circle cx="66" cy="52" r="2.2" fill="#FFFFFF"/>
+            <circle cx="73" cy="52" r="2.2" fill="#FFFFFF"/>
+            <circle cx="294" cy="52" r="2.2" fill="#FFFFFF"/>
+            <circle cx="287" cy="52" r="2.2" fill="#FFFFFF"/>
+          </svg>
+        `
+      };
+
+      const vitrineItems = [
+        {
+          svg: frameSVGs.matsuda,
+          title: "MATSUDA • L'ART DU TITANE JAPONAIS",
+          specs: "SABAE, JAPON · 46□22-145<br>TITANE GRAVÉ MAIN · VERRE HOYA"
+        },
+        {
+          svg: frameSVGs.henau,
+          title: "MICHEL HENAU • ARCHITECTURE BELGE",
+          specs: "ANVERS, BELGIQUE · 48□21-145<br>ACÉTATE SCULPTÉ · LIGNE RADICALE"
+        },
+        {
+          svg: frameSVGs.sabine,
+          title: "SABINE BE • GÉOMÉTRIE & COULEUR",
+          specs: "FRANCE · 45□23-145<br>ACÉTATE MAZZUCCHELLI · FAIT MAIN"
+        }
+      ];
+
+      const vitrineWrap = document.getElementById('vitrineFrameWrap');
+      const vitrineTitle = document.getElementById('vitrineTitle');
+      const vitrineSpecs = document.getElementById('vitrineSpecs');
+      const vitrineBtns = document.querySelectorAll('.vitrine-dot-btn');
+
+      function renderVitrine(idx, animate) {
+        const item = vitrineItems[idx];
+        vitrineBtns.forEach((b, i) => {
+          b.classList.toggle('active', i === idx);
+          b.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+        });
+
+        if (animate && vitrineWrap.firstElementChild) {
+          vitrineWrap.firstElementChild.classList.add('switching');
+          setTimeout(() => {
+            vitrineWrap.innerHTML = item.svg;
+            vitrineWrap.firstElementChild.classList.add('vitrine-frame-svg');
+            vitrineTitle.textContent = item.title;
+            vitrineSpecs.innerHTML = item.specs;
+          }, 180);
+        } else {
+          vitrineWrap.innerHTML = item.svg;
+          vitrineWrap.firstElementChild.classList.add('vitrine-frame-svg');
+          vitrineTitle.textContent = item.title;
+          vitrineSpecs.innerHTML = item.specs;
+        }
+      }
+
+      vitrineBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          renderVitrine(Number(btn.dataset.vitrine), true);
+        });
+      });
+
+      renderVitrine(0, false);
+
+      const maisons = [
+        {
+          id: 'matsuda',
+          idx: '01',
+          name: 'Matsuda',
+          origin: 'Sabae · Japon',
+          caliber: 'CAL. 46□22-145',
+          category: 'titane',
+          sub: "L'orfèvrerie du titane japonais",
+          desc: "Façonnées à Sabae en plus de 250 étapes, les montures Matsuda marient gravures microscopiques, titane japonais et acétate vieilli. Des pièces d'une précision horlogère, pensées pour durer des décennies.",
+          material: 'Titane gravé & acétate japonais',
+          vibe: 'Précis, architectural, intemporel',
+          note: "« On l'adore sur les visages qui cherchent du détail sans ostentation : de loin une ligne pure, de près un vrai bijou de mécanique. »"
+        },
+        {
+          id: 'henau',
+          idx: '02',
+          name: 'Michel Henau',
+          origin: 'Anvers · Belgique',
+          caliber: 'CAL. 48□21-145',
+          category: 'avantgarde',
+          sub: 'Sculpture optique & minimalisme belge',
+          desc: "Maison belge reconnue pour ses volumes francs et ses ponts dessinés comme des pièces d'architecture. Des formes audacieuses mais étonnamment équilibrées une fois posées sur le nez.",
+          material: 'Acétate haute densité & métal',
+          vibe: 'Graphique, contemporain, assumé',
+          note: "« Idéale si vous voulez sortir des formes rondes classiques : une Henau structure immédiatement le haut du visage. »"
+        },
+        {
+          id: 'magnuson',
+          idx: '03',
+          name: 'Oscar Magnuson',
+          origin: 'Suède · Fait en Italie',
+          caliber: 'CAL. 47□21-145',
+          category: 'acetate',
+          sub: 'Épure scandinave & teintes minérales',
+          desc: "Dessinées à Stockholm et fabriquées à la main en Italie dans un acétate éco-conçu. Une palette sourde et subtile — sable, mousse, écaille fumée — d'une douceur remarquable.",
+          material: 'Bio-acétate italien poli main',
+          vibe: 'Sobre, chaleureux, équilibré',
+          note: "« Notre valeur sûre pour celles et ceux qui aiment les matières mates et les couleurs nuancées qui flattent toutes les carnations. »"
+        },
+        {
+          id: 'sabine',
+          idx: '04',
+          name: 'Sabine be',
+          origin: 'Orléans · France',
+          caliber: 'CAL. 45□23-145',
+          category: 'acetate',
+          sub: 'Géométrie libre & énergie créative',
+          desc: "Création française immédiatement reconnaissable à ses cercles asymétriques, ses touches de couleur franches et ses tenons rond/carré. Joyeuse, singulière et fabriquée avec un vrai soin artisanal.",
+          material: 'Acétate Mazzucchelli travaillé main',
+          vibe: 'Expressif, lumineux, singulier',
+          note: "« Parfaite pour réveiller un teint ou affirmer un style créatif sans jamais tomber dans le gadget. »"
+        },
+        {
+          id: 'kaes',
+          idx: '05',
+          name: 'Vincent Kaes',
+          origin: 'France · Avant-Garde',
+          caliber: 'CAL. 49□20-145',
+          category: 'avantgarde',
+          sub: 'Lignes tendues & esprit galerie',
+          desc: "Une écriture visuelle radicale et poétique, à la croisée du design industriel et de l'art contemporain. Des profils nets qui transforment la lunette en objet de caractère.",
+          material: 'Acétate taillé & acier fin',
+          vibe: 'Avant-garde, sculptural, rare',
+          note: "« Une maison confidentielle qu'on ne croise presque nulle part ailleurs à Lille — pour les amoureux de pièces d'auteur. »"
+        },
+        {
+          id: 'garrett',
+          idx: '06',
+          name: 'Garrett Leight',
+          origin: 'Venice Beach · Californie',
+          caliber: 'CAL. 47□22-145',
+          category: 'titane',
+          sub: 'Classiques californiens revisités',
+          desc: "Des proportions justes inspirées de la culture ciné et studio de Los Angeles. Des montures faciles à vivre, légères, disponibles en optique comme en solaires aux verres minéraux.",
+          material: 'Acétate japonais & titane',
+          vibe: 'Décontracté, chic, quotidien',
+          note: "« L'équilibre parfait entre naturel et élégance : on l'enfile le matin, on l'oublie toute la journée. »"
+        }
+      ];
+
+      const maisonListEl = document.getElementById('maisonList');
+      const dossierOriginTag = document.getElementById('dossierOriginTag');
+      const dossierCaliber = document.getElementById('dossierCaliber');
+      const dossierSvgWrap = document.getElementById('dossierSvgWrap');
+      const dossierTitle = document.getElementById('dossierTitle');
+      const dossierSub = document.getElementById('dossierSub');
+      const dossierDesc = document.getElementById('dossierDesc');
+      const dossierMaterial = document.getElementById('dossierMaterial');
+      const dossierVibe = document.getElementById('dossierVibe');
+      const dossierNote = document.getElementById('dossierNote');
+      const addBrandBtn = document.getElementById('addBrandToFicheBtn');
+
+      let activeBrandId = 'matsuda';
+      const selectedBrands = new Set();
+
+      function buildMaisonList() {
+        maisonListEl.innerHTML = maisons.map(m => `
+          <button class="maison-row ${m.id === activeBrandId ? 'active' : ''}" data-id="${m.id}" data-cat="${m.category}" role="option" aria-selected="${m.id === activeBrandId}">
+            <span class="maison-idx">${m.idx}</span>
+            <span class="maison-name">${m.name}</span>
+            <span class="maison-origin">${m.origin}</span>
+          </button>
+        `).join('');
+
+        maisonListEl.querySelectorAll('.maison-row').forEach(row => {
+          row.addEventListener('click', () => selectBrand(row.dataset.id));
+        });
+      }
+
+      function selectBrand(id) {
+        const brand = maisons.find(m => m.id === id);
+        if (!brand) return;
+        activeBrandId = id;
+
+        maisonListEl.querySelectorAll('.maison-row').forEach(row => {
+          const isAct = row.dataset.id === id;
+          row.classList.toggle('active', isAct);
+          row.setAttribute('aria-selected', isAct ? 'true' : 'false');
+        });
+
+        dossierOriginTag.textContent = brand.origin.toUpperCase();
+        dossierCaliber.textContent = brand.caliber;
+        dossierSvgWrap.innerHTML = frameSVGs[brand.id];
+        dossierTitle.textContent = brand.name;
+        dossierSub.textContent = brand.sub;
+        dossierDesc.textContent = brand.desc;
+        dossierMaterial.textContent = brand.material;
+        dossierVibe.textContent = brand.vibe;
+        dossierNote.textContent = brand.note;
+
+        updateAddBrandButton();
+      }
+
+      function updateAddBrandButton() {
+        const brand = maisons.find(m => m.id === activeBrandId);
+        if (selectedBrands.has(brand.name)) {
+          addBrandBtn.textContent = `✓ ${brand.name} ajoutée à votre fiche`;
+          addBrandBtn.classList.add('added');
+        } else {
+          addBrandBtn.textContent = `+ Ajouter ${brand.name} à ma fiche d'essayage`;
+          addBrandBtn.classList.remove('added');
+        }
+      }
+
+      addBrandBtn.addEventListener('click', () => {
+        const brand = maisons.find(m => m.id === activeBrandId);
+        if (selectedBrands.has(brand.name)) {
+          selectedBrands.delete(brand.name);
+          showToast(`${brand.name} retirée de votre fiche.`);
+        } else {
+          selectedBrands.add(brand.name);
+          showToast(`${brand.name} ajoutée à votre fiche d'essayage.`);
+        }
+        updateAddBrandButton();
+        updateFicheSummary();
+      });
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.dataset.filter;
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          let firstVisible = null;
+          maisonListEl.querySelectorAll('.maison-row').forEach(row => {
+            const match = filter === 'all' || row.dataset.cat === filter;
+            row.classList.toggle('hidden', !match);
+            if (match && !firstVisible) firstVisible = row.dataset.id;
+          });
+
+          const currentVisible = !maisonListEl.querySelector(`.maison-row[data-id="${activeBrandId}"]`).classList.contains('hidden');
+          if (!currentVisible && firstVisible) {
+            selectBrand(firstVisible);
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-jump-brand]').forEach(link => {
+        link.addEventListener('click', () => {
+          document.querySelector('.filter-btn[data-filter="all"]').click();
+          selectBrand(link.dataset.jumpBrand);
+        });
+      });
+
+      buildMaisonList();
+      selectBrand('matsuda');
+
+      const hoyaModes = {
+        clair: {
+          title: 'Transparence absolue & antireflet haute résistance',
+          desc: 'Conçu pour laisser passer le regard sans reflet parasite ni halo nocturne. Traitement durci contre les micro-rayures, antistatique et hydrophobe pour un nettoyage sans trace.',
+          chips: ['Transmission 99,2%', 'Anti-rayures Long-Life', 'Amincissement sur mesure'],
+          tag: 'HOYA · HI-VISION',
+          val: 'Clarté neutre',
+          sub: '0% teinte · Filtre UV intégral',
+          glare: false
+        },
+        sensity: {
+          title: 'Sensity : du clair intérieur au solaire extérieur',
+          desc: 'Les verres photochromiques Hoya Sensity foncent automatiquement au soleil et redeviennent parfaitement clairs en intérieur. Idéal pour la lumière changeante du Nord.',
+          chips: ['Transition rapide', 'Teintes Bronze / Gris / Vert', '100% protection UV'],
+          tag: 'HOYA · SENSITY 2',
+          val: 'Teinte adaptative',
+          sub: 'Catégorie 0 → 3 selon les UV',
+          glare: false
+        },
+        solaire: {
+          title: 'Solaire polarisant : contraste pur, zéro éblouissement',
+          desc: 'Supprime les reflets rasants sur la route mouillée ou l’eau tout en préservant la fidélité des couleurs. Montable à votre vue sur toutes nos montures de créateurs.',
+          chips: ['Filtre polarisant', 'Solaire à la vue', 'Confort conduite'],
+          tag: 'HOYA · POLARISANT',
+          val: 'Contraste maîtrisé',
+          sub: 'Catégorie 3 · 85% absorption',
+          glare: false
+        },
+        progressif: {
+          title: 'Progressifs individualisés : champ large & adaptation douce',
+          desc: 'Calculés selon votre posture, la distance verre-œil et la cambrure exacte de votre monture. Fini l’effet de tangage : une transition fluide de près comme de loin.',
+          chips: ['Centrage 0,1 mm', 'Adaptation garantie', 'Vision binoculaire'],
+          tag: 'HOYA · PROGRESSIF ID',
+          val: 'Précision binoculaire',
+          sub: 'Loin · Intermédiaire · Près',
+          glare: true
+        }
+      };
+
+      const hoyaTabs = document.querySelectorAll('.hoya-tab');
+      const lensDisc = document.getElementById('lensDisc');
+      const lensBackdrop = document.getElementById('lensBackdrop');
+
+      hoyaTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const mode = tab.dataset.lens;
+          const data = hoyaModes[mode];
+
+          hoyaTabs.forEach(t => {
+            t.classList.toggle('active', t === tab);
+            t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+          });
+
+          document.getElementById('hoyaTitle').textContent = data.title;
+          document.getElementById('hoyaDesc').textContent = data.desc;
+          document.getElementById('hoyaChips').innerHTML = data.chips.map(c => `<span class="hoya-chip">${c}</span>`).join('');
+          document.getElementById('lensTag').textContent = data.tag;
+          document.getElementById('lensVal').textContent = data.val;
+          document.getElementById('lensSub').textContent = data.sub;
+          lensDisc.dataset.mode = mode;
+          lensBackdrop.classList.toggle('glare', data.glare);
+        });
+      });
+
+      const ficheState = {
+        style: 'Discret & architectural',
+        material: 'Titane léger',
+        need: 'Optique unifocal',
+        slot: 'Passage libre en semaine',
+        name: ''
+      };
+
+      document.querySelectorAll('.choice-grid').forEach(group => {
+        const step = group.dataset.step;
+        group.querySelectorAll('.choice-pill').forEach(pill => {
+          pill.addEventListener('click', () => {
+            group.querySelectorAll('.choice-pill').forEach(p => p.classList.remove('selected'));
+            pill.classList.add('selected');
+            ficheState[step] = pill.dataset.value;
+            updateFicheSummary();
+          });
+        });
+      });
+
+      const visitorNameInput = document.getElementById('visitorName');
+      const visitorSlotSelect = document.getElementById('visitorSlot');
+
+      visitorNameInput.addEventListener('input', () => {
+        ficheState.name = visitorNameInput.value.trim();
+        updateFicheSummary();
+      });
+
+      visitorSlotSelect.addEventListener('change', () => {
+        ficheState.slot = visitorSlotSelect.value;
+        updateFicheSummary();
+      });
+
+      function updateFicheSummary() {
+        document.getElementById('sumStyle').textContent = ficheState.style;
+        document.getElementById('sumMaterial').textContent = ficheState.material;
+        document.getElementById('sumNeed').textContent = ficheState.need;
+        document.getElementById('sumBrands').textContent =
+          selectedBrands.size > 0 ? Array.from(selectedBrands).join(', ') : 'Sélection libre en boutique';
+        document.getElementById('sumSlot').textContent =
+          ficheState.name ? `${ficheState.name} · ${ficheState.slot}` : ficheState.slot;
+      }
+
+      function buildPlainSummary() {
+        const brands = selectedBrands.size > 0 ? Array.from(selectedBrands).join(', ') : 'Sélection libre en boutique';
+        const who = ficheState.name ? `Client : ${ficheState.name}\n` : '';
+        return `FICHE D'ESSAYAGE — RIEN A VOIR 25 (25 Rue de la Clef, Lille)\n${who}Allure : ${ficheState.style}\nMatière : ${ficheState.material}\nBesoin : ${ficheState.need}\nMaisons repérées : ${brands}\nCréneau : ${ficheState.slot}\nContact boutique : 03 20 40 19 86`;
+      }
+
+      document.getElementById('confirmFicheBtn').addEventListener('click', () => {
+        document.getElementById('ficheConfirmBox').classList.add('visible');
+        showToast('Votre fiche d’essayage est prête.');
+      });
+
+      document.getElementById('copyFicheBtn').addEventListener('click', () => {
+        const text = buildPlainSummary();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            showToast('Récapitulatif copié dans le presse-papiers.');
+          }).catch(() => {
+            showToast('Récapitulatif prêt à être présenté en boutique.');
+          });
+        } else {
+          showToast('Récapitulatif prêt à être présenté en boutique.');
+        }
+      });
+
+      document.querySelectorAll('.faq-trigger').forEach(trigger => {
+        trigger.addEventListener('click', () => {
+          const item = trigger.parentElement;
+          const panel = item.querySelector('.faq-panel');
+          const isOpen = item.classList.contains('open');
+
+          document.querySelectorAll('.faq-item').forEach(other => {
+            other.classList.remove('open');
+            other.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
+            other.querySelector('.faq-panel').style.maxHeight = null;
+          });
+
+          if (!isOpen) {
+            item.classList.add('open');
+            trigger.setAttribute('aria-expanded', 'true');
+            panel.style.maxHeight = panel.scrollHeight + 'px';
+          }
+        });
+      });
+
+      function updateLiveStatus() {
+        const dot = document.getElementById('liveStatusDot');
+        const text = document.getElementById('liveStatusText');
+        try {
+          const now = new Date();
+          const paris = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Paris' }));
+          const day = paris.getDay();
+          const mins = paris.getHours() * 60 + paris.getMinutes();
+
+          let isOpen = false;
+          if (day >= 2 && day <= 5) {
+            isOpen = (mins >= 630 && mins < 780) || (mins >= 870 && mins < 1140);
+          } else if (day === 6) {
+            isOpen = mins >= 600 && mins < 1140;
+          }
+
+          if (isOpen) {
+            dot.classList.remove('closed');
+            text.textContent = 'OUVERT ACTUELLEMENT • JUSQU’À 19H00';
+          } else {
+            dot.classList.add('closed');
+            text.textContent = 'MARDI – SAMEDI • 10H30 – 19H00';
+          }
+        } catch (e) {
+          text.textContent = 'MARDI – SAMEDI • 10H30 – 19H00';
+        }
+      }
+      updateLiveStatus();
+
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      const mobileDrawer = document.getElementById('mobileDrawer');
+
+      mobileBtn.addEventListener('click', () => {
+        const isOpen = mobileDrawer.classList.toggle('open');
+        mobileBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        mobileDrawer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      });
+
+      document.querySelectorAll('.drawer-link').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileDrawer.classList.remove('open');
+          mobileBtn.setAttribute('aria-expanded', 'false');
+          mobileDrawer.setAttribute('aria-hidden', 'true');
+        });
+      });
+
+      let toastTimer;
+      function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+      }
+    })();
+  </script>
+</body>
+</html>
+
