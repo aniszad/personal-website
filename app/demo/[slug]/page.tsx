@@ -15,8 +15,9 @@ const DEMOS: Record<string, { file: string; label: string }> = {
   // "another-client": { file: "another-client.html", label: "Another Client" },
 };
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const demo = DEMOS[params.slug];
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const demo = DEMOS[slug];
   if (!demo) return {};
   return {
     title: `Demo — ${demo.label}`,
@@ -24,8 +25,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function DemoPage({ params }: { params: { slug: string } }) {
-  const demo = DEMOS[params.slug];
+export default async function DemoPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const demo = DEMOS[slug];
   if (!demo) notFound();
 
   const src = `/demos/${demo.file}`;
