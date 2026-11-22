@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
       { source: "/demo/les-cousines-de-leon", destination: "/demos/les-cousines-de-leon/index.html" },
       { source: "/demo/rien-a-voir",          destination: "/demos/rien-a-voir/index.html" },
       { source: "/demo/alchemie-fleuriste",   destination: "/demos/alchemie-fleuriste/index.html" },
+      { source: "/demo/will_s_grillz_atelier", destination: "/demos/wills-grillz/index.html" },
     ];
   },
 };
