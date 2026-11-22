@@ -65,6 +65,12 @@ export function ProjectIndexRow({
     );
   }
 
+  if (project.demo) {
+    return (
+      <RowLink href={project.demo}>{content}</RowLink>
+    );
+  }
+
   return <div className={ROW_CLASS}>{content}</div>;
 }
 

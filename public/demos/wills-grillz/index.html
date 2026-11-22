@@ -1,0 +1,3061 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>WILL'S GRILLZ — Joaillerie Dentaire sur Empreinte · Roubaix &amp; Lille</title>
+
+  <!-- Single-family Google Fonts: Barlow Condensed (600, 700, 800) & Barlow (300, 400, 500, 600) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================================
+       DESIGN TOKENS & RESET (PURE VANILLA CSS — ZERO MONOSPACE / ZERO SERIF)
+       ========================================================================= */
+    :root {
+      --bg: #050507;
+      --surface-1: #0B0B0E;
+      --surface-2: #121216;
+      --border: #222228;
+      --border-strong: rgba(244, 244, 242, 0.32);
+      --bone: #F4F4F2;
+      --muted: #8E8E96;
+      --silver: #D8DCE2;
+      --gold: #D4AF5A;
+      --ruby: #A61C33;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+      --mx: 62%;
+      --my: 46%;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg);
+      color: var(--bone);
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--bone);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.55;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection {
+      background: var(--bone);
+      color: var(--bg);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, textarea {
+      font-family: var(--font-body);
+      color: inherit;
+    }
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .tabular {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Subtle Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #26262E; }
+    ::-webkit-scrollbar-thumb:hover { background: #444452; }
+
+    /* =========================================================================
+       ATMOSPHERE: SUBTLE FILM GRAIN & MOUSE-REACTIVE COLD SILVER AURA
+       ========================================================================= */
+    .grain-overlay {
+      position: fixed;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      pointer-events: none;
+      z-index: 40;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grainShift 0.65s steps(2) infinite;
+    }
+
+    @keyframes grainShift {
+      0%   { transform: translate(0, 0); }
+      25%  { transform: translate(-1.8%, 1.2%); }
+      50%  { transform: translate(1.4%, -1.8%); }
+      75%  { transform: translate(-1%, -1%); }
+      100% { transform: translate(0, 0); }
+    }
+
+    .aura-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background:
+        radial-gradient(circle 480px at var(--mx) var(--my), rgba(216, 220, 226, 0.085) 0%, rgba(216, 220, 226, 0.025) 42%, rgba(5, 5, 7, 0) 72%);
+      transition: opacity 0.4s ease;
+    }
+
+    /* =========================================================================
+       LAYOUT CONTAINER & REVEAL
+       ========================================================================= */
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    @media (min-width: 640px) {
+      .container { padding: 0 40px; }
+    }
+
+    @media (min-width: 1024px) {
+      .container { padding: 0 56px; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =========================================================================
+       MINIMAL FIXED HEADER (NO NAV BAR, NO BORDERS)
+       ========================================================================= */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 24px;
+      pointer-events: none;
+    }
+
+    @media (min-width: 640px) {
+      .site-header { padding: 28px 40px; }
+    }
+
+    @media (min-width: 1024px) {
+      .site-header { padding: 30px 56px; }
+    }
+
+    .brand-mark {
+      pointer-events: auto;
+      font-family: var(--font-display);
+      font-weight: 700;
+      transition: opacity 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      filter: brightness(0) invert(1);
+      opacity: 0.92;
+    }
+
+    .brand-logo-fallback {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bone);
+      transition: opacity 0.25s ease;
+    }
+
+    .brand-mark:hover {
+      opacity: 0.75;
+    }
+
+    .menu-btn {
+      pointer-events: auto;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bone);
+      padding: 10px 18px;
+      border: 1px solid rgba(244, 244, 242, 0.22);
+      background: rgba(5, 5, 7, 0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .menu-btn:hover {
+      background: var(--bone);
+      color: var(--bg);
+      border-color: var(--bone);
+    }
+
+    /* =========================================================================
+       FULL-SCREEN OBSIDIAN NAVIGATION OVERLAY
+       ========================================================================= */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 55;
+      background: rgba(5, 5, 7, 0.97);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 112px 24px 40px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.38s var(--ease);
+    }
+
+    @media (min-width: 640px) {
+      .menu-overlay { padding: 120px 40px 44px; }
+    }
+
+    @media (min-width: 1024px) {
+      .menu-overlay { padding: 128px 56px 48px; }
+    }
+
+    .menu-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .menu-nav-list {
+      list-style: none;
+      max-width: 900px;
+      margin: auto 0;
+    }
+
+    .menu-nav-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .menu-nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.6rem, 6.8vw, 5.25rem);
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      color: var(--bone);
+      transform: translateY(18px);
+      opacity: 0;
+      transition: transform 0.48s var(--ease), opacity 0.48s ease, color 0.22s ease, padding-left 0.28s var(--ease);
+    }
+
+    .menu-overlay.is-open .menu-nav-link {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .menu-nav-link:hover {
+      color: var(--silver);
+      padding-left: 14px;
+    }
+
+    .menu-nav-arrow {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 1.5rem;
+      color: var(--muted);
+      transition: transform 0.28s var(--ease), color 0.28s ease;
+    }
+
+    .menu-nav-link:hover .menu-nav-arrow {
+      transform: translate(4px, -4px);
+      color: var(--bone);
+    }
+
+    .menu-footer {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    @media (min-width: 768px) {
+      .menu-footer {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: end;
+      }
+      .menu-footer > div:last-child {
+        text-align: right;
+      }
+    }
+
+    .menu-footer-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(244, 244, 242, 0.45);
+      margin-bottom: 4px;
+    }
+
+    .menu-footer a {
+      color: var(--bone);
+      transition: opacity 0.2s ease;
+    }
+
+    .menu-footer a:hover {
+      opacity: 0.7;
+    }
+
+    /* =========================================================================
+       SECTION 1 — FULL-BLEED CINEMA COVER HERO (100vh)
+       ========================================================================= */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background:
+        radial-gradient(ellipse 68% 64% at 68% 45%, rgba(216, 220, 226, 0.13) 0%, rgba(142, 142, 150, 0.05) 36%, rgba(5, 5, 7, 0) 70%),
+        linear-gradient(135deg, #050507 0%, #0E0F14 48%, #1A1C24 72%, #060609 100%);
+    }
+
+    .hero.is-dragover::after {
+      content: 'DÉPOSER LA PHOTO HERO';
+      position: absolute;
+      inset: 16px;
+      z-index: 35;
+      border: 1px dashed rgba(244, 244, 242, 0.65);
+      background: rgba(5, 5, 7, 0.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.8rem;
+      letter-spacing: 0.14em;
+      color: var(--bone);
+    }
+
+    /* Fallback subtle sculptural metallic sheen when no custom photo is loaded */
+    .hero-fallback-sheen {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 46% 38% at 64% 48%, rgba(216, 220, 226, 0.12) 0%, rgba(216, 220, 226, 0.02) 48%, transparent 72%),
+        radial-gradient(circle 120px at 66% 45%, rgba(244, 244, 242, 0.14) 0%, transparent 65%),
+        radial-gradient(circle 70px at 72% 49%, rgba(166, 28, 51, 0.12) 0%, transparent 70%);
+      transition: opacity 0.5s ease;
+    }
+
+    .hero-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 62% center;
+      filter: contrast(1.08) grayscale(100%);
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.55s var(--ease);
+    }
+
+    .hero-bg-img.has-src {
+      opacity: 1;
+    }
+
+    /* Smooth directional obsidian vignette for razor-sharp left legibility */
+    .hero-vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(5, 5, 7, 0.94) 0%, rgba(5, 5, 7, 0.72) 38%, rgba(5, 5, 7, 0.24) 68%, rgba(5, 5, 7, 0.52) 100%),
+        linear-gradient(180deg, rgba(5, 5, 7, 0.62) 0%, rgba(5, 5, 7, 0.08) 26%, rgba(5, 5, 7, 0.22) 68%, rgba(5, 5, 7, 0.96) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      padding-top: 130px;
+      padding-bottom: 72px;
+    }
+
+    @media (min-width: 768px) {
+      .hero-content {
+        padding-bottom: 88px;
+      }
+    }
+
+    .hero-inner {
+      max-width: 760px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--silver);
+      margin-bottom: 24px;
+    }
+
+    .hero-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 9999px;
+      background: var(--ruby);
+      flex-shrink: 0;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(4.1rem, 11.2vw, 9.2rem);
+      line-height: 0.88;
+      letter-spacing: -0.015em;
+      text-transform: uppercase;
+      color: var(--bone);
+      margin-bottom: 28px;
+    }
+
+    .hero-title span {
+      display: block;
+    }
+
+    .hero-subcopy {
+      font-size: clamp(1rem, 1.4vw, 1.15rem);
+      font-weight: 300;
+      color: var(--silver);
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 24px 32px;
+    }
+
+    .btn-hairline {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 26px;
+      border: 1px solid rgba(244, 244, 242, 0.36);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--bone);
+      background: rgba(5, 5, 7, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: background 0.28s var(--ease), color 0.28s var(--ease), border-color 0.28s var(--ease);
+    }
+
+    .btn-hairline:hover {
+      background: var(--bone);
+      color: var(--bg);
+      border-color: var(--bone);
+    }
+
+    .link-underline {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--silver);
+      transition: color 0.25s ease;
+    }
+
+    .link-underline::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: rgba(244, 244, 242, 0.45);
+      transition: background 0.25s ease, transform 0.3s var(--ease);
+    }
+
+    .link-underline:hover {
+      color: var(--bone);
+    }
+
+    .link-underline:hover::after {
+      background: var(--bone);
+    }
+
+    /* Discreet Floating Hero Photo Upload Pill (Bottom-Right) */
+    .hero-photo-pill {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      background: rgba(11, 11, 14, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: border-color 0.25s ease, opacity 0.25s ease;
+    }
+
+    @media (min-width: 640px) {
+      .hero-photo-pill { right: 40px; bottom: 28px; }
+    }
+
+    @media (min-width: 1024px) {
+      .hero-photo-pill { right: 56px; bottom: 32px; }
+    }
+
+    .hero-photo-pill:hover {
+      border-color: rgba(244, 244, 242, 0.35);
+    }
+
+    .hero-photo-pill.is-hidden {
+      display: none;
+    }
+
+    .hero-photo-trigger {
+      padding: 9px 14px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--silver);
+      transition: color 0.2s ease;
+    }
+
+    .hero-photo-trigger:hover {
+      color: var(--bone);
+    }
+
+    .hero-photo-dismiss {
+      padding: 9px 11px;
+      border-left: 1px solid var(--border);
+      font-size: 0.85rem;
+      line-height: 1;
+      color: var(--muted);
+      transition: color 0.2s ease;
+    }
+
+    .hero-photo-dismiss:hover {
+      color: var(--bone);
+    }
+
+    /* =========================================================================
+       SHARED SECTION TYPOGRAPHY & SPACING
+       ========================================================================= */
+    .section {
+      position: relative;
+      z-index: 5;
+      padding: 96px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (min-width: 768px) {
+      .section { padding: 128px 0; }
+    }
+
+    .section-surface {
+      background: var(--surface-1);
+    }
+
+    .section-kicker {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.5rem, 5.4vw, 4.4rem);
+      line-height: 0.94;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--bone);
+      margin-bottom: 24px;
+    }
+
+    .section-title-muted {
+      color: var(--muted);
+    }
+
+    .body-copy {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .body-copy strong {
+      color: var(--bone);
+      font-weight: 500;
+    }
+
+    /* =========================================================================
+       SECTION 3 — L'ATELIER (#atelier)
+       ========================================================================= */
+    .atelier-top {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-bottom: 64px;
+    }
+
+    @media (min-width: 1024px) {
+      .atelier-top {
+        grid-template-columns: 5fr 7fr;
+        gap: 64px;
+        align-items: end;
+      }
+    }
+
+    .atelier-narrative {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 640px;
+    }
+
+    /* Factual Credibility Strip */
+    .facts-strip {
+      display: grid;
+      grid-template-columns: 1fr;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 72px;
+    }
+
+    @media (min-width: 640px) {
+      .facts-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .facts-strip {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .fact-cell {
+      padding: 24px 20px 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    @media (min-width: 1024px) {
+      .fact-cell {
+        padding: 28px 24px;
+        border-bottom: none;
+        border-right: 1px solid var(--border);
+      }
+      .fact-cell:first-child { padding-left: 0; }
+      .fact-cell:last-child { border-right: none; padding-right: 0; }
+    }
+
+    .fact-value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.45rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--bone);
+      margin-bottom: 4px;
+    }
+
+    .fact-star {
+      color: var(--gold);
+    }
+
+    .fact-label {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    /* 4-Column Craft Process Grid (ZERO 01/02/03/04 numbers) */
+    .process-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 640px) {
+      .process-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1024px) {
+      .process-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .process-card {
+      padding: 28px 24px;
+      border: 1px solid var(--border);
+      background: var(--surface-1);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color 0.25s ease;
+    }
+
+    .process-card:hover {
+      border-color: rgba(244, 244, 242, 0.28);
+    }
+
+    .process-bar {
+      width: 24px;
+      height: 2px;
+      background: var(--silver);
+    }
+
+    .process-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.5rem;
+      line-height: 1.05;
+      text-transform: uppercase;
+      color: var(--bone);
+    }
+
+    .process-desc {
+      font-size: 0.92rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* =========================================================================
+       SECTION 4 — ARCHIVES (#archives)
+       ========================================================================= */
+    .archives-header {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      margin-bottom: 48px;
+    }
+
+    @media (min-width: 1024px) {
+      .archives-header {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      transition: all 0.22s ease;
+    }
+
+    .filter-btn:hover {
+      color: var(--bone);
+      border-color: rgba(244, 244, 242, 0.35);
+    }
+
+    .filter-btn.is-active {
+      background: var(--bone);
+      color: var(--bg);
+      border-color: var(--bone);
+    }
+
+    .archives-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .archives-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1024px) {
+      .archives-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .archive-card {
+      position: relative;
+      border: 1px solid var(--border);
+      background: var(--surface-1);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color 0.28s ease, transform 0.35s var(--ease);
+    }
+
+    .archive-card:hover {
+      border-color: rgba(244, 244, 242, 0.36);
+      transform: translateY(-2px);
+    }
+
+    .archive-visual {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      width: 100%;
+      background: #07070A;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .archive-visual img.card-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(1.06);
+      z-index: 2;
+    }
+
+    .card-upload-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
+      padding: 6px 11px;
+      border: 1px solid rgba(244, 244, 242, 0.25);
+      background: rgba(5, 5, 7, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bone);
+      opacity: 0;
+      transition: opacity 0.22s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .archive-card:hover .card-upload-btn,
+    .archive-card:focus-within .card-upload-btn {
+      opacity: 1;
+    }
+
+    @media (hover: none) {
+      .card-upload-btn { opacity: 0.9; }
+    }
+
+    .card-upload-btn:hover {
+      background: var(--bone);
+      color: var(--bg);
+    }
+
+    .archive-body {
+      padding: 22px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      gap: 18px;
+    }
+
+    .archive-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.55rem;
+      line-height: 1.05;
+      text-transform: uppercase;
+      color: var(--bone);
+      margin-bottom: 6px;
+    }
+
+    .archive-meta {
+      font-size: 0.82rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .archive-foot {
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.2s ease;
+    }
+
+    .archive-card:hover .archive-foot {
+      color: var(--bone);
+    }
+
+    /* =========================================================================
+       SECTION 2 — CONFIGURATEUR D'EMPREINTE (#configurateur)
+       ========================================================================= */
+    .config-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    @media (min-width: 1024px) {
+      .config-layout {
+        grid-template-columns: 7fr 5fr;
+        gap: 44px;
+      }
+    }
+
+    .preset-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .preset-label {
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .preset-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-btn {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--silver);
+      background: var(--bg);
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--bone);
+      color: var(--bone);
+    }
+
+    .preset-btn.is-danger:hover {
+      border-color: var(--ruby);
+      color: var(--ruby);
+    }
+
+    .arch-box {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 640px) {
+      .arch-box { padding: 28px; }
+    }
+
+    .arch-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .arch-svg-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 14px 0;
+    }
+
+    #dentalArchSvg {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      user-select: none;
+    }
+
+    .tooth-group {
+      cursor: pointer;
+    }
+
+    .tooth-group:hover .tooth-base {
+      stroke: rgba(244, 244, 242, 0.8);
+    }
+
+    .tooth-group.active .tooth-base {
+      filter: drop-shadow(0 0 8px rgba(244, 244, 242, 0.2));
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    @media (min-width: 640px) {
+      .controls-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .control-panel {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      padding: 18px;
+    }
+
+    .control-heading {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .control-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cfg-btn {
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .cfg-btn:hover {
+      color: var(--bone);
+      border-color: rgba(244, 244, 242, 0.35);
+    }
+
+    .cfg-btn.is-active {
+      background: var(--bone);
+      color: var(--bg);
+      border-color: var(--bone);
+    }
+
+    /* Live Summary Panel */
+    .summary-card {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      padding: 28px;
+    }
+
+    @media (min-width: 1024px) {
+      .summary-card {
+        position: sticky;
+        top: 96px;
+        padding: 32px;
+      }
+    }
+
+    .summary-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 18px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .summary-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.55rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--bone);
+    }
+
+    .summary-sub {
+      font-size: 0.74rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .summary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    .summary-key {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      flex-shrink: 0;
+    }
+
+    .summary-val {
+      color: var(--bone);
+      text-align: right;
+      font-weight: 500;
+    }
+
+    .estimate-box {
+      padding: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      margin-bottom: 24px;
+    }
+
+    .estimate-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .estimate-price {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 2.35rem;
+      line-height: 1.05;
+      color: var(--bone);
+    }
+
+    .estimate-note {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.45;
+    }
+
+    .btn-primary-full {
+      width: 100%;
+      padding: 15px 20px;
+      background: var(--bone);
+      color: var(--bg);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.22s ease;
+    }
+
+    .btn-primary-full:hover {
+      background: #FFFFFF;
+    }
+
+    .btn-secondary-full {
+      width: 100%;
+      padding: 14px 20px;
+      border: 1px solid var(--border);
+      color: var(--bone);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-align: center;
+      display: inline-block;
+      transition: border-color 0.22s ease, background 0.22s ease;
+    }
+
+    .btn-secondary-full:hover {
+      border-color: var(--bone);
+      background: rgba(244, 244, 242, 0.04);
+    }
+
+    .summary-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* =========================================================================
+       SECTION 5 — PRISE D'EMPREINTE (#empreinte)
+       ========================================================================= */
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    @media (min-width: 1024px) {
+      .booking-layout {
+        grid-template-columns: 5fr 7fr;
+        gap: 64px;
+      }
+    }
+
+    .contact-details {
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contact-item-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .contact-item-val {
+      font-size: 0.98rem;
+      color: var(--bone);
+    }
+
+    .contact-links-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 4px;
+    }
+
+    .booking-box {
+      border: 1px solid var(--border);
+      background: var(--surface-1);
+      padding: 28px;
+    }
+
+    @media (min-width: 640px) {
+      .booking-box { padding: 38px; }
+    }
+
+    .mode-toggle {
+      display: grid;
+      grid-template-columns: 1fr;
+      border: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    @media (min-width: 640px) {
+      .mode-toggle { grid-template-columns: 1fr 1fr; }
+    }
+
+    .mode-btn {
+      padding: 14px 16px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .mode-btn:hover {
+      color: var(--bone);
+    }
+
+    .mode-btn.is-active {
+      background: var(--bone);
+      color: var(--bg);
+    }
+
+    .form-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 640px) {
+      .form-row-2 { grid-template-columns: 1fr 1fr; }
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .field-input,
+    .field-textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 13px 15px;
+      font-size: 0.95rem;
+      color: var(--bone);
+      transition: border-color 0.2s ease;
+    }
+
+    .field-input::placeholder,
+    .field-textarea::placeholder {
+      color: rgba(142, 142, 150, 0.52);
+    }
+
+    .field-input:focus,
+    .field-textarea:focus {
+      outline: none;
+      border-color: var(--bone);
+    }
+
+    .field-textarea {
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .form-error {
+      font-size: 0.85rem;
+      color: #E54D66;
+      display: none;
+    }
+
+    .form-error.is-visible {
+      display: block;
+    }
+
+    .confirmation-panel {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .confirmation-panel.is-visible {
+      display: flex;
+    }
+
+    .recap-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 18px;
+      font-family: var(--font-body);
+      font-variant-numeric: tabular-nums;
+      font-size: 0.92rem;
+      color: var(--bone);
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .confirm-actions { grid-template-columns: 1fr 1fr; }
+    }
+
+    .btn-text-reset {
+      align-self: flex-start;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .btn-text-reset:hover {
+      color: var(--bone);
+    }
+
+    /* =========================================================================
+       FOOTER
+       ========================================================================= */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 0;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    @media (min-width: 768px) {
+      .footer-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .footer-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 24px;
+    }
+
+    .footer-brand {
+      color: var(--bone);
+      font-weight: 600;
+    }
+
+    .footer-group a:hover {
+      color: var(--bone);
+    }
+
+    /* =========================================================================
+       ARCHIVE DETAIL MODAL & TOAST
+       ========================================================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(5, 5, 7, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .modal-dialog {
+      position: relative;
+      width: 100%;
+      max-width: 820px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+      .modal-dialog { grid-template-columns: 1fr 1fr; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 10;
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      background: rgba(5, 5, 7, 0.85);
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--silver);
+    }
+
+    .modal-close:hover {
+      color: var(--bone);
+      border-color: var(--bone);
+    }
+
+    .modal-visual {
+      position: relative;
+      min-height: 260px;
+      background: #07070A;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    @media (min-width: 768px) {
+      .modal-visual {
+        border-bottom: none;
+        border-right: 1px solid var(--border);
+      }
+    }
+
+    .modal-visual img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-body {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 2rem;
+      line-height: 0.98;
+      text-transform: uppercase;
+      color: var(--bone);
+      margin-bottom: 12px;
+    }
+
+    .modal-specs {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.84rem;
+    }
+
+    .modal-spec-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .toast-bar {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 90;
+      padding: 14px 20px;
+      border: 1px solid rgba(244, 244, 242, 0.28);
+      background: rgba(11, 11, 14, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bone);
+      transform: translateY(140%);
+      opacity: 0;
+      transition: transform 0.32s var(--ease), opacity 0.32s ease;
+    }
+
+    .toast-bar.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Subtle animated film grain + mouse-reactive cold silver aura -->
+  <div class="grain-overlay" aria-hidden="true"></div>
+  <div id="auraLayer" class="aura-layer" aria-hidden="true"></div>
+
+  <!-- Hidden file inputs for Hero photo and Archive card previews -->
+  <input type="file" id="heroFileInput" accept="image/*" hidden />
+  <input type="file" id="cardFileInput" accept="image/*" hidden />
+
+  <!-- =========================================================================
+       MINIMAL FIXED HEADER
+       ========================================================================= -->
+  <header class="site-header">
+    <a href="#hero" class="brand-mark">
+      <img
+        src="./logo.jpg"
+        alt="Will's Grillz"
+        class="brand-logo-img"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+      />
+      <span class="brand-logo-fallback" style="display:none;">WILL'S GRILLZ</span>
+    </a>
+    <button
+      id="menuToggleBtn"
+      type="button"
+      class="menu-btn"
+      aria-expanded="false"
+      aria-controls="fullscreenMenu"
+    >
+      <span id="menuToggleText">MENU +</span>
+    </button>
+  </header>
+
+  <!-- =========================================================================
+       FULL-SCREEN OBSIDIAN NAVIGATION OVERLAY (UNNUMBERED LINKS)
+       ========================================================================= -->
+  <nav id="fullscreenMenu" class="menu-overlay" aria-label="Navigation principale">
+    <ul class="menu-nav-list">
+      <li class="menu-nav-item">
+        <a href="#configurateur" class="menu-nav-link" style="transition-delay: 50ms;">
+          <span>CONFIGURATEUR</span>
+          <span class="menu-nav-arrow" aria-hidden="true">↗</span>
+        </a>
+      </li>
+      <li class="menu-nav-item">
+        <a href="#atelier" class="menu-nav-link" style="transition-delay: 100ms;">
+          <span>L'ATELIER</span>
+          <span class="menu-nav-arrow" aria-hidden="true">↗</span>
+        </a>
+      </li>
+      <li class="menu-nav-item">
+        <a href="#archives" class="menu-nav-link" style="transition-delay: 150ms;">
+          <span>ARCHIVES</span>
+          <span class="menu-nav-arrow" aria-hidden="true">↗</span>
+        </a>
+      </li>
+      <li class="menu-nav-item">
+        <a href="#empreinte" class="menu-nav-link" style="transition-delay: 200ms;">
+          <span>PRISE D'EMPREINTE</span>
+          <span class="menu-nav-arrow" aria-hidden="true">↗</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="menu-footer">
+      <div>
+        <span class="menu-footer-label">ATELIER</span>
+        <span class="tabular">14 Rue du Coq Français, 59100 Roubaix</span>
+      </div>
+      <div>
+        <span class="menu-footer-label">CONTACT DIRECT</span>
+        <a href="tel:+33783982264" class="tabular">07 83 98 22 64</a> ·
+        <a href="https://instagram.com/willsgrillz" target="_blank" rel="noopener noreferrer">@willsgrillz</a>
+      </div>
+      <div>
+        <span class="menu-footer-label">HORAIRES</span>
+        <span class="tabular">Lun–Ven · 09h–20h sur rendez-vous</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =========================================================================
+       SECTION 1 — FULL-BLEED CINEMA COVER HERO (100vh)
+       ========================================================================= -->
+  <section id="hero" class="hero">
+    <!-- Tasteful dark metallic fallback sheen (visible before local photo is dropped) -->
+    <div id="heroFallbackSheen" class="hero-fallback-sheen" aria-hidden="true"></div>
+
+    <!-- Full-bleed background image element -->
+    <img
+      id="heroBgImg"
+      class="hero-bg-img has-src"
+      src="./grillz_website_backg.jfif"
+      alt="Macro photographie noir et blanc de grillz sur mesure Will's Grillz"
+    />
+
+    <!-- Directional obsidian vignette -->
+    <div class="hero-vignette" aria-hidden="true"></div>
+
+    <!-- Subtle logo watermark in hero bottom-right -->
+    <div style="position:absolute;bottom:32px;right:32px;z-index:10;opacity:0.18;pointer-events:none;">
+      <img src="./logo.jpg" alt="" style="height:72px;width:auto;object-fit:contain;filter:brightness(0) invert(1);" />
+    </div>
+
+    <!-- Left-Lower Editorial Composition -->
+    <div class="container hero-content">
+      <div class="hero-inner">
+        <p class="hero-eyebrow">
+          <span class="hero-eyebrow-dot" aria-hidden="true"></span>
+          ATELIER DE JOAILLERIE DENTAIRE · ROUBAIX &amp; LILLE
+        </p>
+
+        <h1 class="hero-title">
+          <span>MÉTAL.</span>
+          <span>SUR EMPREINTE.</span>
+        </h1>
+
+        <p class="hero-subcopy">
+          Pièces uniques fondues à la main. Argent 925, or 18K &amp; serti sur mesure — uniquement sur rendez-vous.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#empreinte" class="btn-hairline">
+            <span>PRENDRE RDV EMPREINTE</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a href="#configurateur" class="link-underline">
+            CONFIGURER UNE PIÈCE
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discreet Floating Pill for Local Hero Photo Injection -->
+    <div id="heroPhotoPill" class="hero-photo-pill">
+      <button id="heroUploadBtn" type="button" class="hero-photo-trigger">
+        + INSÉRER LA PHOTO HERO
+      </button>
+      <button id="heroPillCloseBtn" type="button" class="hero-photo-dismiss" aria-label="Masquer le bouton photo" title="Masquer pour capture d'écran">
+        ×
+      </button>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 2 — CONFIGURATEUR D'EMPREINTE (#configurateur)
+       ========================================================================= -->
+  <section id="configurateur" class="section">
+    <div class="container">
+      <div class="reveal" style="max-width: 720px; margin-bottom: 48px;">
+        <p class="section-kicker">CONFIGURATEUR D'EMPREINTE</p>
+        <h2 class="section-title">
+          COMPOSEZ VOTRE <span class="section-title-muted">PIÈCE.</span>
+        </h2>
+        <p class="body-copy">
+          Cliquez sur chaque dent de l'arcade FDI (haut et bas) pour sélectionner votre configuration, choisissez l'alliage, la géométrie et la finition. Aucun panier e-commerce : votre brief technique est prêt à être transmis pour la prise d'empreinte.
+        </p>
+      </div>
+
+      <div class="config-layout reveal">
+        <!-- Left: Interactive 16-Tooth SVG Diagram + Controls -->
+        <div>
+          <div class="preset-bar">
+            <span class="preset-label">PRÉRÉGLAGES RAPIDES</span>
+            <div class="preset-actions">
+              <button type="button" class="preset-btn" data-preset="fangs">Double Crocs</button>
+              <button type="button" class="preset-btn tabular" data-preset="top6">6 Haut</button>
+              <button type="button" class="preset-btn is-danger" data-preset="reset">Réinitialiser</button>
+            </div>
+          </div>
+
+          <div class="arch-box">
+            <div class="arch-meta-row tabular">
+              <span>ARCADE SUPÉRIEURE (14 — 24)</span>
+              <span>CLIQUEZ SUR LES DENTS</span>
+            </div>
+
+            <div class="arch-svg-wrap">
+              <svg
+                id="dentalArchSvg"
+                viewBox="0 0 640 360"
+                role="img"
+                aria-label="Diagramme interactif des arcades dentaires supérieure et inférieure en notation FDI"
+              >
+                <defs>
+                  <linearGradient id="grad-argent925" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFFFFF" />
+                    <stop offset="32%" stop-color="#D8DCE2" />
+                    <stop offset="70%" stop-color="#7D838E" />
+                    <stop offset="100%" stop-color="#ECEFF4" />
+                  </linearGradient>
+                  <linearGradient id="grad-orjaune18k" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFF0B8" />
+                    <stop offset="36%" stop-color="#D4AF5A" />
+                    <stop offset="74%" stop-color="#8A661B" />
+                    <stop offset="100%" stop-color="#EBD07F" />
+                  </linearGradient>
+                  <linearGradient id="grad-orblanc18k" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFFFFF" />
+                    <stop offset="40%" stop-color="#EFF3F8" />
+                    <stop offset="74%" stop-color="#9CA4B2" />
+                    <stop offset="100%" stop-color="#F8FAFC" />
+                  </linearGradient>
+                  <radialGradient id="grad-ruby" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#FF5270" />
+                    <stop offset="46%" stop-color="#A61C33" />
+                    <stop offset="100%" stop-color="#450611" />
+                  </radialGradient>
+                  <pattern id="brushedPattern" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(24)">
+                    <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(5,5,7,0.24)" stroke-width="1" />
+                  </pattern>
+                  <pattern id="pavePattern" width="8" height="8" patternUnits="userSpaceOnUse">
+                    <circle cx="2.5" cy="2.5" r="1.35" fill="#FFFFFF" opacity="0.94" />
+                    <circle cx="6.5" cy="6.5" r="1.2" fill="#E2E8F0" opacity="0.84" />
+                    <circle cx="6.5" cy="2.5" r="0.7" fill="#050507" opacity="0.45" />
+                  </pattern>
+                  <pattern id="engravePattern" width="12" height="12" patternUnits="userSpaceOnUse">
+                    <path d="M 1 6 Q 6 1 11 6 Q 6 11 1 6" fill="none" stroke="rgba(5,5,7,0.48)" stroke-width="0.9" />
+                  </pattern>
+                </defs>
+
+                <!-- Architectural center axes -->
+                <line x1="36" y1="180" x2="604" y2="180" stroke="rgba(255,255,255,0.1)" stroke-dasharray="3 5" />
+                <line x1="320" y1="18" x2="320" y2="342" stroke="rgba(255,255,255,0.06)" />
+                <text x="42" y="172" fill="#8E8E96" font-family="Barlow, sans-serif" font-size="10" font-weight="500" letter-spacing="2">HAUT</text>
+                <text x="42" y="196" fill="#8E8E96" font-family="Barlow, sans-serif" font-size="10" font-weight="500" letter-spacing="2">BAS</text>
+
+                <g id="upperArchGroup"></g>
+                <g id="lowerArchGroup"></g>
+              </svg>
+            </div>
+
+            <div class="arch-meta-row tabular">
+              <span>ARCADE INFÉRIEURE (44 — 34)</span>
+              <span id="archLiveBadge" style="color: var(--bone);">2 DENTS SÉLECTIONNÉES</span>
+            </div>
+          </div>
+
+          <!-- Controls: Alloy / Style / Finish -->
+          <div class="controls-grid">
+            <div class="control-panel">
+              <p class="control-heading">ALLIAGE</p>
+              <div class="control-stack" id="alloySelector">
+                <button type="button" class="cfg-btn is-active" data-alloy="argent925">Argent 925</button>
+                <button type="button" class="cfg-btn" data-alloy="orjaune18k">Or Jaune 18K</button>
+                <button type="button" class="cfg-btn" data-alloy="orblanc18k">Or Blanc 18K</button>
+              </div>
+            </div>
+
+            <div class="control-panel">
+              <p class="control-heading">STYLE</p>
+              <div class="control-stack" id="styleSelector">
+                <button type="button" class="cfg-btn" data-style="cap">Cap Plein</button>
+                <button type="button" class="cfg-btn" data-style="openface">Open Face</button>
+                <button type="button" class="cfg-btn is-active" data-style="fang">Croc / Fang</button>
+                <button type="button" class="cfg-btn" data-style="pave">Pavé Serti</button>
+                <button type="button" class="cfg-btn" data-style="ruby">Pierre / Rubis</button>
+              </div>
+            </div>
+
+            <div class="control-panel">
+              <p class="control-heading">FINITION</p>
+              <div class="control-stack" id="finishSelector">
+                <button type="button" class="cfg-btn is-active" data-finish="miroir">Poli Miroir</button>
+                <button type="button" class="cfg-btn" data-finish="brosse">Brossé Brut</button>
+                <button type="button" class="cfg-btn" data-finish="grave">Gravé</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Live RÉSUMÉ DU PROJET Panel -->
+        <aside class="summary-card">
+          <div class="summary-head">
+            <div>
+              <h3 class="summary-title">RÉSUMÉ DU PROJET</h3>
+              <p class="summary-sub">WILL'S GRILLZ · ROUBAIX</p>
+            </div>
+            <span class="hero-eyebrow-dot" aria-hidden="true"></span>
+          </div>
+
+          <div class="summary-list">
+            <div class="summary-row">
+              <span class="summary-key">Dents sélectionnées</span>
+              <span id="specCount" class="summary-val tabular">2 dents</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Liste FDI</span>
+              <span id="specFdi" class="summary-val tabular">13 · 23</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Alliage</span>
+              <span id="specAlloy" class="summary-val">Argent 925</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Style</span>
+              <span id="specStyle" class="summary-val">Croc / Fang</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Finition</span>
+              <span id="specFinish" class="summary-val">Poli Miroir</span>
+            </div>
+          </div>
+
+          <div class="estimate-box">
+            <span class="estimate-label">ESTIMATION INDICATIVE</span>
+            <div id="specPrice" class="estimate-price tabular">200 € — 310 €</div>
+            <p class="estimate-note">
+              Fourchette indicative à l'unité — devis définitif confirmé lors de la prise d'empreinte selon le poids métal et le sertissage.
+            </p>
+          </div>
+
+          <div class="summary-btns">
+            <button id="transferToBookingBtn" type="button" class="btn-primary-full">
+              <span>TRANSFÉRER VERS LE RDV</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <button id="copyBriefBtn" type="button" class="btn-secondary-full">
+              COPIER LE BRIEF
+            </button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 3 — L'ATELIER (#atelier)
+       ========================================================================= -->
+  <section id="atelier" class="section">
+    <div class="container">
+      <div class="atelier-top reveal">
+        <div>
+          <p class="section-kicker">L'ATELIER · ROUBAIX &amp; LILLE MÉTROPOLE</p>
+          <h2 class="section-title">
+            RIEN D'INDUSTRIEL.<br />
+            <span class="section-title-muted">TOUT À LA MAIN.</span>
+          </h2>
+        </div>
+
+        <div class="atelier-narrative">
+          <p class="body-copy">
+            Chez <strong>Will's Grillz</strong>, aucune pièce ne sort d'un catalogue générique. Chaque grillz commence par une empreinte dentaire prise au millimètre à l'atelier de Roubaix, avant d'être sculptée en cire puis fondue en argent massif 925 ou en or 18 carats.
+          </p>
+          <p class="body-copy">
+            Ancré dans la métropole lilloise et actif sur les scènes indépendantes — présent notamment à <strong>Lille Culture Street</strong> et à la <strong>Venus Tattoo Convention</strong> — l'atelier reçoit uniquement sur rendez-vous pour garantir un maintien chirurgical et une finition sans compromis.
+          </p>
+        </div>
+      </div>
+
+      <!-- Factual Credibility Strip (Clean Barlow tabular numbers) -->
+      <div class="facts-strip reveal">
+        <div class="fact-cell">
+          <div class="fact-value tabular">5.0 <span class="fact-star">★</span> · 84 AVIS CLIENTS</div>
+          <div class="fact-label">Réputation vérifiée sur la métropole</div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-value tabular">14 RUE DU COQ FRANÇAIS</div>
+          <div class="fact-label tabular">59100 Roubaix · Lille métropole</div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-value">SCÈNE &amp; CONVENTIONS</div>
+          <div class="fact-label">Lille Culture Street &amp; Venus Tattoo Convention</div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-value tabular">LUN–VEN · 09h–20h</div>
+          <div class="fact-label">Accueil individuel sur rendez-vous</div>
+        </div>
+      </div>
+
+      <!-- 4-Column Craft Process Grid (NO numbered prefixes) -->
+      <div class="process-grid reveal">
+        <article class="process-card">
+          <span class="process-bar" aria-hidden="true"></span>
+          <h3 class="process-title">Empreinte dentaire précise</h3>
+          <p class="process-desc">
+            Relevé complet de votre arcade à l'atelier ou en convention. Validation directe du nombre de dents, des volumes, de l'alliage et des pierres.
+          </p>
+        </article>
+
+        <article class="process-card">
+          <span class="process-bar" aria-hidden="true"></span>
+          <h3 class="process-title">Fonte à la cire perdue</h3>
+          <p class="process-desc">
+            Tirage du moulage en plâtre dur, sculpture manuelle à la cire puis fonte artisanale en argent 925, or jaune ou or blanc 18K.
+          </p>
+        </article>
+
+        <article class="process-card">
+          <span class="process-bar" aria-hidden="true"></span>
+          <h3 class="process-title">Finition &amp; serti main</h3>
+          <p class="process-desc">
+            Sertissage clos ou pavé diamant et rubis, gravure, texture brossée brute ou polissage miroir froid travaillé pièce par pièce.
+          </p>
+        </article>
+
+        <article class="process-card">
+          <span class="process-bar" aria-hidden="true"></span>
+          <h3 class="process-title">Essayage &amp; ajustement</h3>
+          <p class="process-desc">
+            Contrôle du clipsage directement en bouche et micro-ajustements à l'établi pour une tenue nette, confortable et durable.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 4 — ARCHIVES (#archives)
+       ========================================================================= -->
+  <section id="archives" class="section section-surface">
+    <div class="container">
+      <div class="archives-header reveal">
+        <div>
+          <p class="section-kicker">ARCHIVES D'ATELIER</p>
+          <h2 class="section-title">
+            PIÈCES SORTIES <span class="section-title-muted">DU FEU.</span>
+          </h2>
+        </div>
+
+        <div id="archiveFilters" class="filter-row">
+          <button type="button" class="filter-btn is-active" data-filter="all">Tout</button>
+          <button type="button" class="filter-btn" data-filter="argent">Argent 925</button>
+          <button type="button" class="filter-btn" data-filter="or">Or 18K</button>
+          <button type="button" class="filter-btn" data-filter="serti">Serti / Pierres</button>
+          <button type="button" class="filter-btn" data-filter="crocs">Crocs / Fangs</button>
+        </div>
+      </div>
+
+      <div id="archiveGrid" class="archives-grid reveal">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SECTION 5 — PRISE D'EMPREINTE (#empreinte)
+       ========================================================================= -->
+  <section id="empreinte" class="section section-surface">
+    <div class="container">
+      <div class="booking-layout reveal">
+        <!-- Left Info -->
+        <div>
+          <p class="section-kicker">PRISE D'EMPREINTE</p>
+          <h2 class="section-title">
+            BLOQUER VOTRE <span class="section-title-muted">CRÉNEAU.</span>
+          </h2>
+          <p class="body-copy">
+            Réception individuelle sur rendez-vous à l'atelier de Roubaix, ou lors de nos présences sur les conventions et événements de la métropole lilloise.
+          </p>
+
+          <div class="contact-details">
+            <div>
+              <span class="contact-item-label">ATELIER</span>
+              <p class="contact-item-val tabular">14 Rue du Coq Français, 59100 Roubaix (Lille métropole)</p>
+            </div>
+            <div>
+              <span class="contact-item-label">HORAIRES</span>
+              <p class="contact-item-val tabular">Lun–Ven · 09h–20h sur rendez-vous</p>
+            </div>
+            <div>
+              <span class="contact-item-label">CONTACT DIRECT</span>
+              <div class="contact-links-row">
+                <a href="tel:+33783982264" class="link-underline tabular" style="color: var(--bone);">07 83 98 22 64 ↗</a>
+                <a href="https://instagram.com/willsgrillz" target="_blank" rel="noopener noreferrer" class="link-underline" style="color: var(--bone);">@willsgrillz ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Appointment Request Form -->
+        <div class="booking-box">
+          <div class="mode-toggle">
+            <button type="button" class="mode-btn is-active" data-mode="atelier">
+              Atelier Roubaix (14 Rue du Coq Français)
+            </button>
+            <button type="button" class="mode-btn" data-mode="event">
+              Convention / Événement Lille
+            </button>
+          </div>
+
+          <form id="bookingForm" class="form-grid" novalidate>
+            <div>
+              <label for="inputName" class="field-label">NOM / PSEUDO *</label>
+              <input id="inputName" type="text" class="field-input" required placeholder="Ex. Yanis / @pseudo" />
+            </div>
+
+            <div class="form-row-2">
+              <div>
+                <label for="inputContact" class="field-label">TÉLÉPHONE OU @INSTAGRAM *</label>
+                <input id="inputContact" type="text" class="field-input tabular" required placeholder="06 00 00 00 00 ou @compte" />
+              </div>
+              <div>
+                <label for="inputSlot" class="field-label">CRÉNEAU SOUHAITÉ *</label>
+                <input id="inputSlot" type="text" class="field-input tabular" required placeholder="Ex. Jeudi vers 17h30" />
+              </div>
+            </div>
+
+            <div>
+              <label for="inputBrief" class="field-label">NOTES / BRIEF PROJET</label>
+              <textarea id="inputBrief" rows="5" class="field-textarea tabular" placeholder="Nombre de dents, alliage, pierres ou pièce repérée dans les archives..."></textarea>
+            </div>
+
+            <p id="formErrorMsg" class="form-error"></p>
+
+            <button type="submit" class="btn-primary-full">
+              <span>VALIDER LA DEMANDE D'EMPREINTE</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+          </form>
+
+          <!-- Clean Confirmation Panel -->
+          <div id="bookingConfirmation" class="confirmation-panel">
+            <div class="hero-eyebrow" style="margin-bottom: 0;">
+              <span class="hero-eyebrow-dot" aria-hidden="true"></span>
+              DEMANDE PRÊTE À L'ENVOI
+            </div>
+            <h3 class="section-title" style="font-size: 2.2rem; margin-bottom: 0;">
+              RÉCAPITULATIF FORMATÉ.
+            </h3>
+            <p class="body-copy">
+              Copiez le message ci-dessous pour l'envoyer en DM Instagram à <strong>@willsgrillz</strong>, ou lancez directement un SMS pré-rempli vers l'atelier.
+            </p>
+
+            <div id="generatedMessageBox" class="recap-box"></div>
+
+            <div class="confirm-actions">
+              <button id="copyReadyMessageBtn" type="button" class="btn-primary-full" style="justify-content: center;">
+                COPIER LE MESSAGE
+              </button>
+              <a id="smsDirectLink" href="sms:+33783982264" class="btn-secondary-full tabular">
+                ENVOYER PAR SMS (07 83 98 22 64)
+              </a>
+            </div>
+
+            <button id="resetBookingBtn" type="button" class="btn-text-reset">
+              Modifier la demande
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       QUIET HAIRLINE FOOTER
+       ========================================================================= -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-group tabular">
+        <img src="./logo.jpg" alt="Will's Grillz" style="height:28px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:0.7;" />
+        <span class="footer-brand">WILL'S GRILLZ</span>
+        <span>14 Rue du Coq Français, 59100 Roubaix</span>
+      </div>
+      <div class="footer-group tabular">
+        <a href="tel:+33783982264">07 83 98 22 64</a>
+        <a href="https://instagram.com/willsgrillz" target="_blank" rel="noopener noreferrer">@willsgrillz</a>
+        <span>Sur rendez-vous uniquement</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       ARCHIVE DETAIL MODAL
+       ========================================================================= -->
+  <div id="archiveModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-dialog">
+      <button id="closeModalBtn" type="button" class="modal-close" aria-label="Fermer la fiche">
+        FERMER ×
+      </button>
+
+      <div id="modalVisual" class="modal-visual"></div>
+
+      <div class="modal-body">
+        <div>
+          <p id="modalCategory" class="section-kicker" style="margin-bottom: 10px;"></p>
+          <h3 id="modalTitle" class="modal-title"></h3>
+          <p id="modalDesc" class="body-copy" style="font-size: 0.94rem;"></p>
+
+          <div class="modal-specs tabular">
+            <div class="modal-spec-row">
+              <span class="summary-key">Alliage</span>
+              <span id="modalAlloy" class="summary-val"></span>
+            </div>
+            <div class="modal-spec-row">
+              <span class="summary-key">Finition</span>
+              <span id="modalFinish" class="summary-val"></span>
+            </div>
+            <div class="modal-spec-row">
+              <span class="summary-key">Configuration</span>
+              <span id="modalSetup" class="summary-val"></span>
+            </div>
+          </div>
+        </div>
+
+        <button id="modalLoadConfigBtn" type="button" class="btn-primary-full">
+          <span>CHARGER DANS LE CONFIGURATEUR</span>
+          <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastBar" class="toast-bar" role="status" aria-live="polite">
+    <span id="toastText">Brief copié.</span>
+  </div>
+
+  <!-- =========================================================================
+       PURE VANILLA JAVASCRIPT (ZERO EXTERNAL LIBRARIES)
+       ========================================================================= -->
+  <script>
+    (() => {
+      'use strict';
+
+      /* -----------------------------------------------------------------------
+         1. TOAST & IFRAME-SAFE CLIPBOARD HELPER
+         ----------------------------------------------------------------------- */
+      const toastBar = document.getElementById('toastBar');
+      const toastText = document.getElementById('toastText');
+      let toastTimer = null;
+
+      function showToast(msg) {
+        toastText.textContent = msg;
+        toastBar.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastBar.classList.remove('show'), 2800);
+      }
+
+      function copyText(text, successMsg) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast(successMsg);
+        } catch (err) {
+          showToast('Copie manuelle requise.');
+        }
+      }
+
+      /* -----------------------------------------------------------------------
+         2. MOUSE-REACTIVE COLD SILVER AURA
+         ----------------------------------------------------------------------- */
+      const auraLayer = document.getElementById('auraLayer');
+      window.addEventListener('mousemove', (e) => {
+        const px = ((e.clientX / Math.max(window.innerWidth, 1)) * 100).toFixed(1);
+        const py = ((e.clientY / Math.max(window.innerHeight, 1)) * 100).toFixed(1);
+        auraLayer.style.setProperty('--mx', `${px}%`);
+        auraLayer.style.setProperty('--my', `${py}%`);
+      });
+
+      /* -----------------------------------------------------------------------
+         3. FULL-SCREEN MENU OVERLAY
+         ----------------------------------------------------------------------- */
+      const menuToggleBtn = document.getElementById('menuToggleBtn');
+      const menuToggleText = document.getElementById('menuToggleText');
+      const fullscreenMenu = document.getElementById('fullscreenMenu');
+      let menuOpen = false;
+
+      function setMenuOpen(state) {
+        menuOpen = state;
+        fullscreenMenu.classList.toggle('is-open', state);
+        menuToggleBtn.setAttribute('aria-expanded', String(state));
+        menuToggleText.textContent = state ? 'FERMER ×' : 'MENU +';
+        document.body.style.overflow = state ? 'hidden' : '';
+      }
+
+      menuToggleBtn.addEventListener('click', () => setMenuOpen(!menuOpen));
+      fullscreenMenu.querySelectorAll('a[href^="#"]').forEach((a) => {
+        a.addEventListener('click', () => setMenuOpen(false));
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (menuOpen) setMenuOpen(false);
+          closeArchiveModal();
+        }
+      });
+
+      /* -----------------------------------------------------------------------
+         4. HERO PHOTO UPLOAD & DRAG-AND-DROP
+         ----------------------------------------------------------------------- */
+      const heroSection = document.getElementById('hero');
+      const heroBgImg = document.getElementById('heroBgImg');
+      const heroFallbackSheen = document.getElementById('heroFallbackSheen');
+      const heroFileInput = document.getElementById('heroFileInput');
+      const heroUploadBtn = document.getElementById('heroUploadBtn');
+      const heroPhotoPill = document.getElementById('heroPhotoPill');
+      const heroPillCloseBtn = document.getElementById('heroPillCloseBtn');
+
+      function loadHeroFile(file) {
+        if (!file || !file.type.startsWith('image/')) {
+          showToast('Format image requis.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          heroBgImg.src = ev.target.result;
+          heroBgImg.classList.add('has-src');
+          heroFallbackSheen.style.opacity = '0';
+          showToast('Photo hero chargée.');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      heroUploadBtn.addEventListener('click', () => heroFileInput.click());
+      heroFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          loadHeroFile(e.target.files[0]);
+          heroFileInput.value = '';
+        }
+      });
+
+      heroPillCloseBtn.addEventListener('click', () => {
+        heroPhotoPill.classList.add('is-hidden');
+      });
+
+      ['dragenter', 'dragover'].forEach((evt) => {
+        heroSection.addEventListener(evt, (e) => {
+          e.preventDefault();
+          heroSection.classList.add('is-dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach((evt) => {
+        heroSection.addEventListener(evt, (e) => {
+          e.preventDefault();
+          heroSection.classList.remove('is-dragover');
+        });
+      });
+
+      heroSection.addEventListener('drop', (e) => {
+        const files = e.dataTransfer && e.dataTransfer.files;
+        if (files && files[0]) loadHeroFile(files[0]);
+      });
+
+      /* -----------------------------------------------------------------------
+         5. ARCHIVES GALLERY (6 UNNUMBERED PIECES + LOCAL PHOTO PREVIEW + MODAL)
+         ----------------------------------------------------------------------- */
+      const archiveItems = [
+        {
+          id: 'six-ruby',
+          title: 'Six Supérieur — Argent & Rubis Sang',
+          categoryLabel: 'Argent 925 · Serti Clos',
+          meta: 'Argent 925 · Poli miroir · Rubis sang',
+          categories: ['argent', 'serti'],
+          alloyLabel: 'Argent 925 massif',
+          finishLabel: 'Poli miroir & serti clos 3 rubis',
+          setupLabel: '6 dents haut (13 — 23)',
+          desc: 'Pièce signature inspirée des moulages bruts d\'atelier : trois caps polis miroir répondent à trois rubis sang taillés en poire, montés sur empreinte exacte.',
+          preset: { teeth: ['13', '12', '11', '21', '22', '23'], alloy: 'argent925', style: 'ruby', finish: 'miroir' },
+          artType: 'ruby6',
+          customImg: null,
+        },
+        {
+          id: 'pave-integral',
+          title: 'Pavé Intégral — Argent 925',
+          categoryLabel: 'Argent 925 · Micro-Pavé',
+          meta: 'Argent 925 · Pavé serti · Poli miroir',
+          categories: ['argent', 'serti'],
+          alloyLabel: 'Argent 925 massif',
+          finishLabel: 'Micro-pavé haute brillance',
+          setupLabel: '6 dents haut (13 — 23)',
+          desc: 'Surface intégralement pavée main pour un éclat froid et dense sous les projecteurs. Ajustement net sans surépaisseur.',
+          preset: { teeth: ['13', '12', '11', '21', '22', '23'], alloy: 'argent925', style: 'pave', finish: 'miroir' },
+          artType: 'pave6',
+          customImg: null,
+        },
+        {
+          id: 'double-crocs',
+          title: 'Double Crocs — Poli Miroir',
+          categoryLabel: 'Argent 925 · Crocs / Fangs',
+          meta: 'Argent 925 · Pointes affûtées · Miroir',
+          categories: ['argent', 'crocs'],
+          alloyLabel: 'Argent 925 massif',
+          finishLabel: 'Poli miroir chirurgical',
+          setupLabel: '2 canines haut (13, 23)',
+          desc: 'Deux canines allongées et équilibrées à la cire pour suivre la courbe naturelle du sourire. Léger, précis et radical.',
+          preset: { teeth: ['13', '23'], alloy: 'argent925', style: 'fang', finish: 'miroir' },
+          artType: 'fangs2',
+          customImg: null,
+        },
+        {
+          id: 'set-brut-or',
+          title: 'Set Brut — Or Jaune 18K',
+          categoryLabel: 'Or 18K · Cap Plein',
+          meta: 'Or Jaune 18K · Caps pleins · Poli miroir',
+          categories: ['or'],
+          alloyLabel: 'Or Jaune 18K',
+          finishLabel: 'Poli miroir chaleureux',
+          setupLabel: '6 dents haut (13 — 23)',
+          desc: 'Six caps pleins fondus en or jaune 18 carats massif. Volumes propres, arêtes nettes et tenue calibrée à l\'établi.',
+          preset: { teeth: ['13', '12', '11', '21', '22', '23'], alloy: 'orjaune18k', style: 'cap', finish: 'miroir' },
+          artType: 'gold6',
+          customImg: null,
+        },
+        {
+          id: 'open-face-brosse',
+          title: 'Open Face — Finition Brossée',
+          categoryLabel: 'Or 18K · Open Face',
+          meta: 'Or Jaune 18K · Fenêtres ajourées · Brossé',
+          categories: ['or'],
+          alloyLabel: 'Or Jaune 18K',
+          finishLabel: 'Brossé brut satiné',
+          setupLabel: '4 incisives haut (12 — 22)',
+          desc: 'Contour ajouré fin laissant respirer l\'émail naturel, travaillé avec une texture brossée mate pour un rendu sec et contemporain.',
+          preset: { teeth: ['12', '11', '21', '22'], alloy: 'orjaune18k', style: 'openface', finish: 'brosse' },
+          artType: 'openface4',
+          customImg: null,
+        },
+        {
+          id: 'canine-diamant',
+          title: 'Canine Unique — Serti Diamant',
+          categoryLabel: 'Or Blanc 18K · Serti & Croc',
+          meta: 'Or Blanc 18K · Croc solo · Pavé diamant',
+          categories: ['or', 'serti', 'crocs'],
+          alloyLabel: 'Or Blanc 18K',
+          finishLabel: 'Serti diamant & poli miroir',
+          setupLabel: '1 canine haut (23)',
+          desc: 'Une seule dent, un seul point d\'impact. Canine sculptée en pointe douce et sertie main en or blanc 18 carats.',
+          preset: { teeth: ['23'], alloy: 'orblanc18k', style: 'pave', finish: 'miroir' },
+          artType: 'soloDiamond',
+          customImg: null,
+        },
+      ];
+
+      function buildStudioPlaceholderSvg(type) {
+        const defs = `
+          <defs>
+            <linearGradient id="sv-${type}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="34%" stop-color="#C9CFD8"/>
+              <stop offset="68%" stop-color="#444852"/>
+              <stop offset="100%" stop-color="#ECEFF4"/>
+            </linearGradient>
+            <linearGradient id="au-${type}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFF2BF"/>
+              <stop offset="38%" stop-color="#D4AF5A"/>
+              <stop offset="72%" stop-color="#7D5B15"/>
+              <stop offset="100%" stop-color="#EED286"/>
+            </linearGradient>
+            <radialGradient id="rb-${type}" cx="35%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#FF5270"/>
+              <stop offset="48%" stop-color="#A61C33"/>
+              <stop offset="100%" stop-color="#36040D"/>
+            </radialGradient>
+            <radialGradient id="gl-${type}" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(216,220,226,0.14)"/>
+              <stop offset="100%" stop-color="rgba(5,5,7,0)"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="300" fill="#07070A"/>
+          <circle cx="200" cy="150" r="135" fill="url(#gl-${type})"/>
+        `;
+
+        if (type === 'ruby6') {
+          return `<svg viewBox="0 0 400 300" width="100%" height="100%">${defs}
+            <path d="M74 196 Q200 230 326 196 L316 222 Q200 246 84 222 Z" fill="#131419" stroke="rgba(255,255,255,0.08)"/>
+            ${[0,1,2,3,4,5].map((i) => {
+              const x = 90 + i * 37;
+              const h = (i === 0 || i === 5) ? 76 : 68;
+              const isRuby = i < 3;
+              return `<rect x="${x}" y="106" width="32" height="${h}" rx="12" fill="url(#sv-${type})" stroke="rgba(255,255,255,0.45)" stroke-width="1"/>
+                ${isRuby
+                  ? `<ellipse cx="${x + 16}" cy="${106 + h * 0.48}" rx="9.5" ry="20" fill="url(#rb-${type})" stroke="#F4F4F2" stroke-width="1"/>`
+                  : `<rect x="${x + 8}" y="116" width="4.5" height="${h - 24}" rx="2" fill="rgba(255,255,255,0.55)"/>`}`;
+            }).join('')}
+          </svg>`;
+        }
+
+        if (type === 'pave6') {
+          return `<svg viewBox="0 0 400 300" width="100%" height="100%">${defs}
+            ${[0,1,2,3,4,5].map((i) => {
+              const x = 90 + i * 37;
+              const h = (i === 0 || i === 5) ? 74 : 68;
+              let dots = '';
+              for (let dx = 7; dx <= 25; dx += 6) {
+                for (let dy = 10; dy <= h - 10; dy += 7) {
+                  dots += `<circle cx="${x + dx}" cy="${110 + dy}" r="1.4" fill="#FFFFFF" opacity="${0.52 + ((dx + dy) % 5) * 0.09}"/>`;
+                }
+              }
+              return `<rect x="${x}" y="110" width="32" height="${h}" rx="11" fill="url(#sv-${type})" stroke="rgba(255,255,255,0.52)"/>${dots}`;
+            }).join('')}
+          </svg>`;
+        }
+
+        if (type === 'fangs2') {
+          return `<svg viewBox="0 0 400 300" width="100%" height="100%">${defs}
+            <path d="M116 94 L156 94 L136 212 Z" fill="url(#sv-${type})" stroke="rgba(255,255,255,0.58)" stroke-linejoin="round"/>
+            <path d="M244 94 L284 94 L264 212 Z" fill="url(#sv-${type})" stroke="rgba(255,255,255,0.58)" stroke-linejoin="round"/>
+            <line x1="131" y1="106" x2="135" y2="186" stroke="#FFFFFF" stroke-width="2" opacity="0.62"/>
+            <line x1="259" y1="106" x2="263" y2="186" stroke="#FFFFFF" stroke-width="2" opacity="0.62"/>
+          </svg>`;
+        }
+
+        if (type === 'gold6') {
+          return `<svg viewBox="0 0 400 300" width="100%" height="100%">${defs}
+            ${[0,1,2,3,4,5].map((i) => {
+              const x = 90 + i * 37;
+              const h = (i === 0 || i === 5) ? 74 : 68;
+              return `<rect x="${x}" y="110" width="32" height="${h}" rx="11" fill="url(#au-${type})" stroke="rgba(255,242,191,0.52)"/>
+                <rect x="${x + 8}" y="120" width="4.5" height="${h - 24}" rx="2" fill="rgba(255,255,255,0.45)"/>`;
+            }).join('')}
+          </svg>`;
+        }
+
+        if (type === 'openface4') {
+          return `<svg viewBox="0 0 400 300" width="100%" height="100%">${defs}
+            ${[0,1,2,3].map((i) => {
+              const x = 114 + i * 44;
+              return `<rect x="${x}" y="106" width="38" height="80" rx="11" fill="none" stroke="url(#au-${type})" stroke-width="7"/>`;
+            }).join('')}
+          </svg>`;
+        }
+
+        // soloDiamond
+        return `<svg viewBox="0 0 400 300" width="100%" height="100%">${defs}
+          <path d="M168 82 Q200 70 232 82 L224 162 Q200 228 176 162 Z" fill="url(#sv-${type})" stroke="rgba(255,255,255,0.65)" stroke-width="1.2"/>
+          <polygon points="200,108 214,132 200,156 186,132" fill="#FFFFFF" opacity="0.92"/>
+          <line x1="200" y1="94" x2="200" y2="170" stroke="#FFFFFF" stroke-width="0.9" opacity="0.7"/>
+          <line x1="176" y1="132" x2="224" y2="132" stroke="#FFFFFF" stroke-width="0.9" opacity="0.7"/>
+        </svg>`;
+      }
+
+      const archiveGrid = document.getElementById('archiveGrid');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const cardFileInput = document.getElementById('cardFileInput');
+      let currentFilter = 'all';
+      let pendingUploadCardId = null;
+
+      function renderArchives() {
+        const list = currentFilter === 'all'
+          ? archiveItems
+          : archiveItems.filter((item) => item.categories.includes(currentFilter));
+
+        archiveGrid.innerHTML = list.map((item) => `
+          <article class="archive-card" data-id="${item.id}" tabindex="0" role="button" aria-label="${item.title}">
+            <div class="archive-visual">
+              ${item.customImg
+                ? `<img class="card-photo" src="${item.customImg}" alt="${item.title}" />`
+                : buildStudioPlaceholderSvg(item.artType)}
+              <button type="button" class="card-upload-btn" data-upload-id="${item.id}">+ PHOTO</button>
+            </div>
+            <div class="archive-body">
+              <div>
+                <h3 class="archive-title">${item.title}</h3>
+                <p class="archive-meta">${item.meta}</p>
+              </div>
+              <div class="archive-foot">
+                <span>VOIR LA FICHE</span>
+                <span aria-hidden="true">↗</span>
+              </div>
+            </div>
+          </article>
+        `).join('');
+
+        // Bind per-card "+ PHOTO" buttons
+        archiveGrid.querySelectorAll('.card-upload-btn').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pendingUploadCardId = btn.dataset.uploadId;
+            cardFileInput.click();
+          });
+        });
+
+        // Bind card clicks to modal
+        archiveGrid.querySelectorAll('.archive-card').forEach((card) => {
+          const openCard = () => {
+            const found = archiveItems.find((x) => x.id === card.dataset.id);
+            if (found) openArchiveModal(found);
+          };
+          card.addEventListener('click', openCard);
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openCard();
+            }
+          });
+        });
+      }
+
+      cardFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file || !pendingUploadCardId) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const item = archiveItems.find((x) => x.id === pendingUploadCardId);
+          if (item) {
+            item.customImg = ev.target.result;
+            renderArchives();
+            showToast('Aperçu photo ajouté à la pièce.');
+          }
+        };
+        reader.readAsDataURL(file);
+        cardFileInput.value = '';
+      });
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          currentFilter = btn.dataset.filter;
+          renderArchives();
+        });
+      });
+
+      renderArchives();
+
+      /* Archive Detail Modal */
+      const archiveModal = document.getElementById('archiveModal');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const modalVisual = document.getElementById('modalVisual');
+      const modalCategory = document.getElementById('modalCategory');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDesc = document.getElementById('modalDesc');
+      const modalAlloy = document.getElementById('modalAlloy');
+      const modalFinish = document.getElementById('modalFinish');
+      const modalSetup = document.getElementById('modalSetup');
+      const modalLoadConfigBtn = document.getElementById('modalLoadConfigBtn');
+      let activeModalItem = null;
+
+      function openArchiveModal(item) {
+        activeModalItem = item;
+        modalVisual.innerHTML = item.customImg
+          ? `<img src="${item.customImg}" alt="${item.title}" />`
+          : buildStudioPlaceholderSvg(item.artType);
+        modalCategory.textContent = item.categoryLabel;
+        modalTitle.textContent = item.title;
+        modalDesc.textContent = item.desc;
+        modalAlloy.textContent = item.alloyLabel;
+        modalFinish.textContent = item.finishLabel;
+        modalSetup.textContent = item.setupLabel;
+        archiveModal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeArchiveModal() {
+        archiveModal.classList.remove('is-open');
+        if (!menuOpen) document.body.style.overflow = '';
+      }
+
+      closeModalBtn.addEventListener('click', closeArchiveModal);
+      archiveModal.addEventListener('click', (e) => {
+        if (e.target === archiveModal) closeArchiveModal();
+      });
+
+      modalLoadConfigBtn.addEventListener('click', () => {
+        if (!activeModalItem) return;
+        applyPreset(activeModalItem.preset);
+        closeArchiveModal();
+        document.getElementById('configurateur').scrollIntoView({ behavior: 'smooth' });
+        showToast('Configuration chargée dans le configurateur.');
+      });
+
+      /* -----------------------------------------------------------------------
+         6. INTERACTIVE 16-TOOTH FDI CONFIGURATOR
+         ----------------------------------------------------------------------- */
+      const ALLOYS = {
+        argent925:  { label: 'Argent 925',   min: 75,  max: 110, grad: 'url(#grad-argent925)' },
+        orjaune18k: { label: 'Or Jaune 18K', min: 220, max: 310, grad: 'url(#grad-orjaune18k)' },
+        orblanc18k: { label: 'Or Blanc 18K', min: 240, max: 330, grad: 'url(#grad-orblanc18k)' },
+      };
+
+      const STYLES = {
+        cap:      { label: 'Cap Plein',      min: 0,   max: 0 },
+        openface: { label: 'Open Face',      min: 15,  max: 25 },
+        fang:     { label: 'Croc / Fang',    min: 25,  max: 45 },
+        pave:     { label: 'Pavé Serti',     min: 110, max: 180 },
+        ruby:     { label: 'Pierre / Rubis', min: 65,  max: 120 },
+      };
+
+      const FINISHES = {
+        miroir: { label: 'Poli Miroir', min: 0,  max: 0 },
+        brosse: { label: 'Brossé Brut', min: 10, max: 15 },
+        grave:  { label: 'Gravé',       min: 25, max: 50 },
+      };
+
+      const UPPER_TEETH = [
+        { code: '14', x: 96,  y: 78, w: 46, h: 66 },
+        { code: '13', x: 156, y: 66, w: 50, h: 74 },
+        { code: '12', x: 220, y: 60, w: 48, h: 72 },
+        { code: '11', x: 284, y: 56, w: 56, h: 78 },
+        { code: '21', x: 356, y: 56, w: 56, h: 78 },
+        { code: '22', x: 420, y: 60, w: 48, h: 72 },
+        { code: '23', x: 484, y: 66, w: 50, h: 74 },
+        { code: '24', x: 544, y: 78, w: 46, h: 66 },
+      ];
+
+      const LOWER_TEETH = [
+        { code: '44', x: 114, y: 282, w: 42, h: 58 },
+        { code: '43', x: 170, y: 292, w: 46, h: 66 },
+        { code: '42', x: 228, y: 298, w: 42, h: 62 },
+        { code: '41', x: 286, y: 302, w: 44, h: 64 },
+        { code: '31', x: 354, y: 302, w: 44, h: 64 },
+        { code: '32', x: 412, y: 298, w: 42, h: 62 },
+        { code: '33', x: 470, y: 292, w: 46, h: 66 },
+        { code: '34', x: 526, y: 282, w: 42, h: 58 },
+      ];
+
+      const cfg = {
+        teeth: new Set(['13', '23']),
+        alloy: 'argent925',
+        style: 'fang',
+        finish: 'miroir',
+      };
+
+      const upperArchGroup = document.getElementById('upperArchGroup');
+      const lowerArchGroup = document.getElementById('lowerArchGroup');
+      const archLiveBadge = document.getElementById('archLiveBadge');
+      const specCount = document.getElementById('specCount');
+      const specFdi = document.getElementById('specFdi');
+      const specAlloy = document.getElementById('specAlloy');
+      const specStyle = document.getElementById('specStyle');
+      const specFinish = document.getElementById('specFinish');
+      const specPrice = document.getElementById('specPrice');
+
+      function buildToothPath(t, isUpper, active, style) {
+        const hw = t.w / 2;
+        const fang = active && style === 'fang';
+        const h = fang ? t.h * 1.24 : t.h;
+
+        if (isUpper) {
+          if (fang) {
+            return `M ${t.x - hw} ${t.y} Q ${t.x - hw} ${t.y + h * 0.56} ${t.x} ${t.y + h} Q ${t.x + hw} ${t.y + h * 0.56} ${t.x + hw} ${t.y} Q ${t.x} ${t.y - 10} ${t.x - hw} ${t.y} Z`;
+          }
+          return `M ${t.x - hw} ${t.y} Q ${t.x - hw} ${t.y + h * 0.85} ${t.x - hw * 0.55} ${t.y + h} Q ${t.x} ${t.y + h + 5} ${t.x + hw * 0.55} ${t.y + h} Q ${t.x + hw} ${t.y + h * 0.85} ${t.x + hw} ${t.y} Q ${t.x} ${t.y - 10} ${t.x - hw} ${t.y} Z`;
+        } else {
+          if (fang) {
+            return `M ${t.x - hw} ${t.y} Q ${t.x - hw} ${t.y - h * 0.56} ${t.x} ${t.y - h} Q ${t.x + hw} ${t.y - h * 0.56} ${t.x + hw} ${t.y} Q ${t.x} ${t.y + 10} ${t.x - hw} ${t.y} Z`;
+          }
+          return `M ${t.x - hw} ${t.y} Q ${t.x - hw} ${t.y - h * 0.85} ${t.x - hw * 0.55} ${t.y - h} Q ${t.x} ${t.y - h - 5} ${t.x + hw * 0.55} ${t.y - h} Q ${t.x + hw} ${t.y - h * 0.85} ${t.x + hw} ${t.y} Q ${t.x} ${t.y + 10} ${t.x - hw} ${t.y} Z`;
+        }
+      }
+
+      function renderArch(list, container, isUpper) {
+        const alloyObj = ALLOYS[cfg.alloy];
+        container.innerHTML = list.map((t) => {
+          const active = cfg.teeth.has(t.code);
+          const d = buildToothPath(t, isUpper, active, cfg.style);
+          const labelY = isUpper ? t.y - 18 : t.y + 24;
+
+          let fx = '';
+          if (active) {
+            if (cfg.style === 'openface') {
+              const iw = t.w * 0.54;
+              const ih = t.h * 0.58;
+              const ix = t.x - iw / 2;
+              const iy = isUpper ? t.y + t.h * 0.2 : t.y - t.h * 0.78;
+              fx += `<rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" rx="7" fill="#050507" stroke="rgba(255,255,255,0.45)" stroke-width="1"/>`;
+            } else if (cfg.style === 'pave') {
+              fx += `<path d="${d}" fill="url(#pavePattern)" pointer-events="none"/>`;
+            } else if (cfg.style === 'ruby') {
+              const cy = isUpper ? t.y + t.h * 0.48 : t.y - t.h * 0.48;
+              fx += `<ellipse cx="${t.x}" cy="${cy}" rx="${t.w * 0.25}" ry="${t.h * 0.28}" fill="url(#grad-ruby)" stroke="#F4F4F2" stroke-width="1.1" pointer-events="none"/>`;
+            }
+
+            if (cfg.finish === 'brosse') {
+              fx += `<path d="${d}" fill="url(#brushedPattern)" pointer-events="none"/>`;
+            } else if (cfg.finish === 'grave') {
+              fx += `<path d="${d}" fill="url(#engravePattern)" pointer-events="none"/>`;
+            }
+          }
+
+          return `
+            <g class="tooth-group ${active ? 'active' : ''}" data-tooth="${t.code}" tabindex="0" role="button" aria-pressed="${active}" aria-label="Dent FDI ${t.code}">
+              <path
+                class="tooth-base"
+                d="${d}"
+                fill="${active ? alloyObj.grad : '#111116'}"
+                stroke="${active ? 'rgba(244,244,242,0.78)' : '#2A2A32'}"
+                stroke-width="${active ? '1.4' : '1'}"
+              />
+              ${fx}
+              <text
+                x="${t.x}"
+                y="${labelY}"
+                text-anchor="middle"
+                font-family="Barlow, sans-serif"
+                font-weight="500"
+                font-size="11"
+                fill="${active ? '#F4F4F2' : '#777782'}"
+              >${t.code}</text>
+            </g>
+          `;
+        }).join('');
+
+        container.querySelectorAll('.tooth-group').forEach((g) => {
+          const toggle = () => {
+            const code = g.dataset.tooth;
+            if (cfg.teeth.has(code)) cfg.teeth.delete(code);
+            else cfg.teeth.add(code);
+            updateConfigurator();
+          };
+          g.addEventListener('click', toggle);
+          g.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggle();
+            }
+          });
+        });
+      }
+
+      function syncOptionGroup(id, attr, val) {
+        document.querySelectorAll(`#${id} button`).forEach((b) => {
+          b.classList.toggle('is-active', b.dataset[attr] === val);
+        });
+      }
+
+      function getOrderedFdi() {
+        return [
+          ...UPPER_TEETH.map((t) => t.code),
+          ...LOWER_TEETH.map((t) => t.code),
+        ].filter((c) => cfg.teeth.has(c));
+      }
+
+      function buildBriefText() {
+        const codes = getOrderedFdi();
+        const count = codes.length;
+        const a = ALLOYS[cfg.alloy];
+        const s = STYLES[cfg.style];
+        const f = FINISHES[cfg.finish];
+        const min = count * (a.min + s.min + f.min);
+        const max = count * (a.max + s.max + f.max);
+
+        return [
+          `BRIEF PROJET — WILL'S GRILLZ (ROUBAIX)`,
+          `Dents (${count}) : ${count ? codes.join(', ') : 'Aucune sélectionnée'}`,
+          `Alliage : ${a.label}`,
+          `Style : ${s.label}`,
+          `Finition : ${f.label}`,
+          `Estimation indicative : ${count ? `${min} € — ${max} €` : 'À définir'}`,
+        ].join('\n');
+      }
+
+      function updateConfigurator() {
+        renderArch(UPPER_TEETH, upperArchGroup, true);
+        renderArch(LOWER_TEETH, lowerArchGroup, false);
+
+        syncOptionGroup('alloySelector', 'alloy', cfg.alloy);
+        syncOptionGroup('styleSelector', 'style', cfg.style);
+        syncOptionGroup('finishSelector', 'finish', cfg.finish);
+
+        const codes = getOrderedFdi();
+        const count = codes.length;
+        const a = ALLOYS[cfg.alloy];
+        const s = STYLES[cfg.style];
+        const f = FINISHES[cfg.finish];
+
+        archLiveBadge.textContent = `${count} ${count > 1 ? 'DENTS SÉLECTIONNÉES' : 'DENT SÉLECTIONNÉE'}`;
+        specCount.textContent = `${count} ${count > 1 ? 'dents' : 'dent'}`;
+        specFdi.textContent = count ? codes.join(' · ') : '—';
+        specAlloy.textContent = a.label;
+        specStyle.textContent = s.label;
+        specFinish.textContent = f.label;
+
+        if (count === 0) {
+          specPrice.textContent = 'Sélectionnez des dents';
+        } else {
+          const min = count * (a.min + s.min + f.min);
+          const max = count * (a.max + s.max + f.max);
+          specPrice.textContent = `${min} € — ${max} €`;
+        }
+      }
+
+      function applyPreset(preset) {
+        cfg.teeth = new Set(preset.teeth);
+        if (preset.alloy) cfg.alloy = preset.alloy;
+        if (preset.style) cfg.style = preset.style;
+        if (preset.finish) cfg.finish = preset.finish;
+        updateConfigurator();
+      }
+
+      document.querySelectorAll('#alloySelector button').forEach((b) => {
+        b.addEventListener('click', () => { cfg.alloy = b.dataset.alloy; updateConfigurator(); });
+      });
+      document.querySelectorAll('#styleSelector button').forEach((b) => {
+        b.addEventListener('click', () => { cfg.style = b.dataset.style; updateConfigurator(); });
+      });
+      document.querySelectorAll('#finishSelector button').forEach((b) => {
+        b.addEventListener('click', () => { cfg.finish = b.dataset.finish; updateConfigurator(); });
+      });
+
+      document.querySelectorAll('.preset-btn').forEach((b) => {
+        b.addEventListener('click', () => {
+          const p = b.dataset.preset;
+          if (p === 'fangs') applyPreset({ teeth: ['13', '23'], style: 'fang' });
+          else if (p === 'top6') applyPreset({ teeth: ['13', '12', '11', '21', '22', '23'], style: 'cap' });
+          else if (p === 'reset') { cfg.teeth.clear(); updateConfigurator(); }
+        });
+      });
+
+      document.getElementById('copyBriefBtn').addEventListener('click', () => {
+        copyText(buildBriefText(), 'Brief configurateur copié.');
+      });
+
+      document.getElementById('transferToBookingBtn').addEventListener('click', () => {
+        const briefField = document.getElementById('inputBrief');
+        briefField.value = buildBriefText();
+        document.getElementById('empreinte').scrollIntoView({ behavior: 'smooth' });
+        briefField.focus({ preventScroll: true });
+        showToast('Brief transféré vers le formulaire RDV.');
+      });
+
+      updateConfigurator();
+
+      /* -----------------------------------------------------------------------
+         7. PRISE D'EMPREINTE FORM + SMS PRE-FILL
+         ----------------------------------------------------------------------- */
+      let bookingModeLabel = 'Atelier Roubaix (14 Rue du Coq Français)';
+      const modeBtns = document.querySelectorAll('.mode-btn');
+      const bookingForm = document.getElementById('bookingForm');
+      const bookingConfirmation = document.getElementById('bookingConfirmation');
+      const generatedMessageBox = document.getElementById('generatedMessageBox');
+      const smsDirectLink = document.getElementById('smsDirectLink');
+      const formErrorMsg = document.getElementById('formErrorMsg');
+
+      modeBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          modeBtns.forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          bookingModeLabel = btn.dataset.mode === 'atelier'
+            ? 'Atelier Roubaix (14 Rue du Coq Français)'
+            : 'Convention / Événement Lille';
+        });
+      });
+
+      bookingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('inputName').value.trim();
+        const contact = document.getElementById('inputContact').value.trim();
+        const slot = document.getElementById('inputSlot').value.trim();
+        const brief = document.getElementById('inputBrief').value.trim();
+
+        if (!name || !contact || !slot) {
+          formErrorMsg.textContent = 'Merci de renseigner votre nom/pseudo, un contact direct et un créneau souhaité.';
+          formErrorMsg.classList.add('is-visible');
+          return;
+        }
+
+        formErrorMsg.classList.remove('is-visible');
+        const message = [
+          `Bonjour Will's Grillz — Demande de RDV Empreinte`,
+          `Lieu : ${bookingModeLabel}`,
+          `Nom / Pseudo : ${name}`,
+          `Contact : ${contact}`,
+          `Créneau souhaité : ${slot}`,
+          brief ? `\n${brief}` : '',
+        ].filter(Boolean).join('\n');
+
+        generatedMessageBox.textContent = message;
+        smsDirectLink.href = `sms:+33783982264?body=${encodeURIComponent(message)}`;
+        bookingForm.style.display = 'none';
+        bookingConfirmation.classList.add('is-visible');
+        showToast('Demande formatée et prête à l\'envoi.');
+      });
+
+      document.getElementById('copyReadyMessageBtn').addEventListener('click', () => {
+        copyText(generatedMessageBox.textContent, 'Message copié dans le presse-papiers.');
+      });
+
+      document.getElementById('resetBookingBtn').addEventListener('click', () => {
+        bookingConfirmation.classList.remove('is-visible');
+        bookingForm.style.display = 'flex';
+      });
+
+      /* -----------------------------------------------------------------------
+         8. SCROLL REVEAL OBSERVER
+         ----------------------------------------------------------------------- */
+      const revealNodes = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        revealNodes.forEach((n) => io.observe(n));
+      } else {
+        revealNodes.forEach((n) => n.classList.add('visible'));
+      }
+    })();
+  </script>
+</body>
+</html>

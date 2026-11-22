@@ -216,6 +216,15 @@ export const PROJECTS: readonly Project[] = [
     featured: false,
     repo: "https://github.com/aniszad/Lavinia",
   },
+  {
+    slug: "wills-grillz",
+    name: "Will's Grillz",
+    description:
+      "Full website concept for a custom dental jewellery atelier based in Roubaix and Lille. A cinematic dark-mode single page with an interactive tooth configurator, archive gallery, and bespoke order flow. Freelance work.",
+    tags: ["HTML", "CSS", "JavaScript", "Web Design"],
+    featured: false,
+    demo: "/demos/wills-grillz/index.html",
+  },
 ];
 
 export const EDUCATION: readonly EducationEntry[] = [
